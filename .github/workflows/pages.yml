@@ -54,7 +54,14 @@ jobs:
             '.word-main:focus-visible',
             'role="button" tabindex="0" aria-label="شروع',
             '@media(max-width:620px) and (max-height:700px)',
-            'themeColor.content=t==="dark"?"#171a16":"#f6f7f1"'
+            'themeColor.content=t==="dark"?"#171a16":"#f6f7f1"',
+            'Wortin restrained modern 3D color pass',
+            '--accent-mint:#b3e5d5',
+            '@keyframes wortinAuraFloat',
+            'perspective(850px) translateY(-3px) rotateX(1.5deg) rotateY(-1.4deg)',
+            'filter:none;',
+            '#view-learn .flash-back{transform:rotateY(180deg) translateZ(1px)}',
+            '#view-home .hero-art::before,#view-home .hero-art::after,#view-home .core{animation:none!important}'
           ]) {
             if (!html.includes(token)) throw new Error('Missing mobile/performance regression safeguard: ' + token);
           }
