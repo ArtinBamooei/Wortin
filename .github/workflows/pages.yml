@@ -44,7 +44,17 @@ jobs:
           for (const token of ['function dayWordCount', 'recordActivity(word.id)', 'labels[(d.getDay()+1)%7]']) {
             if (!html.includes(token)) throw new Error('Missing expected learning logic: ' + token);
           }
-          console.log('Wortin HTML smoke checks passed');
+          for (const token of [
+            '[0,1000,2000,3000].map(fetchWordPage)',
+            'const stored=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")',
+            '.word-meaning{grid-column:1;grid-row:2',
+            '.field input,.command-input input,.select{font-size:16px}',
+            'card.classList.toggle("flipped",study.revealed)',
+            'if(activeView==="stats")renderTypeStats()'
+          ]) {
+            if (!html.includes(token)) throw new Error('Missing mobile/performance regression safeguard: ' + token);
+          }
+          console.log('Wortin HTML and mobile performance smoke checks passed');
           NODE
       - name: Configure Pages
         uses: actions/configure-pages@v5
