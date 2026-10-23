@@ -4,7 +4,7 @@
 
 ## Features
 
-- Animated, layered 3D hero scene; restrained dark/light themes.
+- Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
 - Responsive desktop, tablet and mobile layouts.
 - Vocabulary search across German words, Persian meanings and example sentences.
 - Word details, example sentences, grammar/case notes, prepositions and source page when present.
