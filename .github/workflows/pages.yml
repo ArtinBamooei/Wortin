@@ -53,6 +53,7 @@ jobs:
             'if(activeView==="stats")renderTypeStats()',
             '.word-main:focus-visible',
             'role="button" tabindex="0" aria-label="شروع',
+            '@media(max-width:620px) and (max-height:700px)',
             'themeColor.content=t==="dark"?"#171a16":"#f6f7f1"'
           ]) {
             if (!html.includes(token)) throw new Error('Missing mobile/performance regression safeguard: ' + token);
