@@ -31,7 +31,7 @@ The schema is idempotent for the current project. It creates the base table if a
 
 ## Publish with GitHub Pages
 
-In the repository, open **Settings → Pages** and select **Deploy from a branch**, branch `main`, folder `/ (root)`. Save and open:
+In the repository, open **Settings → Pages** and select **GitHub Actions** under Build and deployment. Save. The included workflow validates the inline JavaScript, then deploys the static site. Open:
 
 `https://artinbamooei.github.io/Wortin/`
 
