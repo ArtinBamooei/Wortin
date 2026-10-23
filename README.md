@@ -5,7 +5,8 @@
 ## Features
 
 - Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
-- Responsive desktop, tablet and mobile layouts.
+- Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows and native-size form controls.
+- Cached-first vocabulary loading with background refresh, fewer initial API requests, and lazy rendering of inactive dictionary/review/statistics views.
 - Vocabulary search across German words, Persian meanings and example sentences.
 - Word details, example sentences, grammar/case notes, prepositions and source page when present.
 - Flashcards, a four-option meaning quiz, German text-to-speech, saved words and basic spaced-review scheduling.
@@ -43,9 +44,9 @@ Open `index.html` in a local static web server (recommended) or publish it with 
 
 ## Keyboard shortcuts
 
-- `Ctrl/Cmd + K`: global word search
-- `Space`: reveal the flashcard answer
-- `1`: review again · `2`: known · `3`: easy
+- `Ctrl/Cmd + K`: global word search.
+- `Enter` or `Space` while a flashcard is focused: flip between the word and its meaning.
+- Use the three on-card controls to rate a word; numeric rating shortcuts are not enabled.
 
 ## Notes
 
