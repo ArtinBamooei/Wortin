@@ -41,6 +41,9 @@ jobs:
             if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
           }
           if (html.includes('!p.known && (!p.due')) throw new Error('Stale review-scheduling logic detected');
+          for (const token of ['function dayWordCount', 'recordActivity(word.id)', 'labels[(d.getDay()+1)%7]']) {
+            if (!html.includes(token)) throw new Error('Missing expected learning logic: ' + token);
+          }
           console.log('Wortin HTML smoke checks passed');
           NODE
       - name: Configure Pages
