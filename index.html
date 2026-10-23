@@ -379,6 +379,25 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
 .word-title,.word-type{display:block}
 .mode-card:focus-visible{outline:2px solid var(--lime2);outline-offset:3px}
 
+
+/* Compact study layout for short mobile viewports; keep rating actions above the fixed nav. */
+@media(max-width:620px) and (max-height:700px){
+  #view-learn .study-options{margin-bottom:7px;gap:5px}
+  #view-learn .study-options .pill{padding:6px 8px;font-size:10px}
+  #view-learn .study-top{margin-bottom:6px}
+  #view-learn .study-stage{padding:6px 3px 12px;min-height:0}
+  #view-learn .flashcard{height:clamp(220px,41vh,270px)}
+  #view-learn .flash-face{padding:18px 14px}
+  #view-learn .flash-word{font-size:clamp(32px,9vw,42px);margin:14px 0 9px}
+  #view-learn .flash-hint{margin-top:10px;font-size:9px}
+  #view-learn .flash-meaning{font-size:clamp(21px,6vw,26px);margin:12px 0 4px}
+  #view-learn .flash-example{font-size:10px;line-height:1.55;margin-top:5px;padding:7px 9px}
+  #view-learn .flash-deco{bottom:15px}
+  #view-learn .study-controls{gap:6px;margin:0 auto 9px}
+  #view-learn .study-controls button{min-height:40px;padding:8px 6px;font-size:10px}
+  .mobile-nav{padding-top:4px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
+}
+
 </style>
 </head>
 <body>
