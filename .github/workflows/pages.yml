@@ -32,7 +32,7 @@ jobs:
       - name: Validate inline JavaScript
         shell: bash
         run: |
-          sed -n '/<script>/,/<\\/script>/{ /<script>/d; /<\\/script>/d; p; }' index.html > /tmp/wortin-app.js
+          awk '/<script>/{inside=1;next} index($0, "</script>"){inside=0} inside{print}' index.html > /tmp/wortin-app.js
           node --check /tmp/wortin-app.js
           node - <<'NODE'
           const fs = require('node:fs');
