@@ -398,6 +398,17 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   .mobile-nav{padding-top:4px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
 }
 
+/* Compact quiz layout for short mobile viewports. */
+
+@media(max-width:620px) and (max-height:700px){
+  /* Keep the multiple-choice question and its audio control clear of bottom navigation. */
+  #view-learn .lower-card[style*="max-width:700px"]{padding:14px!important}
+  #view-learn .quiz-question{font-size:20px;margin:10px 0}
+  #view-learn .quiz-options{gap:6px}
+  #view-learn .quiz-option{min-height:40px;padding:9px 10px;font-size:11px}
+  #view-learn .study-controls:has(#studyAudio){margin-top:7px}
+}
+
 </style>
 </head>
 <body>
