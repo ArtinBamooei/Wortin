@@ -230,6 +230,118 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   letter-spacing:0;
 }
 
+
+/* Wortin 3D flashcards — tactile depth, calm surfaces, repeatable flip. */
+#view-learn>.study-shell{max-width:980px;margin:8px auto 0}
+#view-learn .study-options{justify-content:center;margin:0 0 18px;gap:8px}
+#view-learn .study-top{max-width:800px;margin:0 auto 8px}
+#view-learn .study-stage{perspective:1500px;min-height:0;padding:18px 12px 30px}
+#view-learn .flashcard{
+  height:clamp(330px,42vw,430px);max-width:760px;margin:auto;position:relative;
+  border:0;border-radius:32px;isolation:isolate;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .82s cubic-bezier(.2,.72,.15,1);
+  filter:drop-shadow(0 24px 20px rgba(44,56,36,.10));
+}
+#view-learn .flashcard::before,#view-learn .flashcard::after{
+  content:"";position:absolute;inset:9px;border-radius:32px;z-index:-1;
+  background:linear-gradient(140deg,color-mix(in srgb,var(--panel) 78%,var(--lime)),var(--panel2));
+  border:1px solid color-mix(in srgb,var(--lime2) 18%,var(--line));
+  transform:translateZ(-17px) rotate(-1deg);pointer-events:none;
+}
+#view-learn .flashcard::after{
+  inset:18px 5px 4px;opacity:.65;
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  transform:translateZ(-32px) rotate(1.1deg);
+}
+#view-learn .flashcard.flipped{transform:rotateY(180deg)}
+#view-learn .flashcard:focus-visible{outline:3px solid var(--lime2);outline-offset:8px}
+#view-learn .flash-face{
+  position:absolute;inset:0;padding:clamp(26px,4vw,44px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--lime2) 18%,var(--line));
+  border-radius:30px;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72),inset 0 -2px 0 rgba(38,50,31,.035);
+}
+#view-learn .flash-face::before{
+  content:"";position:absolute;width:330px;height:330px;right:-95px;top:-155px;border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--lime2) 17%,transparent);
+  box-shadow:0 0 0 22px color-mix(in srgb,var(--lime2) 4%,transparent),0 0 0 48px color-mix(in srgb,var(--lime2) 3%,transparent);
+  pointer-events:none;
+}
+#view-learn .flash-face::after{
+  content:"";position:absolute;inset:13px;border:1px solid color-mix(in srgb,var(--line) 75%,transparent);
+  border-radius:21px;pointer-events:none;
+}
+#view-learn .flash-face>*{position:relative;z-index:1}
+#view-learn .flash-front{
+  background:radial-gradient(ellipse at 82% 7%,color-mix(in srgb,var(--lime) 37%,transparent),transparent 36%),
+    linear-gradient(145deg,color-mix(in srgb,var(--panel) 97%,white),color-mix(in srgb,var(--panel) 90%,var(--lime)));
+}
+#view-learn .flash-back{
+  transform:rotateY(180deg);
+  background:radial-gradient(ellipse at 15% 95%,color-mix(in srgb,var(--violet) 16%,transparent),transparent 43%),
+    linear-gradient(145deg,var(--panel),color-mix(in srgb,var(--panel) 90%,var(--lime)));
+}
+#view-learn .flash-chip{
+  align-self:center;padding:8px 13px;border-radius:100px;
+  border:1px solid color-mix(in srgb,var(--lime2) 23%,var(--line));
+  background:color-mix(in srgb,var(--panel) 65%,transparent);color:var(--lime2);
+  font:600 10px "DM Sans","Vazirmatn",sans-serif;letter-spacing:1.1px;
+  box-shadow:0 5px 16px rgba(30,40,22,.035);
+}
+#view-learn .flash-word{
+  margin:27px 0 18px;font:750 clamp(40px,6vw,66px) "DM Sans","Vazirmatn",sans-serif;
+  letter-spacing:-1.7px;line-height:1.2;color:var(--text);text-shadow:0 2px 0 rgba(255,255,255,.3);
+  overflow-wrap:anywhere;text-align:center;max-width:100%;
+}
+#view-learn .flash-label{font-size:11px;color:var(--muted);letter-spacing:.3px}
+#view-learn .flash-hint{font-size:11px;color:var(--muted2);margin-top:24px;text-align:center}
+#view-learn .flash-deco{
+  position:absolute!important;bottom:24px;left:30px;font:700 12px "DM Sans",sans-serif;
+  letter-spacing:2px;color:color-mix(in srgb,var(--lime2) 36%,var(--muted2));
+}
+#view-learn .flash-meaning{
+  max-width:100%;margin:26px 0 8px;font-size:clamp(25px,3.2vw,36px);
+  line-height:1.65;font-weight:750;text-align:center;overflow-wrap:anywhere;color:var(--text);
+}
+#view-learn .flash-example{
+  max-width:520px;margin-top:12px;padding:13px 18px;border:1px solid var(--line);
+  border-radius:14px;background:color-mix(in srgb,var(--panel) 64%,transparent);
+  font:13px/1.9 "DM Sans","Vazirmatn",sans-serif;color:var(--muted);
+}
+#view-learn .study-controls{display:flex;justify-content:center;align-items:stretch;gap:10px;flex-wrap:wrap;margin:0 auto 22px}
+#view-learn .study-controls button{
+  min-width:155px;min-height:49px;max-width:230px;flex:1;border-radius:14px;
+  font-size:12px;font-weight:650;box-shadow:none;gap:8px;
+}
+#view-learn .study-controls button svg{width:15px;height:15px}
+#view-learn .study-controls .btn-primary.known{background:var(--lime);border-color:var(--lime);color:#34412a}
+#view-learn .study-controls .btn-secondary.missed{color:var(--orange);border-color:color-mix(in srgb,var(--orange) 30%,var(--line));background:color-mix(in srgb,var(--orange) 5%,var(--panel))}
+#view-learn .study-controls .btn-secondary.again{color:var(--text);border-color:var(--line);background:var(--panel)}
+#view-learn .study-controls button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(34,44,28,.06)}
+#view-learn .study-shortcuts{display:none!important}
+@media(max-width:620px){
+  #view-learn>.study-shell{margin-top:4px}
+  #view-learn .study-options{margin-bottom:13px}
+  #view-learn .study-stage{padding:12px 3px 24px}
+  #view-learn .flashcard{height:clamp(315px,60vh,390px);border-radius:25px}
+  #view-learn .flashcard::before{inset:7px;border-radius:25px;transform:translateZ(-14px) rotate(-1deg)}
+  #view-learn .flashcard::after{inset:14px 4px 3px;border-radius:25px;transform:translateZ(-26px) rotate(1deg)}
+  #view-learn .flash-face{padding:25px 18px;border-radius:24px}
+  #view-learn .flash-face::after{inset:10px;border-radius:17px}
+  #view-learn .flash-word{font-size:clamp(36px,10vw,50px);margin:24px 0 15px}
+  #view-learn .flash-meaning{font-size:clamp(23px,6.5vw,30px);margin:20px 0 5px}
+  #view-learn .flash-example{font-size:11px;padding:10px 12px}
+  #view-learn .flash-hint{font-size:10px;margin-top:20px}
+  #view-learn .flash-deco{bottom:19px;left:23px}
+  #view-learn .study-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #view-learn .study-controls button{max-width:none;min-width:0;min-height:46px;padding:10px 8px;font-size:11px}
+  #view-learn .study-controls button:last-child{grid-column:1 / -1}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flashcard{transition:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -319,7 +431,6 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   </section>
 
   <section class="view" id="view-learn">
-    <div class="page-heading"><div><div class="eyebrow">FOCUS MODE</div><h1>زمان تمرین است.</h1><p>پاسخ را از حافظه به یاد بیاور؛ قبل از دیدن معنی کمی مکث کن.</p></div><div class="date-label" id="learnCount">جلسه‌ی امروز</div></div>
     <div class="study-shell">
       <div class="study-options"><button class="pill active" data-study="flash">فلش‌کارت</button><button class="pill" data-study="quiz">آزمون چهارگزینه‌ای</button></div>
       <div class="study-top"><span class="study-counter" id="studyCounter">0 / 12</span><div class="progress-line"><span id="studyProgress"></span></div><button class="mini-button" id="exitStudy" aria-label="خروج"><svg><use href="#i-close"/></svg></button></div>
@@ -398,7 +509,7 @@ function speak(text){if(!("speechSynthesis"in window)){toast("قابلیت تل�
 function toggleSaved(w){const p=pFor(w);progress.words[String(w.id)]={...p,saved:!p.saved};localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));renderStats();renderDictionary();renderSaved();toast(!p.saved?"به واژه‌های نشان‌شده اضافه شد.":"از واژه‌های نشان‌شده حذف شد.")}
 function changeView(view){activeView=view;document.querySelectorAll(".view").forEach(el=>el.classList.toggle("active",el.id==="view-"+view));document.querySelectorAll("[data-view]").forEach(el=>el.classList.toggle("active",el.dataset.view===view));const names={home:"داشبورد",learn:"تمرین هوشمند",dictionary:"واژه‌نامه",review:"مرور کلمات",stats:"پیشرفت من"};$("crumbCurrent").textContent=names[view]||"داشبورد";window.scrollTo({top:0,behavior:"smooth"});if(view==="dictionary")renderDictionary();if(view==="review")renderSaved();if(view==="stats")renderStats();if(view==="learn"&&!study.cards.length)startSession("flash")}
 function startSession(mode="flash",specified=null){if(!words.length){toast("واژگان هنوز دریافت نشده‌اند.");return}study.mode=mode;let pool=specified||((mode==="saved")?savedWords():dueWords());if(!pool.length)pool=words.filter(w=>!pFor(w).known);if(!pool.length)pool=words.slice();pool=[...pool].sort(()=>Math.random()-.5);study.cards=pool.slice(0,mode==="single"?1:12);study.index=0;study.revealed=false;study.correct=0;study.answered=0;study.locked=false;changeView("learn");document.querySelectorAll("[data-study]").forEach(b=>b.classList.toggle("active",b.dataset.study===study.mode));renderStudy()}
-function renderStudy(){if(!study.cards.length){$("studyContent").innerHTML='<div class="review-empty"><svg><use href="#i-check"/></svg><h3>برای این مرحله واژه‌ای باقی نمانده است.</h3><p>این بخش را کامل کرده‌ای. برای یادگیری بیشتر از واژه‌نامه یک مسیر تازه انتخاب کن.</p><button class="btn-primary" id="goDict">رفتن به واژه‌نامه</button></div>';$("goDict").onclick=()=>changeView("dictionary");$("studyCounter").textContent="۰ / ۰";$("studyProgress").style.width="100%";return}const w=study.cards[study.index];$("studyCounter").textContent=faNum(study.index+1)+" / "+faNum(study.cards.length);$("studyProgress").style.width=(study.index/study.cards.length*100)+"%";if(study.mode==="quiz"){renderQuiz(w);return}const p=pFor(w),ex=firstExample(w);$("studyContent").innerHTML='<div class="study-stage"><div class="flashcard '+(study.revealed?"flipped":"")+'" id="flashcard" role="button" tabindex="0" aria-label="نمایش معنی واژه"><div class="flash-face flash-front"><span class="flash-chip">'+safe(typeLabel(w.word_type))+(w.record_section==="G"?" · Themen":"")+'</span><div class="flash-word">'+safe(w.word)+'</div><div class="flash-label">معنی فارسی را به خاطر بیاور</div><div class="flash-hint">برای نمایش پاسخ کلیک کن</div></div><div class="flash-face flash-back"><span class="flash-chip">BEDEUTUNG · معنی</span><div class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</div>'+(ex?'<div class="flash-example">'+safe(ex)+'</div>':'')+'<div class="flash-hint">برای شنیدن تلفظ از دکمه‌ی صدا استفاده کن</div></div></div></div><div class="study-controls">'+(study.revealed?'<button class="btn-secondary again" id="studyAgain">دوباره مرور کن</button><button class="btn-secondary" id="studyKnown">بلدم</button><button class="btn-primary" id="studyEasy">آسان بود '+svg("check")+'</button>':'<button class="btn-secondary" id="studyAudio">'+svg("volume")+' شنیدن تلفظ</button><button class="btn-primary" id="revealCard">نمایش معنی '+svg("arrow")+'</button>')+'</div><div class="study-shortcuts"><kbd>Space</kbd> نمایش پاسخ <kbd>1</kbd> دوباره <kbd>2</kbd> بلدم <kbd>3</kbd> آسان</div>';const reveal=()=>{study.revealed=true;renderStudy()};$("flashcard").onclick=reveal;$("flashcard").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reveal()}};if($("revealCard"))$("revealCard").onclick=reveal;if($("studyAudio"))$("studyAudio").onclick=()=>speak(w.word);if($("studyAgain"))$("studyAgain").onclick=()=>gradeWord(w,"again");if($("studyKnown"))$("studyKnown").onclick=()=>gradeWord(w,"known");if($("studyEasy"))$("studyEasy").onclick=()=>gradeWord(w,"easy")}
+function renderStudy(){if(!study.cards.length){$("studyContent").innerHTML='<div class="review-empty"><svg><use href="#i-check"/></svg><h3>برای این مرحله واژه‌ای باقی نمانده است.</h3><p>این بخش را کامل کرده‌ای. برای یادگیری بیشتر از واژه‌نامه یک مسیر تازه انتخاب کن.</p><button class="btn-primary" id="goDict">رفتن به واژه‌نامه</button></div>';$("goDict").onclick=()=>changeView("dictionary");$("studyCounter").textContent="۰ / ۰";$("studyProgress").style.width="100%";return}const w=study.cards[study.index];$("studyCounter").textContent=faNum(study.index+1)+" / "+faNum(study.cards.length);$("studyProgress").style.width=(study.index/study.cards.length*100)+"%";if(study.mode==="quiz"){renderQuiz(w);return}const ex=firstExample(w);$("studyContent").innerHTML='<div class="study-stage"><div class="flashcard '+(study.revealed?"flipped":"")+'" id="flashcard" role="button" tabindex="0" aria-label="برگرداندن فلش‌کارت"><div class="flash-face flash-front"><span class="flash-chip">'+safe(typeLabel(w.word_type))+(w.record_section==="G"?" · Themen":"")+'</span><div class="flash-word">'+safe(w.word)+'</div><div class="flash-label">واژه‌ی آلمانی</div><div class="flash-hint">برای دیدن معنی، کارت را لمس کن</div><span class="flash-deco" aria-hidden="true">W.</span></div><div class="flash-face flash-back"><span class="flash-chip">BEDEUTUNG · معنی</span><div class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</div>'+(ex?'<div class="flash-example">'+safe(ex)+'</div>':'')+'<div class="flash-hint">برای برگشت به واژه، دوباره کارت را لمس کن</div><span class="flash-deco" aria-hidden="true">✓</span></div></div></div><div class="study-controls"><button class="btn-primary known" id="studyKnown">'+svg("check")+' بلدم</button><button class="btn-secondary missed" id="studyMissed">'+svg("close")+' بلد نبودم</button><button class="btn-secondary again" id="studyAgain">'+svg("refresh")+' دوباره مرور کن</button></div>';const toggleCard=()=>{study.revealed=!study.revealed;renderStudy()};$("flashcard").onclick=toggleCard;$("flashcard").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();toggleCard()}};$("studyKnown").onclick=()=>gradeWord(w,"known");$("studyMissed").onclick=()=>gradeWord(w,"again");$("studyAgain").onclick=()=>{study.cards.push(w);nextCard()}}
 function renderQuiz(w){const others=words.filter(x=>x.id!==w.id&&x.meaning_fa&&x.word_type===w.word_type).sort(()=>Math.random()-.5).slice(0,3);const options=[w,...others].sort(()=>Math.random()-.5);$("studyContent").innerHTML='<div class="lower-card" style="max-width:700px;margin:auto;padding:28px"><div class="flash-label" style="text-align:center">WAS BEDEUTET DIESES WORT?</div><div class="quiz-question">'+safe(w.word)+'</div><div class="quiz-options">'+options.map((o,i)=>'<button class="quiz-option" data-quiz-id="'+safe(o.id)+'">'+safe(o.meaning_fa||"—")+'</button>').join("")+'</div><div class="study-shortcuts" style="margin-top:18px">معنی درست را انتخاب کن.</div></div><div class="study-controls"><button class="btn-secondary" id="studyAudio">'+svg("volume")+' تلفظ</button></div>';document.querySelectorAll("[data-quiz-id]").forEach(btn=>btn.onclick=()=>{if(study.locked)return;study.locked=true;study.answered++;progress.quizTotal++;const correct=String(w.id)===btn.dataset.quizId;if(correct){study.correct++;progress.quizCorrect++;btn.classList.add("correct");saveWordState(w,{known:true,interval:Math.max(2,pFor(w).interval||0),due:Date.now()+3*86400000,seen:1})}else{btn.classList.add("wrong");const c=document.querySelector('[data-quiz-id="'+w.id+'"]');if(c)c.classList.add("correct");saveWordState(w,{known:false,due:Date.now()+600000,seen:1})}localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));setTimeout(nextCard,950)});$("studyAudio").onclick=()=>speak(w.word)}
 function gradeWord(w,grade){const p=pFor(w);let interval=grade==="again"?0:grade==="known"?Math.max(1,p.interval||1):Math.max(4,(p.interval||1)*2);const due=grade==="again"?Date.now()+10*60000:Date.now()+interval*86400000;saveWordState(w,{known:grade==="easy"||grade==="known",interval,repetitions:(p.repetitions||0)+1,due,seen:1});nextCard()}
 function nextCard(){if(study.index<study.cards.length-1){study.index++;study.revealed=false;study.locked=false;renderStudy()}else{study.index=study.cards.length;$("studyContent").innerHTML='<div class="review-empty"><svg><use href="#i-spark"/></svg><h3>جلسه به پایان رسید.</h3><p>'+faNum(study.cards.length)+' کارت بررسی شد. پاسخ‌های درست این آزمون: '+(study.mode==="quiz"?faNum(study.correct)+" از "+faNum(study.cards.length):"فلش‌کارت‌ها مرور شدند")+'. استمرار، حافظه را می‌سازد.</p><button class="btn-primary" id="sessionAgain">یک جلسه‌ی دیگر</button> <button class="btn-secondary" id="sessionHome">بازگشت به خانه</button></div>';$("sessionAgain").onclick=()=>startSession(study.mode==="quiz"?"quiz":"flash");$("sessionHome").onclick=()=>changeView("home");$("studyCounter").textContent=faNum(study.cards.length)+" / "+faNum(study.cards.length);$("studyProgress").style.width="100%";progress.sessions++;recordActivity();localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));renderAll()}}
@@ -415,7 +526,7 @@ $("openSearch").onclick=openCommand;$("closeSearch").onclick=()=>$("commandOverl
 function setTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem(THEME_KEY,t);$("themeToggle").innerHTML=svg(t==="dark"?"sun":"moon");$("themeToggle").setAttribute("aria-label",t==="dark"?"تغییر به پوسته روشن":"تغییر به پوسته تاریک")}
 $("themeToggle").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
 $("exitStudy").onclick=()=>changeView("home");
-document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand()}if(e.key==="Escape"){$("detailOverlay").classList.remove("open");$("commandOverlay").classList.remove("open")}if(activeView==="learn"&&!$("commandOverlay").classList.contains("open")&&!$("detailOverlay").classList.contains("open")){if(e.code==="Space"&&study.mode==="flash"){e.preventDefault();if(!study.revealed){study.revealed=true;renderStudy()}}if(study.revealed&&["1","2","3"].includes(e.key)&&study.mode==="flash"){const w=study.cards[study.index];if(w)gradeWord(w,e.key==="1"?"again":e.key==="2"?"known":"easy")}}});
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand()}if(e.key==="Escape"){$("detailOverlay").classList.remove("open");$("commandOverlay").classList.remove("open")}});
 const today=new Date();$("todayDate").textContent=new Intl.DateTimeFormat("fa-IR",{weekday:"long",day:"numeric",month:"long"}).format(today);setTheme(localStorage.getItem(THEME_KEY)||"light");renderStreak();renderWeekChart();renderGoal();loadWords();
 </script>
 </body>
