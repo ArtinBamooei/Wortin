@@ -37,7 +37,7 @@ jobs:
           node - <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('index.html', 'utf8');
-          for (const id of ['view-home', 'view-learn', 'view-daily', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dailyContent', 'dailyCounter', 'dailyProgress', 'dbStatus']) {
+          for (const id of ['view-home', 'view-learn', 'view-daily', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dailyContent', 'dailyCounter', 'dailyProgress', 'typeFilter', 'typeStats', 'dbStatus']) {
             if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
           }
           if (html.includes('!p.known && (!p.due')) throw new Error('Stale review-scheduling logic detected');
@@ -68,7 +68,10 @@ jobs:
           for (const token of ['DAILY_KEY', 'function beginDailyReview()', 'function renderDailyReview()', 'Math.round(eligible.length*.6)', 'data-view="daily"', 'daily.studied.push(id)']) {
             if (!html.includes(token)) throw new Error('Missing daily-learning regression safeguard: ' + token);
           }
-          console.log('Wortin HTML, daily-learning, mobile and performance smoke checks passed');
+          for (const token of ['function typeCounts(){const a={};', 'Verbpartikel:"جزء فعلی جداشدنی"', 'split(" / ").includes(type)']) {
+            if (!html.includes(token)) throw new Error('Missing vocabulary taxonomy regression safeguard: ' + token);
+          }
+          console.log('Wortin HTML, daily-learning, taxonomy, mobile and performance smoke checks passed');
           NODE
       - name: Configure Pages
         uses: actions/configure-pages@v5
