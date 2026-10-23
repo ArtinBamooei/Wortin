@@ -1,0 +1,55 @@
+# Wortin
+
+**Wortin** is a Persian-first German vocabulary practice web app based on the supplied Goethe-Zertifikat B1 word-list dataset.
+
+## Features
+
+- Animated, layered 3D hero scene; restrained dark/light themes.
+- Responsive desktop, tablet and mobile layouts.
+- Vocabulary search across German words, Persian meanings and example sentences.
+- Word details, example sentences, grammar/case notes, prepositions and source page when present.
+- Flashcards, a four-option meaning quiz, German text-to-speech, saved words and basic spaced-review scheduling.
+- Personal progress, weekly activity, daily goal and mastery overview.
+- Supabase as the vocabulary source; personal learning progress stays in this browser's local storage.
+
+## Data
+
+The imported source file contained 2,995 alphabetic entries and 405 thematic entries (3,400 total). Each record keeps its source code, section, German headword, word type, Persian meaning, source examples, extra examples, verb case/preposition notes, thematic group/equivalent, and printed PDF page where available.
+
+The Persian meanings and grammar notes are user-supplied annotations from the source text, not independently certified by Goethe.
+
+## Supabase setup
+
+The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
+
+1. Apply `supabase/migrations/20261023120000_wortin_vocabulary_schema.sql` to the Wortin project.
+2. Import the source data into `public.vocabulary` (the initial dataset is already loaded in the linked project).
+3. Confirm the Data API exposes `public.vocabulary` and that anonymous SELECT is permitted by RLS.
+4. Keep learning progress in local storage, or add Supabase Auth and user-owned RLS policies before syncing personal progress between devices.
+
+The schema is idempotent for the current project. It creates the base table if absent and adds all columns used by the app.
+
+## Publish with GitHub Pages
+
+In the repository, open **Settings → Pages** and select **Deploy from a branch**, branch `main`, folder `/ (root)`. Save and open:
+
+`https://artinbamooei.github.io/Wortin/`
+
+If the Pages deployment is already enabled, a push to `main` should trigger a rebuild.
+
+## Local preview
+
+Open `index.html` in a local static web server (recommended) or publish it with GitHub Pages. The app has no build step or frontend framework requirement; its only runtime backend dependency is the Supabase Data API.
+
+## Keyboard shortcuts
+
+- `Ctrl/Cmd + K`: global word search
+- `Space`: reveal the flashcard answer
+- `1`: review again · `2`: known · `3`: easy
+
+## Notes
+
+- The interface is Persian-first and the German sentences render left-to-right.
+- Browser speech synthesis availability depends on the user's browser and installed German voice.
+- Reduced-motion preferences are respected.
+- The current build is a static learning app, not a multi-user account system.
