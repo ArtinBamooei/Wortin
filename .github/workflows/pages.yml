@@ -65,7 +65,10 @@ jobs:
           ]) {
             if (!html.includes(token)) throw new Error('Missing mobile/performance regression safeguard: ' + token);
           }
-          for (const token of ['DAILY_KEY', 'function beginDailyReview()', 'function renderDailyReview()', 'Math.round(eligible.length*.6)', 'data-view="daily"', 'daily.studied.push(id)']) {\n            if (!html.includes(token)) throw new Error('Missing daily-learning regression safeguard: ' + token);\n          }\n          console.log('Wortin HTML, daily-learning, mobile and performance smoke checks passed');
+          for (const token of ['DAILY_KEY', 'function beginDailyReview()', 'function renderDailyReview()', 'Math.round(eligible.length*.6)', 'data-view="daily"', 'daily.studied.push(id)']) {
+            if (!html.includes(token)) throw new Error('Missing daily-learning regression safeguard: ' + token);
+          }
+          console.log('Wortin HTML, daily-learning, mobile and performance smoke checks passed');
           NODE
       - name: Configure Pages
         uses: actions/configure-pages@v5
