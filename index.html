@@ -732,7 +732,6 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   </header>
 
   <section class="view active" id="view-home">
-    <div class="page-heading"><div><div class="eyebrow">DEIN DEUTSCH. DEIN TEMPO.</div><h1>سلام، آماده‌ی یادگیری هستی؟</h1><p>هر واژه یک قدم نزدیک‌تر به تسلط واقعی بر زبان آلمانی است.</p></div><div class="date-label" id="todayDate">امروز</div></div>
     <section class="hero">
       <div class="hero-copy">
         <div class="hero-kicker"><b></b><span>مسیر یادگیری تا B1</span></div>
@@ -910,7 +909,7 @@ $("exitStudy").onclick=()=>changeView("home");
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand()}if(e.key==="Escape"){$("detailOverlay").classList.remove("open");$("commandOverlay").classList.remove("open");$("authOverlay").classList.remove("open")}});
 $("authOpen").addEventListener("click",openAuth);$("authClose").addEventListener("click",()=>$("authOverlay").classList.remove("open"));$("authOverlay").addEventListener("click",e=>{if(e.target===$("authOverlay"))$("authOverlay").classList.remove("open")});$("authLoginTab").addEventListener("click",()=>{authMode="login";renderAuthMode()});$("authSignupTab").addEventListener("click",()=>{authMode="signup";renderAuthMode()});$("authForm").addEventListener("submit",submitAuth);$("authSignOut").addEventListener("click",signOutWortin);renderAuthControls();renderAuthMode();
 if(authClient){authClient.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>{activateAuthSession(session)},0)});authClient.auth.getSession().then(({data,error})=>{if(error)throw error;return activateAuthSession(data.session)}).catch(err=>{console.warn("Could not initialize auth session.",err)})}else{console.error("Supabase Auth client unavailable; login is disabled.")}
-const today=new Date();$("todayDate").textContent=new Intl.DateTimeFormat("fa-IR",{weekday:"long",day:"numeric",month:"long"}).format(today);setTheme(localStorage.getItem(THEME_KEY)||"light");renderStreak();renderWeekChart();renderGoal();loadWords();
+const today=new Date();setTheme(localStorage.getItem(THEME_KEY)||"light");renderStreak();renderWeekChart();renderGoal();loadWords();
 </script>
 </body>
 </html>
