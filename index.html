@@ -409,6 +409,17 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   #view-learn .study-controls:has(#studyAudio){margin-top:7px}
 }
 
+
+/* Critical 3D flip fix: filter/isolation flattened the 3D context and exposed mirrored front text. */
+#view-learn .flashcard{
+  filter:none;
+  isolation:auto;
+  box-shadow:0 24px 34px -18px rgba(44,56,36,.22);
+}
+#view-learn .flashcard::before,
+#view-learn .flashcard::after{display:none!important}
+#view-learn .flash-back{transform:rotateY(180deg) translateZ(1px)}
+
 </style>
 </head>
 <body>
