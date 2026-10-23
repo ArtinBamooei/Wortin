@@ -809,7 +809,7 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
 "use strict";
 const SUPABASE_URL="https://gfsghvyotfkchjwqhorl.supabase.co";
 const SUPABASE_KEY="sb_publishable_CiAz7Kyz80SC-j3djY0LoQ_ZpPNb1qW";
-const CACHE_KEY="wortin.vocabulary.cache.v1",PROGRESS_KEY="wortin.progress.v1",THEME_KEY="wortin.theme.v2",DAILY_KEY="wortin.daily.v1";
+const CACHE_KEY="wortin.vocabulary.cache.v2",PROGRESS_KEY="wortin.progress.v1",THEME_KEY="wortin.theme.v2",DAILY_KEY="wortin.daily.v1";
 const $=id=>document.getElementById(id),faNum=n=>Number(n||0).toLocaleString("fa-IR"),safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),svg=(name)=>'<svg aria-hidden="true"><use href="#i-'+name+'"/></svg>';
 let words=[],wordById=new Map(),progress=loadProgress(),activeView="home",study={mode:"flash",cards:[],index:0,revealed:false,correct:0,answered:0,locked:false},dictPage=0,toastTimer=null,daily=loadDaily();
 function loadProgress(){try{return JSON.parse(localStorage.getItem(PROGRESS_KEY))||{words:{},sessions:0,reviewCount:0,quizCorrect:0,quizTotal:0,days:{},lastActive:null}}catch{return{words:{},sessions:0,reviewCount:0,quizCorrect:0,quizTotal:0,days:{},lastActive:null}}}
