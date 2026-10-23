@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101218">
+<meta name="theme-color" content="#f6f7f1">
 <meta name="description" content="Wortin — یادگیری هوشمند واژگان آلمانی تا سطح B1 با فلش‌کارت، مرور فاصله‌دار و مثال‌های واقعی.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Wortin — واژه‌ها، ماندگار می‌شوند">
@@ -13,7 +13,8 @@
 <title>Wortin — واژه‌ها، ماندگار می‌شوند</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#101218;--panel:#171a23;--panel2:#1d202a;--panel3:#242834;--line:rgba(255,255,255,.075);--text:#f4f3f1;--muted:#9b9eaa;--muted2:#6f7380;--lime:#d5f278;--lime2:#a9d84e;--violet:#b6a3ff;--orange:#ffb48d;--blue:#87c8ff;--shadow:0 24px 70px rgba(0,0,0,.23);--radius:24px}
 :root[data-theme=light]{color-scheme:light;--bg:#f2f2ef;--panel:#fff;--panel2:#f8f8f5;--panel3:#eeeef0;--line:rgba(20,24,34,.09);--text:#20222a;--muted:#656a76;--muted2:#858994;--lime:#d6f487;--lime2:#9cc849;--violet:#785dce;--orange:#df8156;--blue:#347dbb;--shadow:0 22px 60px rgba(42,46,53,.08)}
@@ -342,6 +343,35 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   #view-learn .flashcard{transition:none!important}
 }
 
+
+/* Mobile performance, legibility and input refinements. */
+:root[data-theme=light]{--muted:#606a58;--muted2:#656e5e}
+:root[data-theme=dark]{--muted:#a2ab9a;--muted2:#929d89}
+@media(max-width:620px){
+  /* Keep dictionary rows readable instead of squeezing meaning beside the word. */
+  .word-row{grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:5px 10px}
+  .word-main{grid-column:1;grid-row:1;min-width:0}
+  .word-meaning{grid-column:1;grid-row:2;min-width:0;overflow-wrap:anywhere;margin-top:2px}
+  .word-actions{grid-column:2;grid-row:1 / span 2;align-self:center;gap:5px;flex-wrap:nowrap}
+  /* Avoid iOS Safari's automatic page zoom when a small-text input receives focus. */
+  .field input,.command-input input,.select{font-size:16px}
+  .icon-button,.profile-mini{width:40px;height:40px;min-width:40px;min-height:40px}
+  .search-trigger{width:40px;height:40px;min-width:40px;min-height:40px;flex:0 0 40px}
+  .mini-button,.pagination button{width:40px;height:40px;min-width:40px;min-height:40px}
+  .btn-primary,.btn-secondary,.pill,.mini-button,.pagination button,.mobile-nav button{touch-action:manipulation}
+  .mobile-nav button{min-height:44px}
+  .word-row{padding:13px 10px}
+}
+@media(max-width:360px){
+  .main{padding-right:12px;padding-left:12px}
+  .topbar{gap:5px}
+  .top-actions{gap:4px}
+  .breadcrumb span{display:none}
+  .profile-mini{display:none}
+  .stats-grid{gap:6px}
+  .stat-card{padding:11px}
+}
+
 </style>
 </head>
 <body>
@@ -489,9 +519,9 @@ function toast(message){$("toast").textContent=message;$("toast").classList.add(
 function setDbStatus(mode,msg){const el=$("dbStatus");el.className="connection "+mode;el.querySelector("span").textContent=msg}
 function normaliseWord(w){return{...w,word:String(w.word||""),meaning_fa:String(w.meaning_fa||""),examples_de:Array.isArray(w.examples_de)?w.examples_de:[],extra_examples_de:Array.isArray(w.extra_examples_de)?w.extra_examples_de:[],example_de:String(w.example_de||"")}}
 async function fetchWordPage(offset){const params=new URLSearchParams({select:"id,source_number,record_code,record_section,word,word_type,meaning_fa,example_de,examples_de,extra_examples_de,case_info,preposition,pdf_page,thematic_group,equivalent",order:"id.asc",limit:"1000",offset:String(offset)});const res=await fetch(SUPABASE_URL+"/rest/v1/vocabulary?"+params.toString(),{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});if(!res.ok)throw new Error("Supabase returned "+res.status);return res.json()}
-async function loadWords(){setDbStatus("loading","دریافت واژگان");try{const chunks=await Promise.all([0,1000,2000,3000,4000].map(fetchWordPage));words=chunks.flat().filter(Boolean).map(normaliseWord);if(!words.length)throw new Error("جدول واژگان هنوز خالی است");wordById=new Map(words.map(w=>[String(w.id),w]));try{localStorage.setItem(CACHE_KEY,JSON.stringify(words))}catch{}setDbStatus("ok",faNum(words.length)+" واژه متصل");renderAll()}catch(err){try{const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");if(cached.length){words=cached.map(normaliseWord);wordById=new Map(words.map(w=>[String(w.id),w]));setDbStatus("","حالت آفلاین");renderAll();toast("از نسخه‌ی ذخیره‌شده‌ی واژگان استفاده می‌شود.");return}}catch{}setDbStatus("","اتصال ناموفق");$("statTotal").textContent="—";$("wordList").innerHTML='<div class="empty">دیتابیس واژگان در دسترس نیست. تنظیمات Supabase و سیاست دسترسی خواندن را بررسی کن.</div>';console.error(err)}}
-function renderAll(){const due=dueWords().length,known=knownWords().length; $("statTotal").textContent=faNum(words.length);$("statKnown").textContent=faNum(known);$("knownPercent").textContent=Math.round(known/Math.max(words.length,1)*100)+"%";$("statDue").textContent=faNum(due);$("statSessions").textContent=faNum(progress.sessions);$("dueNav").textContent=faNum(due);$("savedNav").textContent=faNum(savedWords().length);$("dictCount").textContent=faNum(words.length)+" واژه";renderStreak();renderWeekChart();renderGoal();renderDictionary();renderSaved();renderStats()}
-function renderStats(){if(!words.length)return;const known=knownWords().length,due=dueWords().length,saved=savedWords().length,st=streak();$("statKnown").textContent=faNum(known);$("knownPercent").textContent=Math.round(known/words.length*100)+"%";$("statDue").textContent=faNum(due);$("statSessions").textContent=faNum(progress.sessions);$("dueNav").textContent=faNum(due);$("savedNav").textContent=faNum(saved);$("streakNumber").innerHTML=faNum(st)+' <small>روز</small>';$("savedTotal").textContent=faNum(saved);$("reviewTotal").textContent=faNum(due);$("reviewKnown").textContent=faNum(known);$("reviewSessions").textContent=faNum(progress.sessions);$("progressMastery").textContent=Math.round(known/words.length*100)+"%";$("progressAccuracy").textContent=progress.quizTotal?Math.round(progress.quizCorrect/progress.quizTotal*100)+"%":"—";$("progressReviews").textContent=faNum(progress.reviewCount);$("progressStreak").textContent=faNum(st);$("masteryBar").style.width=Math.round(known/words.length*100)+"%";$("masteryCaption").textContent=faNum(Math.round(known/words.length*100))+"٪";renderTypeStats();renderStreak();renderWeekChart();renderGoal()}
+async function loadWords(){let cached=[];try{const stored=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");if(Array.isArray(stored))cached=stored}catch{}if(cached.length){words=cached.map(normaliseWord);wordById=new Map(words.map(w=>[String(w.id),w]));renderAll()}setDbStatus("loading",cached.length?"به‌روزرسانی واژگان":"دریافت واژگان");try{const chunks=await Promise.all([0,1000,2000,3000].map(fetchWordPage));for(let offset=4000;chunks[chunks.length-1]?.length===1000;offset+=1000){const page=await fetchWordPage(offset);chunks.push(page);if(page.length<1000)break}const fresh=chunks.flat().filter(Boolean).map(normaliseWord);if(!fresh.length)throw new Error("جدول واژگان هنوز خالی است");words=fresh;wordById=new Map(words.map(w=>[String(w.id),w]));try{localStorage.setItem(CACHE_KEY,JSON.stringify(words))}catch{}setDbStatus("ok",faNum(words.length)+" واژه متصل");renderAll()}catch(err){if(words.length){setDbStatus("","حالت آفلاین");if(!cached.length)toast("از نسخه‌ی ذخیره‌شده‌ی واژگان استفاده می‌شود.");console.warn("Vocabulary refresh failed; using cached data.",err);return}setDbStatus("","اتصال ناموفق");$("statTotal").textContent="—";$("wordList").innerHTML='<div class="empty">دیتابیس واژگان در دسترس نیست. تنظیمات Supabase و سیاست دسترسی خواندن را بررسی کن.</div>';console.error(err)}}
+function renderAll(){$("statTotal").textContent=faNum(words.length);$("dictCount").textContent=faNum(words.length)+" واژه";renderStats();if(activeView==="dictionary")renderDictionary();if(activeView==="review")renderSaved()}
+function renderStats(){if(!words.length)return;const known=knownWords().length,due=dueWords().length,saved=savedWords().length,st=streak();$("statKnown").textContent=faNum(known);$("knownPercent").textContent=Math.round(known/words.length*100)+"%";$("statDue").textContent=faNum(due);$("statSessions").textContent=faNum(progress.sessions);$("dueNav").textContent=faNum(due);$("savedNav").textContent=faNum(saved);$("streakNumber").innerHTML=faNum(st)+' <small>روز</small>';$("savedTotal").textContent=faNum(saved);$("reviewTotal").textContent=faNum(due);$("reviewKnown").textContent=faNum(known);$("reviewSessions").textContent=faNum(progress.sessions);$("progressMastery").textContent=Math.round(known/words.length*100)+"%";$("progressAccuracy").textContent=progress.quizTotal?Math.round(progress.quizCorrect/progress.quizTotal*100)+"%":"—";$("progressReviews").textContent=faNum(progress.reviewCount);$("progressStreak").textContent=faNum(st);$("masteryBar").style.width=Math.round(known/words.length*100)+"%";$("masteryCaption").textContent=faNum(Math.round(known/words.length*100))+"٪";if(activeView==="stats")renderTypeStats();renderStreak();renderWeekChart();renderGoal()}
 function renderStreak(){const days=["ش","ی","د","س","چ","پ","ج"],now=new Date(),html=[];for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);html.push('<i>'+days[(d.getDay()+1)%7]+'<b class="'+(progress.days[dayKey(d)]?'on':'')+'"></b></i>')} $("streakDays").innerHTML=html.join("")}
 function renderWeekChart(){const labels=["ش","ی","د","س","چ","پ","ج"],today=new Date(),items=[];let max=1;for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);const v=dayWordCount(dayKey(d));items.push({label:labels[(d.getDay()+1)%7],v});max=Math.max(max,v)}$("weekChart").innerHTML=items.map((x,i)=>'<div class="chart-day"><div class="bar-stack"><div class="bar accent" style="height:'+Math.max(x.v?5:2,x.v/max*90)+'px"></div></div><span>'+x.label+'</span></div>').join("")}
 function renderGoal(){const count=dayWordCount(dayKey()),pct=Math.min(100,Math.round(count/10*100));$("goalRing").style.setProperty("--progress",pct+"%");$("goalPercent").textContent=pct+"%";$("goalBar").style.width=pct+"%";$("goalCount").textContent=faNum(Math.min(count,10))+" از ۱۰ واژه"}
@@ -523,7 +553,7 @@ $("dictSearch").addEventListener("input",()=>{dictPage=0;renderDictionary()});$(
 $("wordList").addEventListener("click",e=>{const save=e.target.closest("[data-save-id]");if(save){e.stopPropagation();const w=wordById.get(save.dataset.saveId);if(w)toggleSaved(w);return}const row=e.target.closest("[data-word-id]");if(row)openDetail(wordById.get(row.dataset.wordId))});
 $("savedList").addEventListener("click",e=>{const save=e.target.closest("[data-save-id]");if(save){e.stopPropagation();const w=wordById.get(save.dataset.saveId);if(w)toggleSaved(w);return}const row=e.target.closest("[data-word-id]");if(row)openDetail(wordById.get(row.dataset.wordId))});
 $("openSearch").onclick=openCommand;$("closeSearch").onclick=()=>$("commandOverlay").classList.remove("open");$("commandSearch").addEventListener("input",e=>renderCommand(e.target.value));$("commandOverlay").addEventListener("click",e=>{if(e.target===$("commandOverlay"))$("commandOverlay").classList.remove("open")});$("detailOverlay").addEventListener("click",e=>{if(e.target===$("detailOverlay"))$("detailOverlay").classList.remove("open")});
-function setTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem(THEME_KEY,t);$("themeToggle").innerHTML=svg(t==="dark"?"sun":"moon");$("themeToggle").setAttribute("aria-label",t==="dark"?"تغییر به پوسته روشن":"تغییر به پوسته تاریک")}
+function setTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem(THEME_KEY,t);const themeColor=document.querySelector('meta[name="theme-color"]');if(themeColor)themeColor.content=t==="dark"?"#171a16":"#f6f7f1";$("themeToggle").innerHTML=svg(t==="dark"?"sun":"moon");$("themeToggle").setAttribute("aria-label",t==="dark"?"تغییر به پوسته روشن":"تغییر به پوسته تاریک")}
 $("themeToggle").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
 $("exitStudy").onclick=()=>changeView("home");
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand()}if(e.key==="Escape"){$("detailOverlay").classList.remove("open");$("commandOverlay").classList.remove("open")}});
