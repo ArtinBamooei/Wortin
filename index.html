@@ -13,7 +13,7 @@
 <title>Wortin — واژه‌ها، ماندگار می‌شوند</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#101218;--panel:#171a23;--panel2:#1d202a;--panel3:#242834;--line:rgba(255,255,255,.075);--text:#f4f3f1;--muted:#9b9eaa;--muted2:#6f7380;--lime:#d5f278;--lime2:#a9d84e;--violet:#b6a3ff;--orange:#ffb48d;--blue:#87c8ff;--shadow:0 24px 70px rgba(0,0,0,.23);--radius:24px}
 :root[data-theme=light]{color-scheme:light;--bg:#f2f2ef;--panel:#fff;--panel2:#f8f8f5;--panel3:#eeeef0;--line:rgba(20,24,34,.09);--text:#20222a;--muted:#656a76;--muted2:#858994;--lime:#d6f487;--lime2:#9cc849;--violet:#785dce;--orange:#df8156;--blue:#347dbb;--shadow:0 22px 60px rgba(42,46,53,.08)}
@@ -208,6 +208,26 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
  .core,.hero-art *{animation:none!important}
  .view{animation:none!important}
  *{scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+
+/* Wortin Persian numeral typography: Estedad for Persian-digit UI values. */
+:root{--fa-number-font:"Estedad","Vazirmatn",sans-serif}
+.stat-value,
+.streak-number,
+.nav .nav-count,
+.study-counter,
+.goal-ring b,
+.date-label,
+.goal-note,
+.list-footer,
+.connection,
+.pagination button,
+#knownPercent{
+  font-family:var(--fa-number-font);
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum";
+  letter-spacing:0;
 }
 
 </style>
