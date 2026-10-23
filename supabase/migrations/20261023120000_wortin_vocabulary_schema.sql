@@ -23,12 +23,8 @@ alter table public.vocabulary
 
 create unique index if not exists vocabulary_record_code_key
   on public.vocabulary (record_code);
-create index if not exists vocabulary_word_lower_idx
-  on public.vocabulary (lower(word));
 create index if not exists vocabulary_section_idx
   on public.vocabulary (record_section);
-create index if not exists vocabulary_group_idx
-  on public.vocabulary (thematic_group);
 
 alter table public.vocabulary enable row level security;
 
