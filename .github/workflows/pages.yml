@@ -29,6 +29,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate inline JavaScript
+        shell: bash
+        run: |
+          sed -n '/<script>/,/<\\/script>/{ /<script>/d; /<\\/script>/d; p; }' index.html > /tmp/wortin-app.js
+          node --check /tmp/wortin-app.js
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('index.html', 'utf8');
+          for (const id of ['view-home', 'view-learn', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dbStatus']) {
+            if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
+          }
+          if (html.includes('!p.known && (!p.due')) throw new Error('Stale review-scheduling logic detected');
+          console.log('Wortin HTML smoke checks passed');
+          NODE
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
