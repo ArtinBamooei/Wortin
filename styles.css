@@ -784,3 +784,13 @@ body.modal-open{overflow:hidden}
  .auth-submit{min-height:50px}
 }
 @media(prefers-reduced-motion:reduce){.auth-overlay.open{animation:none}}
+
+@media(max-width:620px){
+ .auth-open-button{width:66px;min-width:66px;flex:0 0 66px;padding:0 8px;gap:5px}
+ .auth-open-button span{display:inline!important;min-width:0;font-size:0}
+ .auth-open-button #authOpenLabel::after{content:"ورود";font-size:11px;white-space:nowrap}
+ .auth-open-button[data-signed-in="true"] #authOpenLabel::after{content:"حساب"}
+}
+@media(max-width:380px){
+ .auth-open-button{width:60px;min-width:60px;flex-basis:60px}
+}
