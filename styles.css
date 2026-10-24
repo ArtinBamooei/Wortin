@@ -750,3 +750,37 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
   .main { padding-bottom: 24px; }
 }
 
+
+
+/* Authentication UX: accessible touch targets, clear password controls and mobile-safe dialog. */
+body.modal-open{overflow:hidden}
+.auth-overlay{overscroll-behavior:contain}
+.auth-card{width:min(440px,100%);max-height:calc(100vh - 36px);max-height:calc(100dvh - 36px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
+.auth-head h2{line-height:1.5}
+.auth-head p,.auth-hint{font-size:12px;line-height:1.9}
+.auth-tabs{gap:8px}
+.auth-tabs button{min-height:44px;padding:10px 12px;font-size:13px}
+.auth-field label{font-size:12px;font-weight:600}
+.auth-field input{height:48px;min-height:48px;font-size:16px}
+.auth-password-control{display:flex;align-items:stretch;gap:7px;min-width:0}
+.auth-password-control input{flex:1;min-width:0;width:0}
+.auth-password-toggle{flex:0 0 auto;min-width:64px;min-height:48px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel3);color:var(--text);font-size:12px;font-weight:700}
+.auth-password-toggle[aria-pressed="true"]{border-color:var(--lime2);color:var(--lime2)}
+.auth-forgot{display:block;width:100%;min-height:44px;margin-top:8px;padding:10px;border:0;background:transparent;color:var(--blue);font-size:12px;text-align:center;text-decoration:underline;text-underline-offset:3px}
+.auth-submit{min-height:48px;font-size:14px;font-weight:800}
+.auth-submit[disabled]{opacity:.68;cursor:wait;transform:none}
+.auth-close{width:44px;height:44px;min-width:44px;min-height:44px;font-size:22px}
+.auth-error{font-size:12px;line-height:1.9;overflow-wrap:anywhere}
+.auth-tabs[hidden],.auth-field[hidden],.auth-forgot[hidden],#authGuestPanel[hidden],#authUserPanel[hidden]{display:none!important}
+.auth-overlay :focus-visible{outline:2px solid var(--lime2);outline-offset:3px}
+@media(max-width:620px){
+ .auth-overlay{align-items:flex-start;justify-content:center;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}
+ .auth-card{width:100%;max-width:440px;max-height:calc(100vh - 20px);max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);padding:20px 17px;border-radius:20px}
+ .auth-head{gap:8px;margin-bottom:15px}
+ .auth-head h2{font-size:20px}
+ .auth-field{margin:12px 0}
+ .auth-password-control{gap:6px}
+ .auth-password-toggle{min-width:60px;padding:0 9px}
+ .auth-submit{min-height:50px}
+}
+@media(prefers-reduced-motion:reduce){.auth-overlay.open{animation:none}}
