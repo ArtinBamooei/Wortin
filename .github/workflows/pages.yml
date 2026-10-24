@@ -29,11 +29,12 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      actions: read
       contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate inline JavaScript
+      - name: Validate app JavaScript and security
         shell: bash
         run: |
           node --check app.js
