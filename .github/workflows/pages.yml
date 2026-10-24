@@ -40,6 +40,13 @@ jobs:
           node - <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('index.html', 'utf8') + fs.readFileSync('app.js', 'utf8') + fs.readFileSync('styles.css', 'utf8');
+          const app = fs.readFileSync('app.js', 'utf8');
+          const policy = fs.readFileSync('index.html', 'utf8');
+          if (!policy.includes('http-equiv="Content-Security-Policy"')) throw new Error('Missing CSP meta policy');
+          if (!policy.includes("script-src 'self' https://cdn.jsdelivr.net")) throw new Error('CSP script policy must not allow arbitrary inline scripts');
+          if (/\\b(?:eval|Function)\\s*\\(/.test(app)) throw new Error('Dynamic code execution sink detected');
+          if (/service_role|sb_secret_[A-Za-z0-9_]+/.test(policy + app)) throw new Error('Potential Supabase secret key exposed in public code');
+          console.log('Wortin security smoke checks passed');
           for (const id of ['view-home', 'view-learn', 'view-daily', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dailyContent', 'dailyCounter', 'dailyProgress', 'typeFilter', 'typeStats', 'dbStatus']) {
             if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
           }
@@ -84,4 +91,4 @@ jobs:
           path: .
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
