@@ -85,7 +85,7 @@ jobs:
           console.log('Wortin HTML, daily-learning, taxonomy, mobile and performance smoke checks passed');
           NODE
       - name: Configure Pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload static site
         uses: actions/upload-pages-artifact@f7615f5917213b24245d49ba96693d0f5375a414 # immutable commit
         with:
