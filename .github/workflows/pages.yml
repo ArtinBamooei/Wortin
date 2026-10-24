@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'supabase/migrations/**'
+      - '.github/dependabot.yml'
       - '.nojekyll'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -28,15 +32,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Validate inline JavaScript
         shell: bash
         run: |
-          awk '/<script>/{inside=1;next} index($0, "</script>"){inside=0} inside{print}' index.html > /tmp/wortin-app.js
-          node --check /tmp/wortin-app.js
+          node --check app.js
           node - <<'NODE'
           const fs = require('node:fs');
-          const html = fs.readFileSync('index.html', 'utf8');
+          const html = fs.readFileSync('index.html', 'utf8') + fs.readFileSync('app.js', 'utf8') + fs.readFileSync('styles.css', 'utf8');
           for (const id of ['view-home', 'view-learn', 'view-daily', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dailyContent', 'dailyCounter', 'dailyProgress', 'typeFilter', 'typeStats', 'dbStatus']) {
             if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
           }
@@ -74,9 +77,9 @@ jobs:
           console.log('Wortin HTML, daily-learning, taxonomy, mobile and performance smoke checks passed');
           NODE
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - name: Upload static site
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@f7615f5917213b24245d49ba96693d0f5375a414 # immutable commit
         with:
           path: .
       - name: Deploy
