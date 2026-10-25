@@ -38,7 +38,7 @@ jobs:
           const app = fs.readFileSync('app.js', 'utf8');
           const policy = fs.readFileSync('index.html', 'utf8');
           if (!policy.includes('http-equiv="Content-Security-Policy"')) throw new Error('Missing CSP meta policy');
-          if (!policy.includes('./app.js?v=sync5')) throw new Error('App cache version must be bumped for client updates');
+          if (!policy.includes('./app.js?v=sync6')) throw new Error('App cache version must be bumped for client updates');
           if (!policy.includes("script-src 'self' https://cdn.jsdelivr.net")) throw new Error('CSP script policy must not allow arbitrary inline scripts');
           if (/\b(?:eval|Function)\s*\(/.test(app)) throw new Error('Dynamic code execution sink detected');
           if (/service_role|sb_secret_[A-Za-z0-9_]+/.test(policy + app)) throw new Error('Potential Supabase secret key exposed in public code');
@@ -104,6 +104,15 @@ jobs:
             if (!html.includes(token)) throw new Error('Missing storage/lifecycle reliability safeguard: ' + token);
           }
           console.log('Wortin storage recovery and lifecycle-flush safeguards passed');
+          for (const token of [
+            'function buildQuizOptions(w)',
+            'usedMeanings=new Set(targetMeaning?[targetMeaning]:[])',
+            'cloudSyncWarned=false',
+            'همگام‌سازی موقتاً در دسترس نیست'
+          ]) {
+            if (!html.includes(token)) throw new Error('Missing quiz/sync-feedback safeguard: ' + token);
+          }
+          console.log('Wortin quiz options and user-visible sync feedback safeguards passed');
           console.log('Wortin HTML, daily-learning, taxonomy, mobile and performance smoke checks passed');
           NODE
       - name: Configure Pages
