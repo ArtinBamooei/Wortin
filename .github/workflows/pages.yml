@@ -4,13 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'index.html'
-      - 'styles.css'
-      - 'app.js'
-      - 'supabase/migrations/**'
-      - '.github/dependabot.yml'
-      - '.nojekyll'
-      - '.github/workflows/pages.yml'
+      - '**'
   workflow_dispatch:
 
 permissions:
