@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=stats3d02">
+<link rel="stylesheet" href="./styles.css?v=navgroups01">
 <link rel="stylesheet" href="./learning-media.css?v=1">
 </head>
 <body>
@@ -46,15 +46,25 @@
 <div class="app">
 <aside class="sidebar">
   <div class="brand"><div class="brand-mark"><svg><use href="#i-mark"/></svg></div><div class="brand-copy"><div class="brand-name">WORTIN</div><div class="brand-tag">DEUTSCH • B1</div></div></div>
-  <div class="nav-label">فضای یادگیری</div>
   <nav class="nav" aria-label="منوی اصلی">
-    <button class="active" data-view="home"><svg><use href="#i-home"/></svg><span>داشبورد</span></button>
-    <button data-view="learn"><svg><use href="#i-layers"/></svg><span>تمرین هوشمند</span><span class="nav-count" id="dueNav">—</span></button>
-    <button data-view="daily"><svg><use href="#i-spark"/></svg><span>یادگیری روزانه</span></button>
-    <button data-view="listening"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button>
-    <button data-view="dictionary"><svg><use href="#i-book"/></svg><span>واژه‌نامه</span></button>
-    <button data-view="review"><svg><use href="#i-refresh"/></svg><span>مرور کلمات</span><span class="nav-count" id="savedNav">0</span></button>
-    <button data-view="stats"><svg><use href="#i-chart"/></svg><span>پیشرفت من</span></button>
+    <div class="nav-group-label">خانه</div>
+    <button class="active" data-view="home" title="داشبورد"><svg><use href="#i-home"/></svg><span>داشبورد</span></button>
+
+    <div class="nav-group-label">یادگیری کلمات</div>
+    <button data-view="learn" title="فلش‌کارت‌ها"><svg><use href="#i-layers"/></svg><span>فلش‌کارت‌ها</span><span class="nav-count" id="dueNav">—</span></button>
+    <button data-view="dictionary" title="همه‌ی کلمات"><svg><use href="#i-book"/></svg><span>همه‌ی کلمات</span></button>
+
+    <div class="nav-group-label">تمرین مهارت‌ها</div>
+    <button data-view="daily" title="یادگیری روزانه"><svg><use href="#i-spark"/></svg><span>یادگیری روزانه</span></button>
+    <button data-view="listening" title="شنیداری"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button>
+    <button data-view="reading" title="خواندن"><svg><use href="#i-book"/></svg><span>خواندن</span></button>
+
+    <div class="nav-group-label">مرور و پیشرفت</div>
+    <button data-view="review" title="مرور کلمات نشان‌شده"><svg><use href="#i-bookmark"/></svg><span>مرور کلمات نشان‌شده</span><span class="nav-count" id="savedNav">0</span></button>
+    <button data-view="stats" title="پیشرفت من"><svg><use href="#i-chart"/></svg><span>پیشرفت من</span></button>
+
+    <div class="nav-group-label">آزمون‌ها</div>
+    <button data-view="official-exams" title="نمونه آزمون‌های رسمی"><svg><use href="#i-target"/></svg><span>نمونه آزمون‌های رسمی</span></button>
   </nav>
   <div class="sidebar-bottom">
     <div class="streak-card">
@@ -111,6 +121,16 @@
 
   <section class="view" id="view-listening"><div id="learning-media"><div class="empty">در حال آماده‌سازی بخش شنیداری…</div></div></section>
 
+  <section class="view" id="view-reading">
+    <div class="page-heading"><div><div class="eyebrow">LESEN · VERSTEHEN</div><h1>خواندن</h1><p>متن‌های آلمانی سطح‌بندی‌شده و تمرین درک مطلب.</p></div></div>
+    <div class="review-empty"><svg aria-hidden="true"><use href="#i-book"/></svg><h3>بخش خواندن در حال آماده‌سازی است.</h3><p>این بخش برای متن‌های آلمانی و تمرین درک مطلب در نظر گرفته شده است؛ هنوز محتوایی به آن متصل نشده است.</p></div>
+  </section>
+
+  <section class="view" id="view-official-exams">
+    <div class="page-heading"><div><div class="eyebrow">PRÜFUNGSVORBEREITUNG</div><h1>نمونه آزمون‌های رسمی</h1><p>دسترسی به نمونه‌سؤال‌ها و منابع رسمی آمادگی آزمون زبان آلمانی.</p></div></div>
+    <div class="review-empty"><svg aria-hidden="true"><use href="#i-target"/></svg><h3>بخش آزمون‌ها در حال آماده‌سازی است.</h3><p>نمونه‌ها پس از بررسی و اتصال منابع معتبر در اینجا قرار می‌گیرند؛ فعلاً آزمون رسمی‌ای در سایت بارگذاری نشده است.</p></div>
+  </section>
+
   <section class="view" id="view-learn">
     <div class="study-shell">
       <div class="study-options"><button class="pill active" data-study="flash">فلش‌کارت</button><button class="pill" data-study="quiz">آزمون چهارگزینه‌ای</button></div>
@@ -161,7 +181,7 @@
   </section>
 </main>
 <nav class="mobile-nav" aria-label="پیمایش موبایل">
-<button class="active" data-view="home"><svg><use href="#i-home"/></svg><span>خانه</span></button><button data-view="learn"><svg><use href="#i-layers"/></svg><span>تمرین</span></button><button data-view="daily"><svg><use href="#i-spark"/></svg><span>روزانه</span></button><button data-view="listening"><svg><use href="#i-volume"/></svg><span>شنیدن</span></button><button data-view="dictionary"><svg><use href="#i-book"/></svg><span>واژه‌نامه</span></button><button data-view="review"><svg><use href="#i-bookmark"/></svg><span>مجموعه</span></button><button data-view="stats"><svg><use href="#i-chart"/></svg><span>آمار</span></button>
+<button class="active" data-view="home"><svg><use href="#i-home"/></svg><span>خانه</span></button><button data-view="learn"><svg><use href="#i-layers"/></svg><span>فلش‌کارت</span></button><button data-view="daily"><svg><use href="#i-spark"/></svg><span>روزانه</span></button><button data-view="listening"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button><button data-view="reading"><svg><use href="#i-book"/></svg><span>خواندن</span></button><button data-view="dictionary"><svg><use href="#i-book"/></svg><span>همه کلمات</span></button><button data-view="review"><svg><use href="#i-bookmark"/></svg><span>نشان‌شده</span></button><button data-view="stats"><svg><use href="#i-chart"/></svg><span>پیشرفت</span></button><button data-view="official-exams"><svg><use href="#i-target"/></svg><span>آزمون‌ها</span></button>
 </nav>
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جزئیات واژه"><div class="detail-modal" id="detailModal"></div></div>
@@ -177,7 +197,7 @@
 </section></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="./app.js?v=sync7" defer></script>
+<script src="./app.js?v=navgroups01" defer></script>
 <script src="./learning-media.js?v=1" defer></script>
 </body>
 </html>
