@@ -19,7 +19,7 @@ for (const name of requiredFiles) if (!fs.existsSync(path.join(root, name))) fai
 if (process.exitCode) process.exit(1);
 
 const html = read("index.html"), app = read("app.js"), css = read("styles.css");
-const csp = html.match(/<meta\\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
+const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 if (!csp) fail("A Content-Security-Policy meta policy is required.");
 if (csp && !/default-src\s+'self'/.test(csp)) fail("CSP must retain default-src 'self'.");
 const scriptPolicy = csp?.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1] || "";
