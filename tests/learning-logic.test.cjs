@@ -7,12 +7,20 @@ const test = require("node:test");
 const vm = require("node:vm");
 const app = fs.readFileSync(path.resolve(__dirname, "..", "app.js"), "utf8");
 
-function appFunction(name, random = () => 0) {
+function appFunction(name, random = () => 0, extraContext = {}) {
   const line = app.split(/\r?\n/).find((candidate) => candidate.startsWith(`function ${name}(`));
   assert.ok(line, `Expected function ${name} in app.js`);
   const testMath = Object.create(Math);
   testMath.random = random;
-  return vm.runInNewContext(`(${line})`, { Math: testMath, Date });
+  return vm.runInNewContext(`(${line})`, { Math: testMath, Date, ...extraContext });
+}
+
+function appFunctionWithContext(name, extraContext = {}) {
+  const line = app.split(/\r?\n/).find((candidate) => candidate.startsWith(`function ${name}(`));
+  assert.ok(line, `Expected function ${name} in app.js`);
+  const context = { Math, Date, ...extraContext };
+  vm.createContext(context);
+  return { fn: vm.runInContext(`(${line})`, context), context };
 }
 
 test("incorrect answers schedule a short retry and reset consecutive correct repetitions", () => {
@@ -77,4 +85,95 @@ test("daily review queue is empty when there are no eligible studied words", () 
 
 test("daily review answers use the same spaced-repetition scheduler as regular practice", () => {
   assert.match(app, /saveWordState\(w,scheduleReview\(pFor\(w\),correct\)\)/);
+});
+
+
+test("progress merge preserves the newest per-word state and unions independent words", () => {
+  const merge = appFunction("mergeProgressData");
+  const remote = {
+    words: {
+      olderLocalEdit: { saved: true, repetitions: 4, _updatedAt: 200 },
+      remoteOnly: { seen: 1, due: 500, _updatedAt: 400 }
+    },
+    days: { "2026-10-26": { count: 3, words: ["a", "b"] } },
+    sessions: 7,
+    reviewCount: 12,
+    quizTotal: 20,
+    quizCorrect: 15,
+    lastActive: "2026-10-26"
+  };
+  const local = {
+    words: {
+      olderLocalEdit: { saved: false, repetitions: 1, _updatedAt: 100 },
+      localOnly: { seen: 1, due: 600, _updatedAt: 500 }
+    },
+    days: { "2026-10-26": { count: 2, words: ["b", "c"] } },
+    sessions: 4,
+    reviewCount: 15,
+    quizTotal: 18,
+    quizCorrect: 17,
+    lastActive: "2026-10-27"
+  };
+  const merged = merge(remote, local);
+  assert.equal(merged.words.olderLocalEdit.saved, true, "the newer remote word state wins");
+  assert.ok(merged.words.remoteOnly);
+  assert.ok(merged.words.localOnly);
+  assert.equal(merged.sessions, 7);
+  assert.equal(merged.reviewCount, 15);
+  assert.equal(merged.quizTotal, 20);
+  assert.equal(merged.quizCorrect, 17);
+  assert.deepEqual([...merged.days["2026-10-26"].words].sort(), ["a", "b", "c"]);
+  assert.equal(merged.days["2026-10-26"].count, 3);
+  assert.equal(merged.lastActive, "2026-10-27");
+});
+
+test("daily progress merge unions studied word IDs and same-day activity", () => {
+  const merge = appFunction("mergeDailyData");
+  const merged = merge(
+    { studied: ["1", "2"], days: { "2026-10-27": ["1", "2"] }, cursor: 8, mode: "learn" },
+    { studied: ["2", "3"], days: { "2026-10-27": ["2", "4"] }, cursor: 5, mode: "review" }
+  );
+  assert.deepEqual(merged.studied, ["1", "2", "3"]);
+  assert.deepEqual(merged.days["2026-10-27"], ["1", "2", "4"]);
+  assert.equal(merged.cursor, 8);
+  assert.equal(merged.mode, "review");
+});
+
+test("local progress, daily state and dirty markers are isolated by authenticated user ID", () => {
+  const { fn: setScope, context } = appFunctionWithContext("setLocalUserScope", {
+    PROGRESS_BASE_KEY: "wortin_progress",
+    DAILY_BASE_KEY: "wortin_daily",
+    LOCAL_CHANGE_BASE_KEY: "wortin_dirty",
+    PROGRESS_KEY: "",
+    DAILY_KEY: "",
+    LOCAL_CHANGE_KEY: "",
+    progress: {},
+    daily: {},
+    progressRevision: 0,
+    derivedWordSets: null,
+    loadProgress: () => ({ scope: "progress" }),
+    loadDaily: () => ({ scope: "daily" })
+  });
+  setScope("user-a");
+  assert.equal(context.PROGRESS_KEY, "wortin_progress.user-a");
+  assert.equal(context.DAILY_KEY, "wortin_daily.user-a");
+  assert.equal(context.LOCAL_CHANGE_KEY, "wortin_dirty.user-a");
+  setScope("user-b");
+  assert.equal(context.PROGRESS_KEY, "wortin_progress.user-b");
+  assert.equal(context.DAILY_KEY, "wortin_daily.user-b");
+  assert.equal(context.LOCAL_CHANGE_KEY, "wortin_dirty.user-b");
+  setScope(null);
+  assert.equal(context.PROGRESS_KEY, "wortin_progress.anon");
+  assert.equal(context.DAILY_KEY, "wortin_daily.anon");
+  assert.equal(context.LOCAL_CHANGE_KEY, "wortin_dirty.anon");
+});
+
+test("the shipped database migration enforces authenticated row ownership for progress", () => {
+  const migration = fs.readFileSync(path.resolve(__dirname, "..", "supabase/migrations/20261025065829_user_progress_security.sql"), "utf8");
+  assert.match(migration, /enable row level security/i);
+  assert.match(migration, /force row level security/i);
+  assert.match(migration, /Users read own progress[\s\S]*?using\s*\(\s*\(select auth\.uid\(\)\)\s*=\s*user_id\s*\)/i);
+  assert.match(migration, /Users insert own progress[\s\S]*?with check\s*\(\s*\(select auth\.uid\(\)\)\s*=\s*user_id\s*\)/i);
+  assert.match(migration, /Users update own progress[\s\S]*?with check\s*\(\s*\(select auth\.uid\(\)\)\s*=\s*user_id\s*\)/i);
+  assert.match(migration, /revoke all on table public\.user_progress from anon, public/i);
 });
