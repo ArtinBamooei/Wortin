@@ -877,7 +877,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 
 
 /* WCAG-oriented palette adjustment: keep low-emphasis text readable in both themes. */
-:root,:root[data-theme=light]{
+:root:not([data-theme=dark]),:root[data-theme=light]{
   --muted:#5b6555;
   --muted2:#66705e;
   --lime2:#526b40;
