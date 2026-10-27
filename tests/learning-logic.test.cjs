@@ -133,8 +133,8 @@ test("daily progress merge unions studied word IDs and same-day activity", () =>
     { studied: ["1", "2"], days: { "2026-10-27": ["1", "2"] }, cursor: 8, mode: "learn" },
     { studied: ["2", "3"], days: { "2026-10-27": ["2", "4"] }, cursor: 5, mode: "review" }
   );
-  assert.deepEqual(merged.studied, ["1", "2", "3"]);
-  assert.deepEqual(merged.days["2026-10-27"], ["1", "2", "4"]);
+  assert.deepEqual(Array.from(merged.studied), ["1", "2", "3"]);
+  assert.deepEqual(Array.from(merged.days["2026-10-27"]), ["1", "2", "4"]);
   assert.equal(merged.cursor, 8);
   assert.equal(merged.mode, "review");
 });
