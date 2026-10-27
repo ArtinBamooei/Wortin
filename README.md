@@ -5,13 +5,13 @@
 ## Features
 
 - Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
-- Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows and native-size form controls.
+- Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows, a compact five-item mobile bar with a More panel, and keyboard-visible focus states.
 - Cached-first vocabulary loading with background refresh, fewer initial API requests, and lazy rendering of inactive dictionary/review/statistics views.
 - Vocabulary search across German words, Persian meanings and example sentences.
 - Word details, example sentences, grammar/case notes, prepositions and source page when present.
-- Flashcards, a four-option meaning quiz, German text-to-speech, saved words and basic spaced-review scheduling.
+- Flashcards, a four-option meaning quiz, German text-to-speech, saved words and spaced-review scheduling with 10-minute retries, 1-day and 3-day early intervals, then gradual expansion up to 180 days.
 - Personal progress, weekly activity, daily goal and mastery overview.
-- Supabase as the vocabulary source; personal learning progress stays in this browser's local storage.
+- Supabase as the vocabulary source; progress is cached in per-user local storage and synchronized through `public.user_progress` for signed-in users.
 
 ## Data
 
