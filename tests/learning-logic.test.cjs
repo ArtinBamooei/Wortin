@@ -181,7 +181,7 @@ test("the shipped database migration enforces authenticated row ownership for pr
 
 test("listening renderer preserves lesson questions and has exactly one active definition", () => {
   const media = fs.readFileSync(path.resolve(__dirname, "..", "learning-media.js"), "utf8");
-  assert.equal([...media.matchAll(/function renderListening\\(\\)\\{/g)].length, 1);
+  assert.equal(media.split("function renderListening(){").length - 1, 1);
   assert.match(media, /Array\.isArray\(v\.questions\)/);
   assert.match(media, /data-answer=/);
 });

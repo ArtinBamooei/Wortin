@@ -51,7 +51,7 @@ for (const token of [
   "const SAVED_PAGE_SIZE=100", 'data-saved-page="next"',
   "saveWordState(w,scheduleReview(pFor(w),correct))"
 ]) if (!app.includes(token)) fail(`Expected learning or pagination behavior is missing: ${token}`);
-if ([...media.matchAll(/function renderListening\\(\\)\\{/g)].length !== 1) fail("Listening renderer must be defined exactly once.");
+if (media.split("function renderListening(){").length - 1 !== 1) fail("Listening renderer must be defined exactly once.");
 if (!media.includes("Array.isArray(v.questions)")) fail("Listening renderer must retain question rendering for future lessons.");
 if (!css.includes("prefers-reduced-motion:reduce")) fail("Reduced-motion support is required.");
 if (!css.includes(":focus-visible")) fail("Visible keyboard focus styles are required.");
