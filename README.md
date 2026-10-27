@@ -23,16 +23,17 @@ The Persian meanings and grammar notes are user-supplied annotations from the so
 
 The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
 
-1. Apply `supabase/migrations/20261023120000_wortin_vocabulary_schema.sql` to the Wortin project.
-2. Import the source data into `public.vocabulary` (the initial dataset is already loaded in the linked project).
-3. Confirm the Data API exposes `public.vocabulary` and that anonymous SELECT is permitted by RLS.
-4. Keep learning progress in local storage, or add Supabase Auth and user-owned RLS policies before syncing personal progress between devices.
+1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, then `supabase/migrations/20261025065829_user_progress_security.sql`.
+2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
+3. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
+4. Signed-in progress is stored in `public.user_progress`. RLS must restrict SELECT, INSERT and UPDATE to rows where `auth.uid() = user_id`; anonymous/public access is revoked by the security migration.
+5. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
 
-The schema is idempotent for the current project. It creates the base table if absent and adds all columns used by the app.
+The migrations are repeatable for the intended schema baseline. Review changes before applying them to an existing production project.
 
 ## Publish with GitHub Pages
 
-In the repository, open **Settings → Pages** and select **GitHub Actions** under Build and deployment. Save. The included workflow validates the inline JavaScript, then deploys the static site. Open:
+In the repository, open **Settings → Pages** and select **GitHub Actions** under Build and deployment. Save. The workflow runs JavaScript syntax checks, security/source validation and automated learning-logic tests before deploying the static site. Open:
 
 `https://artinbamooei.github.io/Wortin/`
 
@@ -53,4 +54,17 @@ Open `index.html` in a local static web server (recommended) or publish it with 
 - The interface is Persian-first and the German sentences render left-to-right.
 - Browser speech synthesis availability depends on the user's browser and installed German voice.
 - Reduced-motion preferences are respected.
-- The current build is a static learning app, not a multi-user account system.
+- Account registration and login use Supabase Auth. Anonymous learning progress stays on that browser; signed-in users sync progress through the user-owned `user_progress` table.
+- Browser security depends on the deployed CSP plus RLS in Supabase; the publishable key is not a substitute for row-level access policies.
+- Supabase's leaked-password protection was flagged as disabled by the security advisor during the 2026-10-27 audit. Enable it in **Authentication → Security and Protection** if the project's plan exposes the setting; do not treat this as fixed by client-side password rules.
+
+
+## Checks
+
+Run the repository's dependency-free checks with Node.js:
+
+```sh
+node --check app.js
+node scripts/validate-site.cjs
+node --test tests/*.test.cjs
+```

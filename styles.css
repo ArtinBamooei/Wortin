@@ -888,3 +888,11 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 :root[data-theme=dark]{
   --muted2:#889381;
 }
+
+
+/* Saved-word paging: explicit, keyboard-friendly controls for large personal lists. */
+.saved-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.saved-pagination span{color:var(--muted);font-size:11px;text-align:center;line-height:1.7}
+.saved-pagination button{min-width:88px;min-height:42px}
+.saved-pagination button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:380px){.saved-pagination{gap:7px;padding:9px}.saved-pagination button{min-width:68px;padding:9px 10px}.saved-pagination span{font-size:10px}}

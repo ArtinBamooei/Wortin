@@ -20,106 +20,24 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
+      contents: read
       pages: write
       id-token: write
-      actions: read
-      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate app JavaScript and security
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate source, security boundaries and learning logic
         shell: bash
         run: |
           node --check app.js
-          node - <<'NODE'
-          const fs = require('node:fs');
-          const html = fs.readFileSync('index.html', 'utf8') + fs.readFileSync('app.js', 'utf8') + fs.readFileSync('styles.css', 'utf8');
-          const app = fs.readFileSync('app.js', 'utf8');
-          const policy = fs.readFileSync('index.html', 'utf8');
-          if (!policy.includes('http-equiv="Content-Security-Policy"')) throw new Error('Missing CSP meta policy');
-          if (!policy.includes('./app.js?v=sync7')) throw new Error('App cache version must be bumped for client updates');
-          if (!policy.includes("script-src 'self' https://cdn.jsdelivr.net")) throw new Error('CSP script policy must not allow arbitrary inline scripts');
-          if (/\b(?:eval|Function)\s*\(/.test(app)) throw new Error('Dynamic code execution sink detected');
-          if (/service_role|sb_secret_[A-Za-z0-9_]+/.test(policy + app)) throw new Error('Potential Supabase secret key exposed in public code');
-          console.log('Wortin security smoke checks passed');
-          for (const id of ['view-home', 'view-learn', 'view-daily', 'view-dictionary', 'view-review', 'view-stats', 'wordList', 'studyContent', 'dailyContent', 'dailyCounter', 'dailyProgress', 'typeFilter', 'typeStats', 'dbStatus']) {
-            if (!html.includes('id="' + id + '"')) throw new Error('Missing required app node: ' + id);
-          }
-          if (html.includes('!p.known && (!p.due')) throw new Error('Stale review-scheduling logic detected');
-          for (const token of ['function dayWordCount', 'recordActivity(word.id)', 'labels[(d.getDay()+1)%7]']) {
-            if (!html.includes(token)) throw new Error('Missing expected learning logic: ' + token);
-          }
-          for (const token of [
-            '[0,1000,2000,3000].map(fetchWordPage)',
-            'const stored=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")',
-            '.word-meaning{grid-column:1;grid-row:2',
-            '.field input,.command-input input,.select{font-size:16px}',
-            'card.classList.toggle("flipped",study.revealed)',
-            'if(activeView==="stats")renderTypeStats()',
-            '.word-main:focus-visible',
-            'role="button" tabindex="0" aria-label="شروع',
-            '@media(max-width:620px) and (max-height:700px)',
-            'themeColor.content=t==="dark"?"#171a16":"#f6f7f1"',
-            'Wortin restrained modern 3D color pass',
-            '--accent-mint:#b3e5d5',
-            '@keyframes wortinAuraFloat',
-            'perspective(850px) translateY(-3px) rotateX(1.5deg) rotateY(-1.4deg)',
-            'filter:none;',
-            '#view-learn .flash-back{transform:rotateY(180deg) translateZ(1px)}',
-            '#view-home .hero-art::before,#view-home .hero-art::after,#view-home .core{animation:none!important}'
-          ]) {
-            if (!html.includes(token)) throw new Error('Missing mobile/performance regression safeguard: ' + token);
-          }
-          for (const token of ['DAILY_KEY', 'function beginDailyReview()', 'function renderDailyReview()', 'Math.round(eligible.length*.6)', 'data-view="daily"', 'daily.studied.push(id)']) {
-            if (!html.includes(token)) throw new Error('Missing daily-learning regression safeguard: ' + token);
-          }
-          for (const token of ['function typeCounts(){const a={};', 'Verbpartikel:"جزء فعلی جداشدنی"', 'split(" / ").includes(type)']) {
-            if (!html.includes(token)) throw new Error('Missing vocabulary taxonomy regression safeguard: ' + token);
-          }
-          for (const token of [
-            'function markLocalProgressDirty()',
-            'function mergeProgressData(remote,local)',
-            'function mergeDailyData(remote,local)',
-            'cloudWritePromise',
-            'select("progress,daily")',
-            'const localHasPendingChanges=Number(storageGet(LOCAL_CHANGE_KEY)||0)>0',
-            '_updatedAt:Date.now()',
-            'await flushCloudSync({force:true})',
-            'const delay=Math.min(30000,1000*2**Math.min(cloudSyncFailures,5))',
-            'localStorage.getItem(LOCAL_CHANGE_KEY)',
-            'cloudSyncRevision>revision'
-          ]) {
-            if (!html.includes(token)) throw new Error('Missing sync-safety regression safeguard: ' + token);
-          }
-          console.log('Wortin sync serialization, dirty-cache recovery and logout safeguards passed');
-          for (const token of [
-            'function flushPendingProgressForLifecycle()',
-            'document.visibilityState==="hidden"',
-            'window.addEventListener("pagehide",flushPendingProgressForLifecycle)',
-            'window.addEventListener("online"',
-            'function storageGet(key)',
-            'function loadProgress(){const defaults=loadProgressDefaults()'
-          ]) {
-            if (!html.includes(token)) throw new Error('Missing storage/lifecycle reliability safeguard: ' + token);
-          }
-          console.log('Wortin storage recovery and lifecycle-flush safeguards passed');
-          for (const token of [
-            'function buildQuizOptions(w)',
-            'usedMeanings=new Set(targetMeaning?[targetMeaning]:[])',
-            'cloudSyncWarned=false',
-            'همگام‌سازی موقتاً در دسترس نیست',
-            'x.dataset.quizId===String(w.id)'
-          ]) {
-            if (!html.includes(token)) throw new Error('Missing quiz/sync-feedback safeguard: ' + token);
-          }
-          console.log('Wortin quiz options and user-visible sync feedback safeguards passed');
-          console.log('Wortin HTML, daily-learning, taxonomy, mobile and performance smoke checks passed');
-          NODE
+          node scripts/validate-site.cjs
+          node --test tests/*.test.cjs
       - name: Configure Pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload static site
-        uses: actions/upload-pages-artifact@f7615f5917213b24245d49ba96693d0f5375a414 # immutable commit
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: .
       - name: Deploy
