@@ -177,3 +177,11 @@ test("the shipped database migration enforces authenticated row ownership for pr
   assert.match(migration, /Users update own progress[\s\S]*?with check\s*\(\s*\(select auth\.uid\(\)\)\s*=\s*user_id\s*\)/i);
   assert.match(migration, /revoke all on table public\.user_progress from anon, public/i);
 });
+
+
+test("listening renderer preserves lesson questions and has exactly one active definition", () => {
+  const media = fs.readFileSync(path.resolve(__dirname, "..", "learning-media.js"), "utf8");
+  assert.equal([...media.matchAll(/function renderListening\\(\\)\\{/g)].length, 1);
+  assert.match(media, /Array\.isArray\(v\.questions\)/);
+  assert.match(media, /data-answer=/);
+});

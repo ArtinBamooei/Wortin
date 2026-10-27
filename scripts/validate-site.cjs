@@ -18,7 +18,7 @@ const requiredFiles = [
 for (const name of requiredFiles) if (!fs.existsSync(path.join(root, name))) fail(`Required file is missing: ${name}`);
 if (process.exitCode) process.exit(1);
 
-const html = read("index.html"), app = read("app.js"), css = read("styles.css");
+const html = read("index.html"), app = read("app.js"), css = read("styles.css"), media = read("learning-media.js");
 const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 if (!csp) fail("A Content-Security-Policy meta policy is required.");
 if (csp && !/default-src\s+'self'/.test(csp)) fail("CSP must retain default-src 'self'.");
@@ -51,6 +51,8 @@ for (const token of [
   "const SAVED_PAGE_SIZE=100", 'data-saved-page="next"',
   "saveWordState(w,scheduleReview(pFor(w),correct))"
 ]) if (!app.includes(token)) fail(`Expected learning or pagination behavior is missing: ${token}`);
+if ([...media.matchAll(/function renderListening\\(\\)\\{/g)].length !== 1) fail("Listening renderer must be defined exactly once.");
+if (!media.includes("Array.isArray(v.questions)")) fail("Listening renderer must retain question rendering for future lessons.");
 if (!css.includes("prefers-reduced-motion:reduce")) fail("Reduced-motion support is required.");
 if (!css.includes(":focus-visible")) fail("Visible keyboard focus styles are required.");
 if (!html.includes('href="#main-content"')) fail("A skip link to main content is required.");
