@@ -1,0 +1,66 @@
+name: Post-deploy Lighthouse audit
+
+on:
+  workflow_run:
+    workflows: ["Deploy Wortin to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Install Chrome for Testing
+        id: chrome
+        uses: browser-actions/setup-chrome@54e7c7bf1c147ffca98dc47b796907454c8c1787 # setup-chrome-v2.2.0
+        with:
+          install-dependencies: true
+      - name: Audit mobile and desktop
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          TARGET_URL: https://artinbamooei.github.io/Wortin/
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes lighthouse@13.5.0 "$TARGET_URL" \
+            --chrome-path="$CHROME_PATH" \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output-path=/tmp/wortin-lighthouse-mobile.json --quiet
+          npx --yes lighthouse@13.5.0 "$TARGET_URL" \
+            --chrome-path="$CHROME_PATH" \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --preset=desktop \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output-path=/tmp/wortin-lighthouse-desktop.json --quiet
+          node <<'NODE'
+          const fs = require('node:fs');
+          for (const mode of ['mobile', 'desktop']) {
+            const report = JSON.parse(fs.readFileSync('/tmp/wortin-lighthouse-' + mode + '.json', 'utf8'));
+            console.log('\n=== Lighthouse ' + mode.toUpperCase() + ' ===');
+            for (const [key, category] of Object.entries(report.categories || {})) {
+              const score = category.score == null ? 'N/A' : Math.round(category.score * 100) + '/100';
+              console.log(key + ': ' + score);
+            }
+            for (const key of ['first-contentful-paint', 'largest-contentful-paint', 'speed-index', 'total-blocking-time', 'cumulative-layout-shift', 'interaction-to-next-paint']) {
+              const audit = report.audits?.[key];
+              if (audit && audit.numericValue != null) console.log(key + ': ' + Math.round(audit.numericValue) + (key.includes('shift') ? '' : ' ms'));
+            }
+          }
+          NODE
+      - name: Save Lighthouse reports
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lighthouse-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/wortin-lighthouse-*.json
+          if-no-files-found: error
+          retention-days: 14
