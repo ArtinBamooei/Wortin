@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=navgroups01">
+<link rel="stylesheet" href="./styles.css?v=qualitypack01">
 <link rel="stylesheet" href="./learning-media.css?v=1">
 </head>
 <body>
@@ -33,7 +33,7 @@
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.8 14A8.9 8.9 0 0 1 10 3.2 9 9 0 1 0 20.8 14Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13 2-10 12h8l-1 8 11-13h-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
-<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m12 12 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m12 12 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4H4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2-9a9 9 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -129,7 +129,7 @@
   <section class="view" id="view-learn">
     <div class="study-shell">
       <div class="study-options"><button class="pill active" data-study="flash">فلش‌کارت</button><button class="pill" data-study="quiz">آزمون چهارگزینه‌ای</button></div>
-      <div class="study-top"><span class="study-counter" id="studyCounter">0 / 12</span><div class="progress-line"><span id="studyProgress"></span></div><button class="mini-button" id="exitStudy" aria-label="خروج"><svg><use href="#i-close"/></svg></button></div>
+      <div class="study-top"><span class="study-counter" id="studyCounter">0 / 12</span><span class="study-due-count" id="studyDueCount" aria-live="polite"></span><div class="progress-line"><span id="studyProgress"></span></div><button class="mini-button" id="exitStudy" aria-label="خروج"><svg><use href="#i-close"/></svg></button></div>
       <div id="studyContent"></div>
     </div>
   </section>
@@ -168,7 +168,7 @@
       <article class="stats-metric metric-peach"><div class="metric-top"><span>روزهای پیوسته</span><span class="metric-icon"><svg><use href="#i-bolt"/></svg></span></div><div class="metric-number" id="progressStreak">0</div><div class="metric-bottom"><span>روز پشت سر هم</span><span class="metric-trend" id="metricSessionCount">۰ جلسه</span></div></article>
     </div>
     <div class="stats-analytics-grid"><section class="stats-panel stats-week-panel"><div class="stats-panel-head"><div><span class="panel-eyebrow">WEEKLY ACTIVITY</span><h3>ریتم یادگیری تو</h3><p>تعداد واژه‌هایی که در هر روز ثبت کرده‌ای</p></div><span class="panel-icon"><svg><use href="#i-chart"/></svg></span></div><div class="stats-week-chart" id="statsWeekChart"></div><div class="stats-chart-legend"><span><i class="legend-current"></i> فعالیت روزانه</span><span id="statsWeekTotal">مجموع این هفته: ۰ واژه</span></div></section>
-      <section class="stats-panel stats-focus-panel"><div class="stats-panel-head"><div><span class="panel-eyebrow">LEARNING FOCUS</span><h3>نقشه‌ی تسلط</h3><p>چه بخشی از واژگان را یاد گرفته‌ای؟</p></div><span class="panel-icon"><svg><use href="#i-target"/></svg></span></div><div class="mastery-visual"><div class="mastery-donut" id="masteryDonut"><div><strong id="masteryDonutValue">۰٪</strong><span>تسلط</span></div></div><div class="mastery-legend"><div><i></i><span>یادگرفته‌شده</span><b id="donutKnown">۰</b></div><div><i></i><span>در حال یادگیری</span><b id="donutLearning">۰</b></div><div><i></i><span>هنوز شروع نشده</span><b id="donutUnseen">۰</b></div></div></div><div class="stats-focus-footer"><span>مجموع واژگان</span><b id="donutTotal">۰</b></div></section></div>
+      <section class="stats-panel stats-focus-panel"><div class="stats-panel-head"><div><span class="panel-eyebrow">LEARNING FOCUS</span><h3>نقشه‌ی تسلط</h3><p>چه بخشی از واژگان را یاد گرفته‌ای؟</p></div><span class="panel-icon"><svg><use href="#i-target"/></svg></span></div><div class="mastery-visual"><div class="mastery-donut" id="masteryDonut"><div><strong id="masteryDonutValue">۰٪</strong><span>تسلط</span></div></div><div class="mastery-legend"><div><i></i><span>مسلط</span><b id="donutKnown">۰</b></div><div><i></i><span>در حال یادگیری</span><b id="donutLearning">۰</b></div><div><i></i><span>نیازمند مرور</span><b id="donutDue">۰</b></div><div><i></i><span>تازه</span><b id="donutUnseen">۰</b></div></div></div><div class="stats-focus-footer"><span>مجموع واژگان</span><b id="donutTotal">۰</b></div></section></div>
     <div class="stats-analytics-grid stats-lower-grid"><section class="stats-panel"><div class="stats-panel-head"><div><span class="panel-eyebrow">CONSISTENCY MAP</span><h3>تقویم استمرار</h3><p>فعالیتت در ۱۴ هفته‌ی اخیر</p></div><span class="panel-icon"><svg><use href="#i-clock"/></svg></span></div><div class="stats-heatmap-wrap"><div class="heatmap-weekdays"><span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span></div><div class="stats-heatmap" id="heatmap"></div></div><div class="stats-chart-legend"><span>کم <i class="heat-level l0"></i><i class="heat-level l1"></i><i class="heat-level l2"></i><i class="heat-level l3"></i><i class="heat-level l4"></i> زیاد</span><span id="statsActiveDays">۰ روز فعال</span></div></section>
       <section class="stats-panel"><div class="stats-panel-head"><div><span class="panel-eyebrow">VOCABULARY BREAKDOWN</span><h3>ترکیب واژگان</h3><p>توزیع نوع واژه در منبع B1</p></div><span class="panel-icon"><svg><use href="#i-layers"/></svg></span></div><div class="stats-type-list" id="typeStats"></div><div class="stats-type-footer"><span>پیشرفت کلی</span><strong id="masteryCaption">۰٪</strong></div><div class="stats-type-progress"><span id="masteryBar" style="width:0%"></span></div></section></div>
     <section class="stats-insight"><div class="insight-graphic"><div class="insight-cube"><span>W</span></div><i class="insight-spark s1"></i><i class="insight-spark s2"></i><i class="insight-spark s3"></i></div><div><span class="panel-eyebrow">YOUR NEXT STEP</span><h3 id="statsInsightTitle">استمرار از سرعت مهم‌تر است.</h3><p id="statsInsightText">امروز چند واژه تمرین کن تا روند یادگیری‌ات ادامه پیدا کند.</p></div><button type="button" class="btn-primary" id="statsStartLearning">شروع تمرین <svg><use href="#i-arrow"/></svg></button></section>
@@ -176,8 +176,22 @@
   </section>
 </main>
 <nav class="mobile-nav" aria-label="پیمایش موبایل">
-<button class="active" data-view="home"><svg><use href="#i-home"/></svg><span>خانه</span></button><button data-view="learn"><svg><use href="#i-layers"/></svg><span>فلش‌کارت</span></button><button data-view="daily"><svg><use href="#i-spark"/></svg><span>روزانه</span></button><button data-view="listening"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button><button data-view="reading"><svg><use href="#i-book"/></svg><span>خواندن</span></button><button data-view="dictionary"><svg><use href="#i-book"/></svg><span>همه کلمات</span></button><button data-view="review"><svg><use href="#i-bookmark"/></svg><span>نشان‌شده</span></button><button data-view="stats"><svg><use href="#i-chart"/></svg><span>پیشرفت</span></button><button data-view="official-exams"><svg><use href="#i-target"/></svg><span>آزمون‌ها</span></button>
+<button class="active" type="button" data-view="home"><svg aria-hidden="true"><use href="#i-home"/></svg><span>خانه</span></button>
+<button type="button" data-view="learn"><svg aria-hidden="true"><use href="#i-layers"/></svg><span>فلش‌کارت</span></button>
+<button type="button" data-view="daily"><svg aria-hidden="true"><use href="#i-spark"/></svg><span>روزانه</span></button>
+<button type="button" data-view="listening"><svg aria-hidden="true"><use href="#i-volume"/></svg><span>شنیداری</span></button>
+<button id="mobileMoreToggle" class="mobile-more-toggle" type="button" aria-label="بیشتر" aria-haspopup="true" aria-expanded="false" aria-controls="mobileMorePanel"><svg aria-hidden="true"><use href="#i-menu"/></svg><span>بیشتر</span></button>
 </nav>
+<div class="mobile-more-panel" id="mobileMorePanel" hidden>
+  <div class="mobile-more-heading"><strong>سایر بخش‌ها</strong><span>انتخاب یک بخش</span></div>
+  <div class="mobile-more-grid">
+    <button type="button" data-view="dictionary"><svg aria-hidden="true"><use href="#i-book"/></svg><span>همه‌ی کلمات</span></button>
+    <button type="button" data-view="reading"><svg aria-hidden="true"><use href="#i-book"/></svg><span>خواندن</span></button>
+    <button type="button" data-view="review"><svg aria-hidden="true"><use href="#i-bookmark"/></svg><span>مرور نشان‌شده‌ها</span></button>
+    <button type="button" data-view="stats"><svg aria-hidden="true"><use href="#i-chart"/></svg><span>پیشرفت من</span></button>
+    <button type="button" data-view="official-exams"><svg aria-hidden="true"><use href="#i-target"/></svg><span>نمونه آزمون‌های رسمی</span></button>
+  </div>
+</div>
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جزئیات واژه"><div class="detail-modal" id="detailModal"></div></div>
 <div class="command-overlay" id="commandOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جست‌وجوی واژه"><div class="command-box"><div class="command-input"><svg><use href="#i-search"/></svg><input id="commandSearch" placeholder="واژه یا معنی را بنویس…" autocomplete="off"><button class="mini-button" id="closeSearch" aria-label="بستن"><svg><use href="#i-close"/></svg></button></div><div class="command-results" id="commandResults"></div></div></div>
@@ -191,8 +205,8 @@
 <div id="authUserPanel" hidden><div class="auth-account"><strong id="authUserEmail"></strong><span>حساب واردشده در نشست فعلی</span></div><p class="auth-hint">پیشرفت یادگیری این حساب جدا از حساب‌های دیگر ذخیره می‌شود.</p><div class="auth-error" id="authUserMessage" role="status" aria-live="polite"></div><button type="button" class="btn-secondary auth-submit" id="authSignOut">خروج از حساب</button></div>
 </section></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="./app.js?v=sidebarclean01" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="./app.js?v=qualitypack01" defer></script>
 <script src="./learning-media.js?v=1" defer></script>
 </body>
 </html>
