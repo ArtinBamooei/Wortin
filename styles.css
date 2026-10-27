@@ -874,3 +874,17 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   .mastery-donut{width:124px;height:124px}
   .mastery-legend{gap:10px;min-width:110px}
 }
+
+
+/* WCAG-oriented palette adjustment: keep low-emphasis text readable in both themes. */
+:root,:root[data-theme=light]{
+  --muted:#5b6555;
+  --muted2:#66705e;
+  --lime2:#526b40;
+  --violet:#625a73;
+  --orange:#8d5339;
+  --blue:#4c6777;
+}
+:root[data-theme=dark]{
+  --muted2:#889381;
+}
