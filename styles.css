@@ -817,3 +817,19 @@ body.modal-open{overflow:hidden}
 /* Persian numeral typography: Estedad, distinct from the main UI typeface */
 :root{--fa-number-font:"Estedad","Vazirmatn",sans-serif}
 .fa-number,.stat-value,.streak-number,.stats-metric .metric-number,.stats-hero-facts strong,.stats-orb-core span,.stats-orb-chip b,.mastery-donut strong,.mastery-legend b,.stats-focus-footer b,.stats-type-row-head>span:last-child,.stats-type-footer strong,.stats-bar-value,.stats-week-total{font-family:var(--fa-number-font)!important;font-variant-numeric:lining-nums}
+
+
+/* Sidebar navigation hierarchy and overflow handling. */
+.nav{flex:1;min-height:0;overflow-y:auto;align-content:start;padding:0 2px 10px 0;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.nav-group-label{padding:13px 12px 5px;color:var(--muted2);font-size:10px;font-weight:800;line-height:1.5}
+.nav-group-label:not(:first-child){margin-top:3px}
+.sidebar-bottom{flex-shrink:0}
+@media(max-width:900px){
+  .nav-group-label{display:none}
+  .nav{overflow:visible;padding:0;gap:5px}
+}
+@media(max-width:620px){
+  .mobile-nav{justify-content:flex-start;gap:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+  .mobile-nav::-webkit-scrollbar{display:none}
+  .mobile-nav button{flex:0 0 48px;width:48px;min-width:48px}
+}
