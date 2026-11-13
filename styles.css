@@ -913,6 +913,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   --study-accent-strong:#304e37;
   --study-accent-soft:#eaf0e7;
   --study-accent-contrast:#fff;
+  --study-warning:#95502f;
   width:100%;
   max-width:1450px;
   margin:23px auto 0;
@@ -922,6 +923,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   --study-accent-strong:#a8cf67;
   --study-accent-soft:#283327;
   --study-accent-contrast:#182218;
+  --study-warning:#ffb48d;
 }
 .study-heading-row{
   display:flex;align-items:center;justify-content:space-between;gap:20px;
@@ -1148,7 +1150,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 #view-learn .study-controls button:hover{transform:translateY(-1px);border-color:var(--study-accent)}
 #view-learn .study-controls button svg{width:18px;height:18px;flex:none}
 #view-learn .study-controls .study-rate-known{border-color:var(--study-accent-strong);background:var(--study-accent-strong);color:var(--study-accent-contrast)}
-#view-learn .study-controls .study-rate-missed{border-color:color-mix(in srgb,var(--orange) 38%,var(--line));background:color-mix(in srgb,var(--orange) 9%,var(--panel));color:var(--orange)}
+#view-learn .study-controls .study-rate-missed{border-color:color-mix(in srgb,var(--orange) 38%,var(--line));background:color-mix(in srgb,var(--orange) 9%,var(--panel));color:var(--study-warning)}
 #view-learn .study-controls .study-rate-again{background:var(--panel2);color:var(--text)}
 /* Quiz uses the same visual language as flashcard mode. */
 .quiz-stage{width:100%;max-width:1360px;margin:0 auto;padding:8px 7px}
@@ -1179,7 +1181,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 }
 #view-learn .quiz-option.correct{border-color:var(--study-accent);background:var(--study-accent-soft);color:var(--study-accent-strong)}
 #view-learn .quiz-option.correct .quiz-option-index{border-color:var(--study-accent);background:var(--study-accent);color:#fff}
-#view-learn .quiz-option.wrong{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 11%,var(--panel));color:var(--orange)}
+#view-learn .quiz-option.wrong{border-color:var(--study-warning);background:color-mix(in srgb,var(--orange) 11%,var(--panel));color:var(--orange)}
 #view-learn .quiz-option:disabled{cursor:default;opacity:1}
 .quiz-instruction{margin:19px 0 0;color:var(--muted);font-size:11px;text-align:center}
 @media(min-width:1500px){
