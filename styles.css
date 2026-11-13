@@ -1283,3 +1283,70 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   #view-learn .study-controls button,#view-learn .study-options .pill{transition:none!important}
   .study-shell.is-revealed .study-rating-panel{animation:none}
 }
+
+
+/* Wortin flashcard anti-mirror rendering fix.
+   Use a 2D face swap instead of rotating text-bearing faces in 3D.
+   This prevents mirrored glyphs across browser engines and RTL layouts. */
+#view-learn .study-card-scene{perspective:none!important}
+#view-learn .flashcard,
+#view-learn .flashcard.flipped{
+  transform:none!important;
+  transform-style:flat!important;
+  transition:none!important;
+}
+#view-learn .flash-face{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(8px)!important;
+  backface-visibility:visible!important;
+  -webkit-backface-visibility:visible!important;
+  transition:
+    opacity .24s ease,
+    transform .24s ease,
+    visibility 0s linear .24s;
+}
+#view-learn .flash-front{
+  z-index:2;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0)!important;
+}
+#view-learn .flash-back{
+  z-index:1;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(8px)!important;
+  transition:
+    opacity .24s ease,
+    transform .24s ease,
+    visibility 0s linear .24s;
+}
+#view-learn .flashcard.flipped .flash-front{
+  z-index:1;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-6px)!important;
+  transition:
+    opacity .2s ease,
+    transform .2s ease,
+    visibility 0s linear .2s;
+}
+#view-learn .flashcard.flipped .flash-back{
+  z-index:2;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0)!important;
+  transition:
+    opacity .24s ease,
+    transform .24s ease,
+    visibility 0s linear 0s;
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flash-face{transition:none!important}
+}
