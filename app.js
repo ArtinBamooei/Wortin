@@ -86,9 +86,14 @@ function changeView(view){activeView=view;document.querySelectorAll(".view").for
 $("statsStartLearning").addEventListener("click",()=>changeView("learn"));
 function startSession(mode="flash",specified=null){if(!words.length){toast("واژگان هنوز دریافت نشده‌اند.");return}const currentDue=dueWords().length;let pool;if(Array.isArray(specified)){pool=[...specified]}else if(mode==="saved"){pool=shuffleItems(savedWords())}else{const overdue=[...dueWords()].sort((a,b)=>(Number(pFor(a).due)||0)-(Number(pFor(b).due)||0));const unseen=shuffleItems(getDerivedWordSets().unseen);pool=[...overdue,...unseen];if(!pool.length)pool=shuffleItems(getDerivedWordSets().learning);if(!pool.length)pool=shuffleItems(words)}const unique=new Set();pool=pool.filter(w=>{const id=String(w.id);if(unique.has(id))return false;unique.add(id);return true});if(!pool.length)pool=shuffleItems(words);study.mode=mode;study.cards=pool.slice(0,mode==="single"?1:12);study.index=0;study.revealed=false;study.correct=0;study.answered=0;study.locked=false;const dueCount=$("studyDueCount");if(dueCount)dueCount.textContent=currentDue?faNum(currentDue)+" واژه موعد مرور دارند":"فعلاً واژه‌ی موعددار برای مرور نیست";changeView("learn");document.querySelectorAll("[data-study]").forEach(b=>b.classList.toggle("active",b.dataset.study===study.mode));renderStudy()}
 function renderStudy(){
+  const shell=document.querySelector("#view-learn .study-shell");
   const previous=$("studyPrevious");
-  if(previous){previous.hidden=study.mode==="quiz";previous.disabled=study.index===0||!study.cards.length}
+  if(previous){
+    previous.hidden=study.mode==="quiz";
+    previous.disabled=study.index===0||!study.cards.length;
+  }
   if(!study.cards.length){
+    shell?.classList.remove("is-revealed");
     $("studyContent").innerHTML='<div class="review-empty"><svg><use href="#i-check"/></svg><h3>برای این مرحله واژه‌ای باقی نمانده است.</h3><p>این بخش را کامل کرده‌ای. برای یادگیری بیشتر از واژه‌نامه یک مسیر تازه انتخاب کن.</p><button class="btn-primary" id="goDict">رفتن به واژه‌نامه</button></div>';
     $("goDict").onclick=()=>changeView("dictionary");
     $("studyCounter").textContent="کارت ۰ از ۰";
@@ -102,42 +107,85 @@ function renderStudy(){
   const pct=Math.round(current/total*100);
   $("studyProgress").style.width=pct+"%";
   $("studyProgress").parentElement?.setAttribute("aria-valuenow",String(pct));
-  if(study.mode==="quiz"){renderQuiz(w);return}
+  if(study.mode==="quiz"){shell?.classList.remove("is-revealed");renderQuiz(w);return}
+  shell?.classList.toggle("is-revealed",study.revealed);
   const ex=firstExample(w);
+  const grammar=wordGrammarHtml(w);
+  const saved=!!pFor(w).saved;
+  const detailCount=(grammar?1:0)+(ex?1:0);
+  const backDetails=grammar||ex
+    ?'<div class="flash-back-grid '+(detailCount<2?'single':'')+'">'+
+      (grammar?'<section class="flash-detail-block flash-grammar-panel"><span class="flash-section-label">نکتهٔ دستوری</span>'+grammar+'</section>':'')+
+      (ex?'<section class="flash-detail-block flash-example-panel"><span class="flash-section-label">واژه در جمله</span><p class="flash-example" lang="de" dir="ltr">'+safe(ex)+'</p></section>':'')+
+    '</div>'
+    :'<div class="flash-no-detail">برای این مدخل نکتهٔ دستوری یا مثال جداگانه ثبت نشده است.</div>';
   $("studyContent").innerHTML=
-    '<div class="study-stage study-stage-redesign">'+
-      '<div class="flashcard '+(study.revealed?"flipped":"")+'" id="flashcard" role="button" tabindex="0" aria-label="'+(study.revealed?"برگرداندن کارت به واژه":"نمایش معنی واژه")+'" aria-pressed="'+(study.revealed?"true":"false")+'" aria-roledescription="فلش‌کارت">'+
+    '<div class="study-card-scene">'+
+      '<div class="flashcard '+(study.revealed?"flipped":"")+'" id="flashcard" role="button" tabindex="0" aria-roledescription="فلش‌کارت" aria-label="'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ کارت")+'" aria-pressed="'+String(study.revealed)+'">'+
         '<div class="flash-face flash-front">'+
-          '<div class="flashcard-topline"><span class="flash-chip">'+safe(typeLabel(w.word_type))+(w.record_section==="G"?" · Themen":"")+'</span><span class="flash-side-label">WORTSCHATZ</span></div>'+
-          '<div class="flash-front-content"><span class="flash-label">واژهٔ آلمانی</span><div class="flash-word" lang="de" dir="ltr">'+safe(w.word)+'</div><div class="flash-front-rule"></div><div class="flash-hint"><span aria-hidden="true">↻</span>برای دیدن معنی، کارت را برگردان</div></div>'+
-          '<div class="flashcard-bottomline"><span>DEUTSCH</span><span>واژه ← معنی</span></div>'+
+          '<div class="flash-card-top">'+
+            '<span class="flash-type-chip">'+safe(typeLabel(w.word_type))+(w.record_section==="G"?" · موضوعی":"")+'</span>'+
+            '<span class="flash-card-index">WORT <b>'+faNum(current).padStart(2,"۰")+'</b></span>'+
+          '</div>'+
+          '<div class="flash-front-content">'+
+            '<span class="flash-front-eyebrow">واژهٔ آلمانی</span>'+
+            '<div class="flash-word" lang="de" dir="auto">'+safe(w.word)+'</div>'+
+            '<span class="flash-front-divider"></span>'+
+            '<p class="flash-front-prompt">معنی واژه را در ذهن خودت بازیابی کن</p>'+
+          '</div>'+
+          '<div class="flash-card-footer"><span>WORTIN</span><span>برای چرخاندن کارت لمس کن</span></div>'+
         '</div>'+
         '<div class="flash-face flash-back">'+
-          '<div class="flashcard-topline"><span class="flash-chip">معنی و کاربرد</span><span class="flash-side-label">BEDEUTUNG</span></div>'+
-          '<div class="flash-back-content">'+
-            '<section class="flash-meaning-panel"><span class="flash-section-label">معنی فارسی</span><div class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</div></section>'+
-            (wordGrammarHtml(w)?'<section class="flash-grammar-panel"><span class="flash-section-label">نکتهٔ دستوری</span>'+wordGrammarHtml(w)+'</section>':'')+
-            (ex?'<section class="flash-example-panel"><span class="flash-section-label">مثال آلمانی</span><p class="flash-example" lang="de" dir="ltr">'+safe(ex)+'</p></section>':'')+
+          '<div class="flash-card-top">'+
+            '<span class="flash-type-chip">پاسخ و کاربرد</span>'+
+            '<span class="flash-card-index">BEDEUTUNG</span>'+
           '</div>'+
-          '<div class="flashcard-bottomline"><span>DEUTSCH · PERSISCH</span><span>برای دیدن واژه، کارت را برگردان</span></div>'+
+          '<div class="flash-back-content">'+
+            '<section class="flash-meaning-panel">'+
+              '<span class="flash-section-label">معنی فارسی</span>'+
+              '<p class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</p>'+
+            '</section>'+
+            backDetails+
+          '</div>'+
+          '<div class="flash-card-footer"><span>DEUTSCH / PERSISCH</span><span>پاسخ را بررسی کن</span></div>'+
         '</div>'+
       '</div>'+
     '</div>'+
-    '<div class="study-controls" role="group" aria-label="ارزیابی میزان یادگیری واژه">'+
-      '<button class="btn-primary known" id="studyKnown" type="button">'+svg("check")+' بلدم</button>'+
-      '<button class="btn-secondary missed" id="studyMissed" type="button">'+svg("close")+' بلد نبودم</button>'+
-      '<button class="btn-secondary again" id="studyAgain" type="button">'+svg("refresh")+' دوباره مرور کن</button>'+
-    '</div>';
+    '<div class="study-card-actions">'+
+      '<button class="study-reveal-button" id="studyReveal" type="button">'+svg("refresh")+' '+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</button>'+
+      '<button class="study-utility-button" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>تلفظ</span></button>'+
+      '<button class="study-utility-button '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
+    '</div>'+
+    '<section class="study-rating-panel" aria-label="ارزیابی یادگیری واژه">'+
+      '<div class="study-rating-heading"><strong>این واژه را چطور به یاد آوردی؟</strong><span>پاسخت زمان مرور بعدی را تعیین می‌کند.</span></div>'+
+      '<div class="study-controls">'+
+        '<button class="study-rate-known" id="studyKnown" type="button">'+svg("check")+'<span>بلدم</span></button>'+
+        '<button class="study-rate-missed" id="studyMissed" type="button">'+svg("close")+'<span>بلد نبودم</span></button>'+
+        '<button class="study-rate-again" id="studyAgain" type="button">'+svg("refresh")+'<span>دوباره مرور کن</span></button>'+
+      '</div>'+
+    '</section>';
   const toggleCard=()=>{
     study.revealed=!study.revealed;
     const card=$("flashcard");
     card.classList.toggle("flipped",study.revealed);
     card.setAttribute("aria-pressed",String(study.revealed));
-    card.setAttribute("aria-label",study.revealed?"برگرداندن کارت به واژه":"نمایش معنی واژه");
+    card.setAttribute("aria-label",study.revealed?"بازگشت به روی کارت":"نمایش پاسخ کارت");
+    shell?.classList.toggle("is-revealed",study.revealed);
+    const reveal=$("studyReveal");
+    if(reveal)reveal.innerHTML=svg("refresh")+(study.revealed?" بازگشت به روی کارت":" نمایش پاسخ");
   };
   $("flashcard").onclick=toggleCard;
   $("flashcard").onkeydown=e=>{
     if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();toggleCard()}
+  };
+  $("studyReveal").onclick=toggleCard;
+  $("studyAudio").onclick=()=>speak(w.word);
+  $("studySave").onclick=()=>{
+    toggleSaved(w);
+    const isSaved=!!pFor(w).saved,button=$("studySave");
+    button.classList.toggle("is-saved",isSaved);
+    button.setAttribute("aria-pressed",String(isSaved));
+    button.innerHTML=svg("bookmark")+'<span>'+(isSaved?"نشان‌شده":"نشان‌کردن")+'</span>';
   };
   if(previous)previous.onclick=()=>{
     if(study.index>0){study.index--;study.revealed=false;study.locked=false;renderStudy()}
@@ -153,7 +201,39 @@ function renderStudy(){
   };
 }
 function buildQuizOptions(w){const targetMeaning=String(w.meaning_fa||"").trim(),pool=shuffleItems(words.filter(x=>String(x.id)!==String(w.id)&&String(x.meaning_fa||"").trim()&&String(x.meaning_fa).trim()!==targetMeaning)),sameType=pool.filter(x=>x.word_type===w.word_type),others=[],usedIds=new Set([String(w.id)]),usedMeanings=new Set(targetMeaning?[targetMeaning]:[]);for(const candidate of [...sameType,...pool]){if(others.length>=3)break;const id=String(candidate.id),meaning=String(candidate.meaning_fa||"").trim();if(usedIds.has(id)||!meaning||usedMeanings.has(meaning))continue;usedIds.add(id);usedMeanings.add(meaning);others.push(candidate)}return shuffleItems([w,...others])}
-function renderQuiz(w){const options=buildQuizOptions(w);$("studyContent").innerHTML='<div class="lower-card" style="max-width:700px;margin:auto;padding:28px"><div class="flash-label" style="text-align:center">WAS BEDEUTET DIESES WORT?</div><div class="quiz-question">'+safe(w.word)+'</div><div class="quiz-options">'+options.map((o,i)=>'<button class="quiz-option" data-quiz-id="'+safe(o.id)+'">'+safe(o.meaning_fa||"—")+'</button>').join("")+'</div><div class="study-shortcuts" style="margin-top:18px">معنی درست را انتخاب کن.</div></div><div class="study-controls"><button class="btn-secondary" id="studyAudio">'+svg("volume")+' تلفظ</button></div>';document.querySelectorAll("[data-quiz-id]").forEach(btn=>btn.onclick=()=>{if(study.locked)return;study.locked=true;study.answered++;progress.quizTotal++;const correct=String(w.id)===btn.dataset.quizId;if(correct){study.correct++;progress.quizCorrect++;btn.classList.add("correct");saveWordState(w,scheduleReview(pFor(w),true))}else{btn.classList.add("wrong");const c=[...document.querySelectorAll("[data-quiz-id]")].find(x=>x.dataset.quizId===String(w.id));if(c)c.classList.add("correct");saveWordState(w,scheduleReview(pFor(w),false))}persistProgress();setTimeout(nextCard,950)});$("studyAudio").onclick=()=>speak(w.word)}
+function renderQuiz(w){
+  const options=buildQuizOptions(w);
+  $("studyContent").innerHTML=
+    '<div class="quiz-stage">'+
+      '<section class="quiz-prompt-card">'+
+        '<div class="quiz-prompt-header"><span class="quiz-question-kicker">MEANING CHECK</span><button class="quiz-audio-button" id="studyAudio" type="button">'+svg("volume")+' شنیدن تلفظ</button></div>'+
+        '<span class="quiz-prompt-label">معنی درست این واژه کدام است؟</span>'+
+        '<h2 class="quiz-question" lang="de" dir="auto">'+safe(w.word)+'</h2>'+
+        '<div class="quiz-answer-grid">'+
+          options.map((o,i)=>'<button class="quiz-option" data-quiz-id="'+safe(o.id)+'" type="button"><span class="quiz-option-index">'+faNum(i+1)+'</span><span>'+safe(o.meaning_fa||"—")+'</span></button>').join("")+
+        '</div>'+
+        '<p class="quiz-instruction">یکی از گزینه‌ها را انتخاب کن.</p>'+
+      '</section>'+
+    '</div>';
+  $("studyAudio").onclick=()=>speak(w.word);
+  document.querySelectorAll("[data-quiz-id]").forEach(btn=>btn.onclick=()=>{
+    if(study.locked)return;
+    study.locked=true;study.answered++;progress.quizTotal++;
+    const correct=String(w.id)===btn.dataset.quizId;
+    if(correct){
+      study.correct++;progress.quizCorrect++;btn.classList.add("correct");
+      saveWordState(w,scheduleReview(pFor(w),true));
+    }else{
+      btn.classList.add("wrong");
+      const answer=[...document.querySelectorAll("[data-quiz-id]")].find(x=>x.dataset.quizId===String(w.id));
+      if(answer)answer.classList.add("correct");
+      saveWordState(w,scheduleReview(pFor(w),false));
+    }
+    document.querySelectorAll("[data-quiz-id]").forEach(x=>x.disabled=true);
+    persistProgress();
+    setTimeout(nextCard,950);
+  });
+}
 function scheduleReview(p,correct,now=Date.now()){if(!correct)return{known:false,interval:0,repetitions:0,due:now+10*60000,seen:1,lastReviewedAt:now};const repetitions=Math.max(0,Number(p.repetitions)||0)+1;let interval=1;if(repetitions===2)interval=3;else if(repetitions>=3)interval=Math.min(180,Math.max(7,Math.round(Math.max(3,Number(p.interval)||3)*2.2)));return{known:repetitions>=2,interval,repetitions,due:now+interval*86400000,seen:1,lastReviewedAt:now}}
 function formatReviewDate(timestamp){return new Date(timestamp).toLocaleString("fa-IR",{dateStyle:"medium",timeStyle:"short"})}
 function sessionReviewSummary(cards){const uniqueDue=new Map(cards.map(w=>[String(w.id),Number(pFor(w).due)||0]));const scheduled=[...uniqueDue.values()].filter(t=>t>Date.now()).sort((a,b)=>a-b);if(!scheduled.length)return'<div class="session-review-summary" role="status">برای واژه‌های این جلسه زمان مرور بعدی ثبت نشده است.</div>';return'<div class="session-review-summary" role="status"><span>نوبت مرور بعدی</span><strong>'+safe(formatReviewDate(scheduled[0]))+'</strong><small>'+faNum(scheduled.length)+' کارت زمان‌بندی شد؛ کارت‌های موعددار را در جلسه‌ی بعد مرور کن.</small></div>'}
