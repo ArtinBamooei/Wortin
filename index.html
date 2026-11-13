@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=qualitypack04">
+<link rel="stylesheet" href="./styles.css?v=flash-study-redesign01">
 <link rel="stylesheet" href="./learning-media.css?v=1">
 </head>
 <body>
@@ -128,8 +128,19 @@
 
   <section class="view" id="view-learn">
     <div class="study-shell">
-      <div class="study-options"><button class="pill active" data-study="flash">فلش‌کارت</button><button class="pill" data-study="quiz">آزمون چهارگزینه‌ای</button><span class="study-due-count" id="studyDueCount" aria-live="polite"></span></div>
-      <div class="study-top"><span class="study-counter" id="studyCounter">0 / 12</span><div class="progress-line"><span id="studyProgress"></span></div><button class="mini-button" id="exitStudy" aria-label="خروج"><svg><use href="#i-close"/></svg></button></div>
+      <div class="study-page-head">
+        <div><div class="eyebrow">ACTIVE RECALL · WORTSCHATZ</div><h1>تمرین واژگان</h1><p>واژه را به خاطر بیاور؛ سپس معنی و کاربردش را بررسی کن.</p></div>
+      </div>
+      <div class="study-toolbar">
+        <div class="study-options" role="group" aria-label="روش تمرین"><button class="pill active" data-study="flash">فلش‌کارت</button><button class="pill" data-study="quiz">آزمون چهارگزینه‌ای</button></div>
+        <span class="study-due-count" id="studyDueCount" aria-live="polite"></span>
+      </div>
+      <div class="study-top">
+        <span class="study-counter" id="studyCounter">کارت ۰ از ۱۲</span>
+        <div class="progress-line" role="progressbar" aria-label="پیشرفت جلسه" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="studyProgress"></span></div>
+        <button class="study-nav-button study-previous" id="studyPrevious" type="button" aria-label="کارت قبلی" title="کارت قبلی" disabled><svg><use href="#i-arrow"/></svg></button>
+        <button class="mini-button study-exit" id="exitStudy" type="button" aria-label="خروج از تمرین" title="خروج"><svg><use href="#i-close"/></svg></button>
+      </div>
       <div id="studyContent"></div>
     </div>
   </section>
@@ -206,7 +217,7 @@
 </section></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-<script src="./app.js?v=kasus-display01" defer></script>
+<script src="./app.js?v=flash-study-redesign01" defer></script>
 <script src="./learning-media.js?v=2" defer></script>
 </body>
 </html>
