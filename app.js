@@ -133,7 +133,7 @@ function renderStudy(){
             '<span class="flash-front-divider"></span>'+
             '<p class="flash-front-prompt">معنی واژه را در ذهن خودت بازیابی کن</p>'+
           '</div>'+
-          '<div class="flash-card-footer"><span>WORTIN</span><span>برای چرخاندن کارت لمس کن</span></div>'+
+          '<div class="flash-card-footer"><span>WORTIN</span><span>برای دیدن پاسخ، کارت را لمس کن یا Enter بزن</span></div>'+
         '</div>'+
         '<div class="flash-face flash-back">'+
           '<div class="flash-card-top">'+
