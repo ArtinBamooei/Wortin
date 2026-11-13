@@ -1350,3 +1350,53 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 @media(prefers-reduced-motion:reduce){
   #view-learn .flash-face{transition:none!important}
 }
+
+
+/* Wortin animated face-swap motion.
+   The card itself remains flat; only each face makes a small, readable
+   2.5D movement. Rotation is deliberately far below 90deg, so glyphs
+   can never turn into a mirrored reverse side. */
+#view-learn .flash-face{
+  transform-origin:50% 50%;
+  will-change:opacity,transform;
+  transition:
+    opacity .30s cubic-bezier(.22,.7,.25,1),
+    transform .42s cubic-bezier(.18,.78,.22,1),
+    visibility 0s linear .30s,
+    box-shadow .42s ease;
+}
+#view-learn .flash-front{
+  transform:perspective(1100px) translate3d(0,0,0) rotateY(0deg) scale(1)!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.055);
+}
+#view-learn .flash-back{
+  transform:perspective(1100px) translate3d(24px,7px,0) rotateY(-7deg) scale(.975)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,0);
+  transition:
+    opacity .30s cubic-bezier(.22,.7,.25,1),
+    transform .42s cubic-bezier(.18,.78,.22,1),
+    visibility 0s linear .30s,
+    box-shadow .42s ease;
+}
+#view-learn .flashcard.flipped .flash-front{
+  transform:perspective(1100px) translate3d(-24px,-5px,0) rotateY(7deg) scale(.975)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,0);
+}
+#view-learn .flashcard.flipped .flash-back{
+  transform:perspective(1100px) translate3d(0,0,0) rotateY(0deg) scale(1)!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.055);
+  transition:
+    opacity .34s cubic-bezier(.22,.7,.25,1),
+    transform .46s cubic-bezier(.18,.78,.22,1),
+    visibility 0s linear 0s,
+    box-shadow .42s ease;
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flash-face,
+  #view-learn .flash-back,
+  #view-learn .flashcard.flipped .flash-back{
+    transition:none!important;
+    transform:none!important;
+    will-change:auto;
+  }
+}
