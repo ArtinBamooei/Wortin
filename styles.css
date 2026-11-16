@@ -1348,3 +1348,34 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 }
 
 
+/* Flashcard flip: one compositor-friendly 3D transform instead of animating both faces. */
+#view-learn .study-stage{perspective:1100px;perspective-origin:50% 50%}
+#view-learn .flashcard{
+  transform:translateZ(0) rotateY(0deg);
+  transform-style:preserve-3d;
+  transition:transform 620ms cubic-bezier(.2,.72,.18,1);
+  will-change:transform;
+  box-shadow:none;
+}
+#view-learn .flash-face{
+  visibility:visible;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  transform:none;
+  transition:none;
+  pointer-events:none;
+}
+#view-learn .flash-front{z-index:2;transform:rotateY(0deg)}
+#view-learn .flash-back{z-index:1;transform:rotateY(180deg)}
+#view-learn .flashcard.flipped{transform:translateZ(0) rotateY(180deg)}
+#view-learn .flashcard.flipped .flash-front,
+#view-learn .flashcard:not(.flipped) .flash-back{pointer-events:none}
+#view-learn .flashcard.flipped .flash-back,
+#view-learn .flashcard:not(.flipped) .flash-front{pointer-events:auto}
+@media(max-width:620px){
+  #view-learn .study-stage{perspective:900px}
+  #view-learn .flashcard{transition-duration:560ms}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flashcard{transition:none!important}
+}
