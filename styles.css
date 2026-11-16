@@ -1354,7 +1354,6 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   transform:translateZ(0) rotateY(0deg);
   transform-style:preserve-3d;
   transition:transform 620ms cubic-bezier(.2,.72,.18,1);
-  will-change:transform;
   box-shadow:none;
 }
 #view-learn .flash-face{
@@ -1415,3 +1414,9 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   #view-learn .flashcard.flipped .flash-front{visibility:hidden}
   #view-learn .flashcard.flipped .flash-back{visibility:visible}
 }
+
+/* Keep the face planes fixed while the parent card rotates. */
+#view-learn .flashcard .flash-front{transform:rotateY(0deg)}
+#view-learn .flashcard .flash-back{transform:rotateY(180deg)}
+#view-learn .flashcard.flipped .flash-front{transform:rotateY(0deg)}
+#view-learn .flashcard.flipped .flash-back{transform:rotateY(180deg)}
