@@ -1347,76 +1347,31 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   .study-shell.is-revealed .study-rating-panel{animation:none}
 }
 
-
-/* Flashcard flip: one compositor-friendly 3D transform instead of animating both faces. */
-#view-learn .study-stage{perspective:1100px;perspective-origin:50% 50%}
+/* Optimized 3D flashcard: a single transform on the card, static backface planes. */
+#view-learn .study-card-scene{perspective:1200px;perspective-origin:50% 50%}
 #view-learn .flashcard{
   transform:translateZ(0) rotateY(0deg);
   transform-style:preserve-3d;
-  transition:transform 620ms cubic-bezier(.2,.72,.18,1);
-  box-shadow:none;
+  transition:transform 580ms cubic-bezier(.2,.72,.18,1);
+  will-change:transform;
 }
 #view-learn .flash-face{
   visibility:visible;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
-  transform:none;
   transition:none;
-  pointer-events:none;
 }
 #view-learn .flash-front{z-index:2;transform:rotateY(0deg)}
 #view-learn .flash-back{z-index:1;transform:rotateY(180deg)}
 #view-learn .flashcard.flipped{transform:translateZ(0) rotateY(180deg)}
-#view-learn .flashcard.flipped .flash-front,
-#view-learn .flashcard:not(.flipped) .flash-back{pointer-events:none}
-#view-learn .flashcard.flipped .flash-back,
-#view-learn .flashcard:not(.flipped) .flash-front{pointer-events:auto}
 @media(max-width:620px){
-  #view-learn .study-stage{perspective:900px}
-  #view-learn .flashcard{transition-duration:560ms}
+  #view-learn .flashcard{transition-duration:520ms}
 }
-@media(prefers-reduced-motion:reduce){
-  #view-learn .flashcard{transition:none!important}
-}
-
-
-/* Flashcard flip: one composited 3D card instead of two independently moving faces. */
-#view-learn .study-card-scene{perspective:1400px;perspective-origin:50% 50%}
-#view-learn .flashcard{
-  transform:rotateY(0deg);
-  transform-style:preserve-3d;
-  transition:transform 560ms cubic-bezier(.2,.72,.22,1);
-  will-change:transform;
-}
-#view-learn .flashcard.flipped{transform:rotateY(180deg)}
-#view-learn .flash-face{
-  visibility:visible;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  transform:none;
-  transition:none;
-}
-#view-learn .flash-front{
-  transform:rotateY(0deg);
-  pointer-events:auto;
-}
-#view-learn .flash-back{
-  transform:rotateY(180deg);
-  pointer-events:none;
-}
-#view-learn .flashcard.flipped .flash-front{pointer-events:none}
-#view-learn .flashcard.flipped .flash-back{pointer-events:auto}
 @media(prefers-reduced-motion:reduce){
   #view-learn .flashcard,
   #view-learn .flashcard.flipped{transform:none!important;transition:none!important}
-  #view-learn .flash-face{transition:none!important;transform:none!important}
+  #view-learn .flash-face{backface-visibility:visible;-webkit-backface-visibility:visible}
   #view-learn .flash-back{visibility:hidden}
   #view-learn .flashcard.flipped .flash-front{visibility:hidden}
   #view-learn .flashcard.flipped .flash-back{visibility:visible}
 }
-
-/* Keep the face planes fixed while the parent card rotates. */
-#view-learn .flashcard .flash-front{transform:rotateY(0deg)}
-#view-learn .flashcard .flash-back{transform:rotateY(180deg)}
-#view-learn .flashcard.flipped .flash-front{transform:rotateY(0deg)}
-#view-learn .flashcard.flipped .flash-back{transform:rotateY(180deg)}
