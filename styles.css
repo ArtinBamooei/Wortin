@@ -1484,3 +1484,22 @@ body{background:var(--bg);background-image:radial-gradient(ellipse at 6% 0%,rgba
 
 /* Keep the tablet layout aligned with the existing navigation collapse breakpoint. */
 @media(max-width:900px){.sidebar{display:none}.main{margin-right:0}}
+
+
+/* Final theme tokens and high-specificity hero treatment for both themes. */
+:root{color-scheme:dark;--bg:#0c1728;--panel:#13243a;--panel2:#192d46;--panel3:#223b57;--line:rgba(218,230,242,.11);--text:#f5f1e9;--muted:#b0bdca;--muted2:#8496a9;--lime:#f08a43;--lime2:#ffad70;--violet:#b7a8e8;--orange:#ffb48d;--blue:#8cb9dc;--accent-mint:#f08a43;--accent-cyan:#8cb9dc;--accent-lilac:#b7a8e8;--shadow:0 24px 70px rgba(3,12,24,.28);--radius:24px}
+:root[data-theme=light]{color-scheme:light;--bg:#f3efe6;--panel:#fffdf8;--panel2:#f9f5ec;--panel3:#eee7db;--line:rgba(24,43,65,.11);--text:#182b43;--muted:#5e6d7c;--muted2:#83909b;--lime:#e77b35;--lime2:#d86625;--violet:#785dce;--orange:#df8156;--blue:#347dbb;--accent-mint:#e77b35;--accent-cyan:#8cb9dc;--accent-lilac:#b7a8e8;--shadow:0 22px 60px rgba(34,45,57,.09)}
+#view-home .hero{background:linear-gradient(125deg,#142a43 0%,#102238 54%,#1b3048 100%);border-color:rgba(218,230,242,.12);box-shadow:0 26px 70px rgba(3,12,24,.22)}
+#view-home .hero:before{background:radial-gradient(ellipse at 76% 34%,rgba(240,138,67,.19),transparent 36%),radial-gradient(ellipse at 12% 95%,rgba(112,151,184,.13),transparent 42%)}
+#view-home .hero h2{color:#f8f8f5}
+#view-home .hero h2 span{color:#ffad70}
+#view-home .hero-copy p{color:#c1cbd3}
+#view-home .hero .btn-primary{background:#f08a43;color:#17263a}
+#view-home .hero .btn-primary:hover{background:#ffad70}
+#view-home .hero .btn-secondary{color:#f5f1e9;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2)}
+#view-home .hero .core-layer.layer-back{background:linear-gradient(145deg,#e9a16d,#a94f28)}
+#view-home .hero .core-layer.layer-mid{background:linear-gradient(145deg,#ffc18f,#e58a4b)}
+#view-home .hero .core-layer.layer-front{background:linear-gradient(145deg,#fff0d7,#f3b47c);color:#293246}
+#view-home .hero .floating-word{background:rgba(19,36,58,.9);color:#f5f1e9;border-color:rgba(255,255,255,.2)}
+#view-home .hero .floating-word b{color:#ffad70}
+#view-home .hero .art-caption{color:#b0bdca}
