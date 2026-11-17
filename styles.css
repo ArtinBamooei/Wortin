@@ -1481,3 +1481,6 @@ body{background:var(--bg);background-image:radial-gradient(ellipse at 6% 0%,rgba
 @media(max-width:760px){.main{padding-inline:17px;padding-bottom:100px}.topbar{height:72px}.hero{border-radius:22px}.hero-copy{padding:28px 24px}.stats-grid{gap:11px}.stat-card{padding:15px}.section-head{margin-top:28px}}
 @media(max-width:480px){.main{padding-inline:13px}.top-actions{gap:7px}.search-trigger{width:40px;padding:0;justify-content:center}.search-trigger span,.search-trigger kbd{display:none}.auth-open-button,.auth-logout-button{padding:0 10px;font-size:10px}.hero-copy{padding:24px 19px}.hero h2{font-size:27px}.hero-art{min-height:245px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stat-card{min-width:0}.stat-value{font-size:27px}.mode-card{padding:17px}.page-heading{align-items:flex-start;flex-direction:column}.date-label{white-space:normal}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Keep the tablet layout aligned with the existing navigation collapse breakpoint. */
+@media(max-width:900px){.sidebar{display:none}.main{margin-right:0}}
