@@ -185,3 +185,13 @@ test("listening renderer preserves lesson questions and has exactly one active d
   assert.match(media, /Array\.isArray\(v\.questions\)/);
   assert.match(media, /data-answer=/);
 });
+
+
+test("new account passwords require at least ten characters including letters and numbers", () => {
+  const isStrongPassword = appFunction("isStrongPassword");
+  assert.equal(isStrongPassword("Abcdef1234"), true);
+  assert.equal(isStrongPassword("1234567890"), false);
+  assert.equal(isStrongPassword("abcdefghij"), false);
+  assert.equal(isStrongPassword("Abc123"), false);
+  assert.equal(isStrongPassword("Abcdef123"), false);
+});
