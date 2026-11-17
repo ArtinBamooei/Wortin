@@ -195,3 +195,8 @@ test("new account passwords require at least ten characters including letters an
   assert.equal(isStrongPassword("Abc123"), false);
   assert.equal(isStrongPassword("Abcdef123"), false);
 });
+
+
+test("auth trigger keeps its visible text as its accessible name", () => {
+  assert.doesNotMatch(app, /\$\("authOpen"\)\.setAttribute\("aria-label"/);
+});
