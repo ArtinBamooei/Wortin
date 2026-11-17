@@ -1347,4 +1347,39 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
   .study-shell.is-revealed .study-rating-panel{animation:none}
 }
 
-
+/* Flashcard motion tuning: remove the incoming-face delay and keep transforms on the compositor. */
+#view-learn .flash-face{
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  will-change:transform;
+  transition:
+    transform 360ms cubic-bezier(.22,.72,.18,1),
+    visibility 0s linear 360ms;
+}
+#view-learn .flash-front,
+#view-learn .flashcard.flipped .flash-back{
+  transition:
+    transform 360ms cubic-bezier(.22,.72,.18,1),
+    visibility 0s;
+}
+#view-learn .flashcard.flipped .flash-front{
+  transition:
+    transform 300ms cubic-bezier(.4,0,.2,1),
+    visibility 0s linear 300ms;
+}
+#view-learn .flashcard:not(.flipped) .flash-back{
+  transition:
+    transform 300ms cubic-bezier(.4,0,.2,1),
+    visibility 0s linear 300ms;
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flash-face,
+  #view-learn .flash-front,
+  #view-learn .flash-back,
+  #view-learn .flashcard.flipped .flash-front,
+  #view-learn .flashcard.flipped .flash-back{
+    transition:none!important;
+    transform:none!important;
+    will-change:auto;
+  }
+}
