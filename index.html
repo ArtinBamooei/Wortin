@@ -16,9 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap"><link id="googleFonts" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print">
 <link rel="stylesheet" href="./styles.css?v=navy-orange-system02">
-<link rel="stylesheet" href="./learning-media.css?v=1">
+
 </head>
 <body>
 <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
@@ -75,10 +75,10 @@
     <div class="breadcrumb"><span>فضای من</span><span> / </span><strong id="crumbCurrent">داشبورد</strong></div>
     <div class="top-actions">
       <div class="connection loading" id="dbStatus"><b></b><span>اتصال به واژگان</span></div>
-      <button class="search-trigger" id="openSearch" aria-label="جست‌وجوی واژه"><svg><use href="#i-search"/></svg><span>جست‌وجو در واژگان...</span><kbd>⌘ K</kbd></button>
+      <button class="search-trigger" id="openSearch" ><svg><use href="#i-search"/></svg><span>جست‌وجو در واژگان...</span><kbd>⌘ K</kbd></button>
       <button class="icon-button" id="themeToggle" aria-label="تغییر پوسته"><svg><use href="#i-sun"/></svg></button>
-      <button class="auth-open-button" id="authOpen" type="button" aria-label="ورود یا ساخت حساب" title="ورود یا ساخت حساب"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="authOpenLabel">ورود / ثبت‌نام</span></button>
-      <button class="auth-logout-button" id="authSignOutTop" type="button" hidden aria-label="خروج از حساب"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3m9-7h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>خروج</span></button>
+      <button class="auth-open-button" id="authOpen" type="button"  title="ورود یا ساخت حساب"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="authOpenLabel">ورود / ثبت‌نام</span></button>
+      <button class="auth-logout-button" id="authSignOutTop" type="button" hidden ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3m9-7h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>خروج</span></button>
     </div>
   </header>
 
@@ -104,9 +104,9 @@
     </div>
     <div class="section-head"><div><h3>انتخاب کن و شروع کن</h3><p>روشی را انتخاب کن که با هدف امروزت هماهنگ است.</p></div></div>
     <div class="modes-grid">
-      <article class="mode-card" data-mode="flash" role="button" tabindex="0" aria-label="شروع فلش‌کارت هوشمند"><div class="mode-icon lime"><svg><use href="#i-layers"/></svg></div><h4>فلش‌کارت هوشمند</h4><p>یادآوری فعال برای ثبت واژه در حافظه‌ی بلندمدت</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
-      <article class="mode-card" data-mode="quiz" role="button" tabindex="0" aria-label="شروع آزمون سریع"><div class="mode-icon violet"><svg><use href="#i-target"/></svg></div><h4>آزمون سریع</h4><p>معنی درست را پیدا کن و میزان یادگیری را بسنج.</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
-      <article class="mode-card" data-mode="saved" role="button" tabindex="0" aria-label="شروع واژه‌های نشان‌شده"><div class="mode-icon blue"><svg><use href="#i-bookmark"/></svg></div><h4>واژه‌های نشان‌شده</h4><p>روی کلمات دشوار تمرکز کن و آن‌ها را مرور کن.</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="flash" role="button" tabindex="0"><div class="mode-icon lime"><svg><use href="#i-layers"/></svg></div><h4>فلش‌کارت هوشمند</h4><p>یادآوری فعال برای ثبت واژه در حافظه‌ی بلندمدت</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="quiz" role="button" tabindex="0"><div class="mode-icon violet"><svg><use href="#i-target"/></svg></div><h4>آزمون سریع</h4><p>معنی درست را پیدا کن و میزان یادگیری را بسنج.</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="saved" role="button" tabindex="0"><div class="mode-icon blue"><svg><use href="#i-bookmark"/></svg></div><h4>واژه‌های نشان‌شده</h4><p>روی کلمات دشوار تمرکز کن و آن‌ها را مرور کن.</p><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
     </div>
     <div class="home-lower">
       <section class="lower-card"><div class="weekly-head"><h4>ریتم یادگیری تو</h4><span>۷ روز اخیر</span></div><div class="chart-bars" id="weekChart"></div></section>
@@ -234,6 +234,6 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 <script src="./app.js?v=strong-password-validation02" defer></script>
-<script src="./learning-media.js?v=2" defer></script>
+
 </body>
 </html>
