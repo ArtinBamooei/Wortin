@@ -1734,3 +1734,104 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   #view-home .hero-art::before,#view-home .hero-art::after,
   #view-home .orbit,#view-home .core,#view-home .floating-word{animation:none!important}
 }
+
+
+/* Wortin 3D logo — restrained motion system */
+.brand-mark{
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible;
+}
+.brand-mark img{
+  display:block;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 4px 5px rgba(10,30,48,.2));
+  animation:wortinMarkSettle 900ms cubic-bezier(.2,.8,.2,1) both;
+}
+.hero-art-logo{
+  min-height:360px!important;
+  position:relative;
+  display:grid!important;
+  place-items:center;
+  isolation:isolate;
+  overflow:hidden;
+  perspective:1000px;
+}
+.hero-art-logo::before,.hero-art-logo::after{content:none!important;display:none!important}
+.hero-art-logo .hero-logo-3d{
+  position:relative;z-index:2;
+  display:block;
+  width:min(82%,420px);
+  height:auto;
+  object-fit:contain;
+  transform-style:preserve-3d;
+  transform-origin:50% 55%;
+  filter:drop-shadow(0 24px 24px rgba(9,29,45,.2));
+  animation:wortinLogoEnter 1.15s cubic-bezier(.18,.72,.2,1) both,
+            wortinLogoFloat 7.5s ease-in-out 1.15s infinite;
+  will-change:transform;
+}
+.logo-aura{
+  position:absolute;z-index:0;
+  width:68%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(196,219,115,.28) 0%,rgba(143,179,210,.12) 44%,transparent 72%);
+  filter:blur(12px);
+  animation:wortinAura 9s ease-in-out infinite alternate;
+}
+.logo-orbit{
+  position:absolute;z-index:1;
+  width:62%;height:25%;
+  border:1px solid rgba(65,108,156,.15);
+  border-radius:50%;
+  transform:rotate(-24deg) rotateX(68deg);
+  pointer-events:none;
+}
+.logo-orbit-one{animation:wortinOrbit 26s linear infinite}
+.logo-orbit-two{
+  width:48%;height:48%;
+  border-color:rgba(196,219,115,.22);
+  transform:rotate(52deg) rotateX(68deg);
+  animation:wortinOrbit 34s linear infinite reverse;
+}
+.hero-art-logo:hover .hero-logo-3d{
+  animation:wortinLogoHover 700ms cubic-bezier(.2,.8,.2,1) both,
+            wortinLogoFloat 7.5s ease-in-out 700ms infinite;
+}
+@keyframes wortinLogoEnter{
+  0%{opacity:0;transform:translateY(24px) rotateX(22deg) rotateY(-18deg) scale(.82)}
+  70%{opacity:1;transform:translateY(-4px) rotateX(-5deg) rotateY(5deg) scale(1.025)}
+  100%{opacity:1;transform:translateY(0) rotateX(0) rotateY(0) scale(1)}
+}
+@keyframes wortinLogoFloat{
+  0%,100%{transform:translate3d(0,0,0) rotateX(-2deg) rotateY(-3deg)}
+  50%{transform:translate3d(0,-9px,0) rotateX(2deg) rotateY(3deg)}
+}
+@keyframes wortinLogoHover{
+  0%{transform:translateY(0) rotateX(0) rotateY(0) scale(1)}
+  55%{transform:translateY(-5px) rotateX(-7deg) rotateY(9deg) scale(1.035)}
+  100%{transform:translateY(0) rotateX(-2deg) rotateY(3deg) scale(1.015)}
+}
+@keyframes wortinAura{
+  from{transform:scale(.92);opacity:.7}
+  to{transform:scale(1.08);opacity:1}
+}
+@keyframes wortinOrbit{to{rotate:360deg}}
+@keyframes wortinMarkSettle{
+  from{opacity:0;transform:scale(.72) rotate(-12deg)}
+  to{opacity:1;transform:scale(1) rotate(0)}
+}
+@media(max-width:760px){
+  .hero-art-logo{min-height:290px!important}
+  .hero-art-logo .hero-logo-3d{width:min(72%,330px)}
+  .logo-orbit-one{width:66%}
+}
+@media(max-width:480px){
+  .hero-art-logo{min-height:250px!important}
+  .hero-art-logo .hero-logo-3d{width:min(70%,280px)}
+  .logo-orbit-two{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .brand-mark img,.hero-art-logo .hero-logo-3d,.logo-aura,.logo-orbit{
+    animation:none!important;transition:none!important;
+  }
+  .hero-art-logo .hero-logo-3d{transform:none!important}
+}
