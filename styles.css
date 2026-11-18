@@ -1837,7 +1837,7 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 }
 
 
-/* Original Wortin mark: transparent PNG, no decorative layers or effects. */
+/* Original Wortin mark: transparent WebP, no decorative layers or effects. */
 .brand-mark{background:transparent!important;box-shadow:none!important;overflow:visible!important}
 .brand-mark img{display:block;width:42px;height:42px;object-fit:contain;filter:none!important;animation:none!important}
 .hero-art-logo{background:transparent!important;border:0!important;box-shadow:none!important;min-height:340px!important;display:grid!important;place-items:center;overflow:visible!important;perspective:none!important}
