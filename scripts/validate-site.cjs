@@ -54,6 +54,17 @@ for (const token of [
 if (media.split("function renderListening(){").length - 1 !== 1) fail("Listening renderer must be defined exactly once.");
 if (!media.includes("Array.isArray(v.questions)")) fail("Listening renderer must retain question rendering for future lessons.");
 if (!css.includes("prefers-reduced-motion:reduce")) fail("Reduced-motion support is required.");
+const cardIntegrity = css.slice(css.lastIndexOf("/* Flashcard display integrity — single source of truth for both faces. */"));
+for (const selector of [
+  "#view-learn #flashcard:not(.flipped) .flash-front",
+  "#view-learn #flashcard:not(.flipped) .flash-back",
+  "#view-learn #flashcard.flipped .flash-front",
+  "#view-learn #flashcard.flipped .flash-back"
+]) if (!cardIntegrity.includes(selector)) fail("Flashcard face state rule is missing: " + selector);
+if (!cardIntegrity.includes("visibility:visible!important")) fail("Flashcard faces must remain visible while cross-fading.");
+if (!cardIntegrity.includes("opacity:1")) fail("Flashcard active face must be fully opaque.");
+if (!cardIntegrity.includes("transform:none!important")) fail("Flashcard contents must not be pushed into a separate 3D text layer.");
+if (!cardIntegrity.includes("content:none!important;display:none!important")) fail("Decorative stacked card pseudo-layers must remain disabled.");
 if (!css.includes(":focus-visible")) fail("Visible keyboard focus styles are required.");
 if (!html.includes('href="#main-content"')) fail("A skip link to main content is required.");
 
