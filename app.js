@@ -122,7 +122,7 @@ function renderStudy(){
     '</div>'
     :'<div class="flash-no-detail">برای این مدخل نکتهٔ دستوری یا مثال جداگانه ثبت نشده است.</div>';
   $("studyContent").innerHTML=
-    '<div class="study-card-scene">'+
+    '<div class="study-card-scene editorial-scene">'+
       '<div class="flashcard '+(study.revealed?"flipped":"")+'" id="flashcard" role="button" tabindex="0" aria-roledescription="فلش‌کارت" aria-label="'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ کارت")+'" aria-pressed="'+String(study.revealed)+'">'+
         '<div class="flash-face flash-front">'+
           '<div class="flash-card-top">'+
