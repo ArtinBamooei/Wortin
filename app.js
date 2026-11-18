@@ -196,7 +196,6 @@ function renderStudy(){
       '<button class="study-utility-button '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
     '</div>'+
     '<section class="study-rating-panel" aria-label="ارزیابی یادگیری واژه">'+
-      '<div class="study-rating-heading"><strong>این واژه را چطور به یاد آوردی؟</strong><span>پاسخت زمان مرور بعدی را تعیین می‌کند.</span></div>'+
       '<div class="study-controls">'+
         '<button class="study-rate-known" id="studyKnown" type="button">'+svg("check")+'<span>بلدم</span></button>'+
         '<button class="study-rate-missed" id="studyMissed" type="button">'+svg("close")+'<span>بلد نبودم</span></button>'+
