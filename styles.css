@@ -2022,168 +2022,178 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 }
 
 
-/* Flashcard flip: keep both faces composited and cross-fade; never expose the blank card surface. */
-#view-learn .flashcard{
-  isolation:isolate;
+
+/* Flashcard display integrity — single source of truth for both faces. */
+#view-learn .study-card-scene,
+#view-learn .study-card-scene.editorial-scene{
+  position:relative;display:block;width:100%;max-width:980px;
+  margin:0 auto;padding:8px 0 12px;isolation:isolate;perspective:1400px;
+}
+#view-learn .study-card-scene::before,
+#view-learn .study-card-scene::after{
+  content:none!important;display:none!important;
+}
+#view-learn #flashcard.flashcard{
+  display:block!important;position:relative!important;
+  width:100%!important;max-width:none!important;
+  height:clamp(430px,57svh,620px)!important;min-height:430px!important;
+  margin:0!important;padding:0!important;box-sizing:border-box;
+  overflow:hidden!important;isolation:isolate!important;
   background:linear-gradient(145deg,#faf8f2 0%,#f1eee5 100%)!important;
+  border:1px solid rgba(255,255,255,.82)!important;border-radius:26px!important;
+  transform:perspective(1400px) rotateX(.55deg)!important;
+  transform-style:flat!important;
+  box-shadow:
+    0 30px 58px rgba(12,25,38,.18),
+    0 10px 22px rgba(12,25,38,.09),
+    0 2px 0 rgba(125,105,84,.18),
+    inset 0 1px 0 rgba(255,255,255,.94),
+    inset 0 -1px 0 rgba(65,74,82,.08)!important;
+  filter:none!important;cursor:pointer;
 }
-#view-learn .flash-face,
-#view-learn .flash-front,
-#view-learn .flash-back,
-#view-learn .flashcard.flipped .flash-front,
-#view-learn .flashcard.flipped .flash-back{
+#view-learn #flashcard.flashcard::before,
+#view-learn #flashcard.flashcard::after,
+#view-learn #flashcard .flash-face::before,
+#view-learn #flashcard .flash-face::after{
+  content:none!important;display:none!important;
+}
+#view-learn #flashcard .flash-face{
+  display:flex!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;box-sizing:border-box;
+  flex-direction:column!important;align-items:stretch!important;
+  justify-content:space-between!important;gap:0!important;
+  margin:0!important;padding:30px clamp(24px,4vw,54px) 22px!important;
+  overflow:hidden!important;border:0!important;border-radius:25px!important;
+  color:#172536!important;text-align:right;
   visibility:visible!important;
-  backface-visibility:visible!important;
-  -webkit-backface-visibility:visible!important;
-  transition:
-    opacity 560ms cubic-bezier(.22,.72,.18,1),
-    transform 720ms cubic-bezier(.18,.82,.2,1)!important;
+  opacity:0;pointer-events:none;
+  backface-visibility:visible!important;-webkit-backface-visibility:visible!important;
+  transform:translate3d(12px,0,0) scale(.992);
+  transform-origin:center center;
+  transition:opacity 260ms ease,transform 360ms cubic-bezier(.2,.78,.18,1)!important;
+  will-change:opacity,transform;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
 }
-#view-learn .flash-front{
-  z-index:2!important;opacity:1!important;pointer-events:auto!important;
-  transform:translate3d(0,0,0) rotateY(0deg) rotateX(0deg) scale(1)!important;
+#view-learn #flashcard .flash-face>*{
+  position:relative;z-index:1;transform:none!important;
 }
-#view-learn .flash-back{
-  z-index:1!important;opacity:0!important;pointer-events:none!important;
-  transform:translate3d(22px,6px,-20px) rotateY(-5deg) rotateX(1deg) scale(.985)!important;
+#view-learn #flashcard .flash-front{
+  z-index:2;
+  background:
+    radial-gradient(ellipse at 82% 8%,rgba(226,170,120,.18),transparent 34%),
+    radial-gradient(ellipse at 0% 100%,rgba(65,103,125,.10),transparent 42%),
+    linear-gradient(145deg,#faf8f2 0%,#f1eee5 100%)!important;
 }
-#view-learn .flashcard.flipped .flash-front{
-  opacity:0!important;pointer-events:none!important;
-  transform:translate3d(-22px,-5px,-20px) rotateY(5deg) rotateX(-1deg) scale(.985)!important;
+#view-learn #flashcard:not(.flipped) .flash-front{
+  z-index:2;opacity:1;visibility:visible!important;
+  transform:translate3d(0,0,0) scale(1);pointer-events:auto;
 }
-#view-learn .flashcard.flipped .flash-back{
-  opacity:1!important;pointer-events:auto!important;
-  transform:translate3d(0,0,0) rotateY(0deg) rotateX(0deg) scale(1)!important;
+#view-learn #flashcard:not(.flipped) .flash-back{
+  z-index:1;opacity:0;visibility:visible!important;
+  transform:translate3d(12px,0,0) scale(.992);pointer-events:none;
+  background:
+    radial-gradient(ellipse at 8% 95%,rgba(80,128,145,.13),transparent 40%),
+    radial-gradient(ellipse at 94% 0%,rgba(226,170,120,.17),transparent 36%),
+    linear-gradient(145deg,#f8f5ed 0%,#eeece4 100%)!important;
 }
-@media(prefers-reduced-motion:reduce){
-  #view-learn .flash-face,#view-learn .flash-front,#view-learn .flash-back,
-  #view-learn .flashcard.flipped .flash-front,#view-learn .flashcard.flipped .flash-back{
-    transition:none!important;transform:none!important;
-  }
+#view-learn #flashcard.flipped .flash-front{
+  z-index:1;opacity:0;visibility:visible!important;
+  transform:translate3d(-12px,0,0) scale(.992);pointer-events:none;
 }
+#view-learn #flashcard.flipped .flash-back{
+  z-index:2;opacity:1;visibility:visible!important;
+  transform:translate3d(0,0,0) scale(1);pointer-events:auto;
+  background:
+    radial-gradient(ellipse at 8% 95%,rgba(80,128,145,.13),transparent 40%),
+    radial-gradient(ellipse at 94% 0%,rgba(226,170,120,.17),transparent 36%),
+    linear-gradient(145deg,#f8f5ed 0%,#eeece4 100%)!important;
+}
+#view-learn #flashcard .flash-card-top{border-color:rgba(31,48,65,.14)}
+#view-learn #flashcard .flash-type-chip{
+  border:1px solid rgba(45,66,84,.15);border-radius:99px;
+  background:rgba(255,255,255,.55);color:#596c78;
+}
+#view-learn #flashcard .flash-card-index{color:#8a9298}
+#view-learn #flashcard .flash-card-index b{color:#c87945}
+#view-learn #flashcard .flash-word{
+  color:#172536!important;
+  text-shadow:0 2px 0 rgba(255,255,255,.72),0 15px 34px rgba(24,43,58,.12)!important;
+}
+#view-learn #flashcard .flash-front-divider{background:#d77b43}
+#view-learn #flashcard .flash-front-eyebrow,
+#view-learn #flashcard .flash-front-prompt,
+#view-learn #flashcard .flash-card-footer{color:#75818a}
+#view-learn #flashcard .flash-card-footer{border-color:rgba(31,48,65,.13)}
+#view-learn #flashcard .flash-meaning-panel{
+  border:1px solid rgba(40,60,78,.12);border-right:3px solid #d77b43;
+  border-radius:14px;background:rgba(255,255,255,.68);
+  box-shadow:0 7px 20px rgba(25,42,56,.045);
+}
+#view-learn #flashcard .flash-section-label{color:#b96d3d}
+#view-learn #flashcard .flash-meaning{color:#172536!important}
+#view-learn #flashcard .flash-detail-block{
+  border-color:rgba(40,60,78,.12);border-radius:13px;background:rgba(255,255,255,.5)
+}
+#view-learn #flashcard .flash-grammar-panel .word-grammar-item{
+  background:rgba(255,255,255,.68);border-color:rgba(40,60,78,.10)
+}
+#view-learn #flashcard .flash-grammar-panel .word-grammar-item strong,
+#view-learn #flashcard .flash-example{color:#263847!important}
 
-
-/* Flashcard refinement: remove decorative card stack and organize actions as one system. */
+/* Exit control remains visible and independent of the card. */
 #view-learn .study-heading-row{
-  position:relative;display:block;min-height:52px;margin:8px 0 23px;
-  padding-right:58px;
+  position:relative;display:block;min-height:52px;
+  margin:8px 0 23px;padding-right:58px;
 }
 #view-learn .study-heading-copy{min-width:0}
 #view-learn .study-exit-button{
-  position:absolute;right:0;top:0;
-  display:grid;place-items:center;
+  position:absolute;right:0;top:0;display:grid;place-items:center;
   width:44px;min-width:44px;height:44px;min-height:44px;
-  padding:0;border-radius:14px;
-  border:1px solid color-mix(in srgb,var(--study-accent) 22%,var(--line));
-  background:var(--panel);color:var(--muted);
-  box-shadow:0 5px 14px rgba(7,18,29,.06);
+  padding:0;border-radius:14px;border:1px solid color-mix(in srgb,var(--study-accent) 22%,var(--line));
+  background:var(--panel);color:var(--muted);box-shadow:0 5px 14px rgba(7,18,29,.06);
 }
 #view-learn .study-exit-button span{display:none!important}
-#view-learn .study-exit-button svg{width:18px;height:18px;stroke-width:2}
+#view-learn .study-exit-button svg{width:18px;height:18px}
 #view-learn .study-exit-button:hover{
   transform:translateY(-1px);border-color:var(--study-warning);
-  background:color-mix(in srgb,var(--study-warning) 9%,var(--panel));
-  color:var(--study-warning);box-shadow:0 8px 18px rgba(7,18,29,.09)
+  background:color-mix(in srgb,var(--study-warning) 9%,var(--panel));color:var(--study-warning);
 }
 
-/* The previous offset pseudo-cards visually collided with the controls below. */
-#view-learn .study-card-scene,
-#view-learn .study-card-scene.editorial-scene{
-  max-width:980px;margin:0 auto;padding:8px 0 12px;
-  perspective:1600px;isolation:isolate;
-}
-#view-learn .study-card-scene:before,
-#view-learn .study-card-scene:after{
-  content:none!important;display:none!important;
-}
-
-/* A single, more dimensional editorial card: bevel, rim and depth without stacked copies. */
-#view-learn .flashcard{
-  position:relative;isolation:isolate;overflow:hidden;
-  transform:perspective(1600px) rotateX(1.15deg) rotateY(-.35deg);
-  transform-style:preserve-3d;
-  border:1px solid rgba(255,255,255,.75);
-  box-shadow:
-    0 34px 64px rgba(12,25,38,.19),
-    0 12px 24px rgba(12,25,38,.10),
-    0 3px 0 rgba(125,105,84,.18),
-    inset 0 1px 0 rgba(255,255,255,.92),
-    inset 0 -1px 0 rgba(65,74,82,.08);
-}
-#view-learn .flashcard:before{
-  content:"";display:block!important;position:absolute;z-index:8;inset:0;
-  border:1px solid rgba(255,255,255,.58);border-radius:inherit;
-  pointer-events:none;box-shadow:inset 0 0 0 1px rgba(31,48,65,.045);
-}
-#view-learn .flashcard:after{display:none!important;content:none!important}
-#view-learn .flash-face{
-  transform-style:preserve-3d;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
-}
-#view-learn .flash-face>*{
-  transform:translateZ(12px);
-}
-#view-learn .flash-face:after{z-index:0}
-#view-learn .flash-card-top,
-#view-learn .flash-front-content,
-#view-learn .flash-back-content,
-#view-learn .flash-card-footer{transform:translateZ(12px)}
-#view-learn .flash-word{
-  text-shadow:0 2px 0 rgba(255,255,255,.72),0 15px 34px rgba(24,43,58,.12)!important;
-}
-@media(hover:hover) and (pointer:fine){
-  #view-learn .flashcard:not(.flipped):hover{
-    transform:perspective(1600px) rotateX(.45deg) rotateY(-.15deg) translateY(-2px);
-    box-shadow:0 40px 76px rgba(12,25,38,.22),0 14px 28px rgba(12,25,38,.11),0 3px 0 rgba(125,105,84,.18),inset 0 1px 0 rgba(255,255,255,.92);
-  }
-}
-
-/* Reveal / audio / bookmark controls: aligned to the same card width. */
+/* Action row and ratings stay aligned with the real card. */
 #view-learn .study-card-actions{
-  max-width:980px;margin:0 auto 13px;padding:0;
+  display:grid;width:100%;max-width:980px;margin:0 auto 13px;padding:0;
   grid-template-columns:minmax(0,1fr) 58px 58px;gap:9px;
 }
-#view-learn .study-card-actions button{
-  min-height:50px;border-radius:13px;
-}
+#view-learn .study-card-actions button{min-height:50px;border-radius:13px}
 #view-learn .study-card-actions .study-reveal-button{
   display:flex;align-items:center;justify-content:center;gap:11px;
   background:linear-gradient(135deg,#1b3044 0%,#29475b 100%);
   border:1px solid rgba(255,255,255,.13);color:#f8f5ed;
   box-shadow:0 8px 18px rgba(17,37,55,.18),inset 0 1px 0 rgba(255,255,255,.16);
 }
-#view-learn .study-card-actions .study-reveal-button svg{
-  width:20px;height:20px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))
-}
+#view-learn .study-card-actions .study-reveal-button svg{width:20px;height:20px}
 #view-learn .study-card-actions .study-reveal-button span{font-size:13px;font-weight:750}
-#view-learn .study-card-actions .study-reveal-button:hover{
-  transform:translateY(-2px);box-shadow:0 12px 24px rgba(17,37,55,.22),inset 0 1px 0 rgba(255,255,255,.2)
-}
 #view-learn .study-card-actions .study-utility-button{
   width:58px;min-width:58px;padding:0;background:var(--panel);
-  border:1px solid var(--line);color:var(--muted);box-shadow:0 4px 12px rgba(7,18,29,.045)
+  border:1px solid var(--line);color:var(--muted);box-shadow:0 4px 12px rgba(7,18,29,.045);
 }
 #view-learn .study-card-actions .study-utility-button svg{width:19px;height:19px}
 #view-learn .study-card-actions .study-utility-button.is-saved{
-  background:var(--study-accent-soft);border-color:var(--study-accent);color:var(--study-accent-strong)
+  background:var(--study-accent-soft);border-color:var(--study-accent);color:var(--study-accent-strong);
 }
-
-/* Rating choices: a compact, equal-width decision row directly under the card actions. */
 #view-learn .study-rating-panel{
-  max-width:980px;margin:0 auto;padding:15px 16px 16px;
+  display:none;width:100%;max-width:980px;margin:0 auto;padding:15px 16px 16px;
   border-radius:16px;border:1px solid var(--line);
   background:color-mix(in srgb,var(--panel) 94%,transparent);
   box-shadow:0 8px 24px rgba(7,18,29,.045);
 }
+#view-learn .study-shell.is-revealed .study-rating-panel{display:block}
 #view-learn .study-rating-heading{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:10px;margin:0 2px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 12px;
 }
 #view-learn .study-rating-heading strong{font-size:13px;font-weight:800}
 #view-learn .study-rating-heading span{font-size:10px;color:var(--muted)}
-#view-learn .study-controls{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;
-}
+#view-learn .study-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 #view-learn .study-controls button{
   min-width:0;min-height:58px;padding:10px 8px;
   display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;
@@ -2192,35 +2202,45 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 }
 #view-learn .study-controls button svg{width:18px;height:18px}
 #view-learn .study-controls .study-rate-known{
-  background:linear-gradient(135deg,#dce9d2,#c5dcb4);
-  border-color:#b5cc9f;color:#263d2a;
+  background:linear-gradient(135deg,#dce9d2,#c5dcb4);border-color:#b5cc9f;color:#263d2a;
 }
 #view-learn .study-controls .study-rate-missed{
-  background:linear-gradient(135deg,#f7e3d8,#f1d4c5);
-  border-color:#e9c3af;color:#79452f;
+  background:linear-gradient(135deg,#f7e3d8,#f1d4c5);border-color:#e9c3af;color:#79452f;
 }
 #view-learn .study-controls .study-rate-again{
-  background:linear-gradient(135deg,#ece9df,#e4e0d5);
-  border-color:#d7d2c5;color:#4b514f;
+  background:linear-gradient(135deg,#ece9df,#e4e0d5);border-color:#d7d2c5;color:#4b514f;
 }
 #view-learn .study-controls button:hover{transform:translateY(-2px);box-shadow:0 8px 17px rgba(7,18,29,.08)}
+@media(hover:hover) and (pointer:fine){
+  #view-learn #flashcard:not(.flipped):hover{
+    transform:perspective(1400px) rotateX(.25deg) translateY(-2px)!important;
+    box-shadow:0 38px 70px rgba(12,25,38,.21),0 12px 26px rgba(12,25,38,.11),0 2px 0 rgba(125,105,84,.18),inset 0 1px 0 rgba(255,255,255,.94)!important;
+  }
+}
 @media(max-width:620px){
-  #view-learn .study-heading-row{padding-right:50px;margin:4px 0 16px;min-height:42px}
+  #view-learn .study-heading-row{min-height:42px;margin:4px 0 16px;padding-right:50px}
   #view-learn .study-exit-button{width:40px;min-width:40px;height:40px;min-height:40px;border-radius:12px}
   #view-learn .study-heading-copy h1{font-size:25px}
   #view-learn .study-heading-copy p{font-size:10px;line-height:1.8}
   #view-learn .study-card-scene.editorial-scene{padding:5px 0 9px}
-  #view-learn .study-card-scene:before,#view-learn .study-card-scene:after{display:none!important;content:none!important}
-  #view-learn .flashcard{
-    height:clamp(390px,56svh,520px);min-height:390px;border-radius:21px;
-    transform:perspective(1200px) rotateX(.8deg);
-    box-shadow:0 25px 45px rgba(8,20,32,.18),0 8px 16px rgba(8,20,32,.09),0 2px 0 rgba(125,105,84,.18),inset 0 1px 0 rgba(255,255,255,.9);
+  #view-learn #flashcard.flashcard{
+    height:clamp(390px,56svh,520px)!important;min-height:390px!important;
+    border-radius:21px!important;transform:perspective(1200px) rotateX(.35deg)!important;
+    box-shadow:0 24px 44px rgba(8,20,32,.18),0 8px 16px rgba(8,20,32,.09),0 2px 0 rgba(125,105,84,.18),inset 0 1px 0 rgba(255,255,255,.9)!important;
   }
-  #view-learn .flash-face{border-radius:21px}
-  #view-learn .flash-face>*{transform:translateZ(8px)}
-  #view-learn .study-card-actions{
-    grid-template-columns:minmax(0,1fr) 48px 48px;gap:7px;margin-bottom:10px;
-  }
+  #view-learn #flashcard .flash-face{padding:18px 17px 15px!important;border-radius:20px!important}
+  #view-learn #flashcard .flash-card-top{padding-bottom:10px}
+  #view-learn #flashcard .flash-type-chip{min-height:25px;padding:3px 9px;font-size:9px}
+  #view-learn #flashcard .flash-front-eyebrow{font-size:11px}
+  #view-learn #flashcard .flash-word{font-size:clamp(39px,9vw,57px)!important;letter-spacing:-1.2px!important;margin:19px 0 16px!important}
+  #view-learn #flashcard .flash-front-prompt{font-size:11px;margin-top:13px}
+  #view-learn #flashcard .flash-card-footer{gap:7px;padding-top:9px}
+  #view-learn #flashcard .flash-card-footer span:last-child{font-size:8px}
+  #view-learn #flashcard .flash-back-content{gap:9px;padding:10px 1px}
+  #view-learn #flashcard .flash-meaning-panel{padding:12px 13px}
+  #view-learn #flashcard .flash-meaning{font-size:clamp(20px,5.2vw,25px)!important}
+  #view-learn #flashcard .flash-detail-block{padding:10px 11px}
+  #view-learn .study-card-actions{grid-template-columns:minmax(0,1fr) 48px 48px;gap:7px;margin-bottom:10px}
   #view-learn .study-card-actions button{min-height:47px;border-radius:11px}
   #view-learn .study-card-actions .study-utility-button{width:48px;min-width:48px}
   #view-learn .study-card-actions .study-utility-button span{display:none}
@@ -2238,12 +2258,13 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   #view-learn .study-controls button svg{width:18px;height:18px}
 }
 @media(max-width:360px){
-  #view-learn .study-controls button{font-size:9px;gap:4px;min-height:62px}
+  #view-learn .study-controls button{min-height:62px;font-size:9px;gap:4px}
   #view-learn .study-controls button svg{width:16px;height:16px}
 }
 @media(prefers-reduced-motion:reduce){
-  #view-learn .flashcard,#view-learn .flash-face,#view-learn .study-controls button,
-  #view-learn .study-card-actions button,#view-learn .study-exit-button{
-    transition:none!important;transform:none!important;
-  }
+  #view-learn #flashcard.flashcard,
+  #view-learn #flashcard .flash-face,
+  #view-learn .study-controls button,
+  #view-learn .study-card-actions button,
+  #view-learn .study-exit-button{transition:none!important;transform:none!important}
 }
