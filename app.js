@@ -191,7 +191,7 @@ function renderStudy(){
       '</div>'+
     '</div>'+
     '<div class="study-card-actions">'+
-      '<button class="study-reveal-button" id="studyReveal" type="button">'+svg("refresh")+' '+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</button>'+
+      '<button class="study-reveal-button" id="studyReveal" type="button">'+svg(study.revealed?"eye-off":"eye")+'<span>'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</span></button>'+
       '<button class="study-utility-button" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>تلفظ</span></button>'+
       '<button class="study-utility-button '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
     '</div>'+
@@ -211,7 +211,7 @@ function renderStudy(){
     card.setAttribute("aria-label",study.revealed?"بازگشت به روی کارت":"نمایش پاسخ کارت");
     shell?.classList.toggle("is-revealed",study.revealed);
     const reveal=$("studyReveal");
-    if(reveal)reveal.innerHTML=svg("refresh")+(study.revealed?" بازگشت به روی کارت":" نمایش پاسخ");
+    if(reveal)reveal.innerHTML=svg(study.revealed?"eye-off":"eye")+'<span>'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</span>';
   };
   $("flashcard").onclick=toggleCard;
   $("flashcard").onkeydown=e=>{
