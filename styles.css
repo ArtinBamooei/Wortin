@@ -1845,3 +1845,7 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 .hero-art-logo .hero-logo-3d{display:block;width:min(82%,420px);height:auto;max-height:390px;object-fit:contain;filter:none!important;transform:none!important;animation:none!important;will-change:auto}
 @media(max-width:760px){.hero-art-logo{min-height:290px!important}.hero-art-logo .hero-logo-3d{width:min(72%,330px)}}
 @media(max-width:480px){.hero-art-logo{min-height:250px!important}.hero-art-logo .hero-logo-3d{width:min(70%,280px)}}
+
+
+/* Remove the main top header completely; the content starts at the top. */
+.main > .topbar{display:none!important}
