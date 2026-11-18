@@ -2020,3 +2020,44 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   #view-learn .flash-face,#view-learn .flashcard.flipped .flash-front,#view-learn .flashcard.flipped .flash-back,
   #view-learn .flash-face:after{animation:none!important;transition:none!important}
 }
+
+
+/* Flashcard flip: keep both faces composited and cross-fade; never expose the blank card surface. */
+#view-learn .flashcard{
+  isolation:isolate;
+  background:linear-gradient(145deg,#faf8f2 0%,#f1eee5 100%)!important;
+}
+#view-learn .flash-face,
+#view-learn .flash-front,
+#view-learn .flash-back,
+#view-learn .flashcard.flipped .flash-front,
+#view-learn .flashcard.flipped .flash-back{
+  visibility:visible!important;
+  backface-visibility:visible!important;
+  -webkit-backface-visibility:visible!important;
+  transition:
+    opacity 560ms cubic-bezier(.22,.72,.18,1),
+    transform 720ms cubic-bezier(.18,.82,.2,1)!important;
+}
+#view-learn .flash-front{
+  z-index:2!important;opacity:1!important;pointer-events:auto!important;
+  transform:translate3d(0,0,0) rotateY(0deg) rotateX(0deg) scale(1)!important;
+}
+#view-learn .flash-back{
+  z-index:1!important;opacity:0!important;pointer-events:none!important;
+  transform:translate3d(22px,6px,-20px) rotateY(-5deg) rotateX(1deg) scale(.985)!important;
+}
+#view-learn .flashcard.flipped .flash-front{
+  opacity:0!important;pointer-events:none!important;
+  transform:translate3d(-22px,-5px,-20px) rotateY(5deg) rotateX(-1deg) scale(.985)!important;
+}
+#view-learn .flashcard.flipped .flash-back{
+  opacity:1!important;pointer-events:auto!important;
+  transform:translate3d(0,0,0) rotateY(0deg) rotateX(0deg) scale(1)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn .flash-face,#view-learn .flash-front,#view-learn .flash-back,
+  #view-learn .flashcard.flipped .flash-front,#view-learn .flashcard.flipped .flash-back{
+    transition:none!important;transform:none!important;
+  }
+}
