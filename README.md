@@ -56,7 +56,7 @@ Open `index.html` in a local static web server (recommended) or publish it with 
 - Reduced-motion preferences are respected.
 - Account registration and login use Supabase Auth. Anonymous learning progress stays on that browser; signed-in users sync progress through the user-owned `user_progress` table.
 - Browser security depends on the deployed CSP plus RLS in Supabase; the publishable key is not a substitute for row-level access policies.
-- Supabase's leaked-password protection was flagged as disabled by the security advisor during the 2026-10-27 audit. Enable it in **Authentication → Security and Protection** if the project's plan exposes the setting; do not treat this as fixed by client-side password rules.
+- Supabase's leaked-password protection was flagged as disabled by the security advisor in the 2026-11-17 audit. The setting is under **Authentication → Sign In / Providers → Email → Prevent use of leaked passwords** and is available on Supabase Pro and above. On lower plans, retain strong server-side minimum-length and character requirements where available; client-side validation alone is not an equivalent server-side control. Re-run the Security Advisor after changing Auth settings.
 
 
 ## Checks
