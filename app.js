@@ -199,7 +199,7 @@ function renderStudy(){
       '<div class="study-controls">'+
         '<button class="study-rate-known" id="studyKnown" type="button">'+svg("check")+'<span>بلدم</span></button>'+
         '<button class="study-rate-missed" id="studyMissed" type="button">'+svg("close")+'<span>بلد نبودم</span></button>'+
-        '<button class="study-rate-again" id="studyAgain" type="button">'+svg("refresh")+'<span>دوباره مرور کن</span></button>'+
+        '<button class="study-rate-again" id="studyAgain" type="button">'+svg("clock")+'<span>مرور مجدد</span></button>'+
       '</div>'+
     '</section>';
   const toggleCard=()=>{
