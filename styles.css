@@ -1847,7 +1847,10 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 @media(max-width:480px){.hero-art-logo{min-height:250px!important}.hero-art-logo .hero-logo-3d{width:min(70%,280px)}}
 
 
-/* Remove the main top header and collapse its layout footprint. */
-.main > header.topbar,
-.main > .topbar{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;}
-.main{padding-top:0!important;}
+/* Restore the functional top header; remove the empty logo panel on phones. */
+.main > header.topbar{display:flex!important;height:66px;min-height:66px;margin:0;border-bottom:1px solid var(--line);}
+@media(max-width:620px){
+  #view-home .hero-art-logo{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;}
+  #view-home .hero{grid-template-columns:1fr;min-height:0!important;}
+  #view-home .hero-copy{grid-column:1;padding-top:24px;}
+}
