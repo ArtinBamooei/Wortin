@@ -2182,7 +2182,7 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   background:var(--study-accent-soft);border-color:var(--study-accent);color:var(--study-accent-strong);
 }
 #view-learn .study-rating-panel{
-  display:none;width:100%;max-width:980px;margin:0 auto;padding:15px 16px 16px;
+  display:none;width:100%;max-width:980px;margin:0 auto;padding:12px;
   border-radius:16px;border:1px solid var(--line);
   background:color-mix(in srgb,var(--panel) 94%,transparent);
   box-shadow:0 8px 24px rgba(7,18,29,.045);
@@ -2193,9 +2193,9 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 }
 #view-learn .study-rating-heading strong{font-size:13px;font-weight:800}
 #view-learn .study-rating-heading span{font-size:10px;color:var(--muted)}
-#view-learn .study-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#view-learn .study-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
 #view-learn .study-controls button{
-  min-width:0;min-height:58px;padding:10px 8px;
+  min-width:0;min-height:54px;padding:10px 8px;
   display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;
   border-radius:12px;font-size:12px;font-weight:750;white-space:nowrap;
   box-shadow:0 4px 11px rgba(7,18,29,.035);
@@ -2208,7 +2208,8 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   background:linear-gradient(135deg,#f7e3d8,#f1d4c5);border-color:#e9c3af;color:#79452f;
 }
 #view-learn .study-controls .study-rate-again{
-  background:linear-gradient(135deg,#ece9df,#e4e0d5);border-color:#d7d2c5;color:#4b514f;
+  background:linear-gradient(135deg,#e8edf0,#dbe4e9);border-color:#c7d4dc;color:#304b5b;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 11px rgba(35,61,78,.06);
 }
 #view-learn .study-controls button:hover{transform:translateY(-2px);box-shadow:0 8px 17px rgba(7,18,29,.08)}
 @media(hover:hover) and (pointer:fine){
@@ -2246,13 +2247,10 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   #view-learn .study-card-actions .study-utility-button span{display:none}
   #view-learn .study-card-actions .study-reveal-button{gap:8px}
   #view-learn .study-card-actions .study-reveal-button span{font-size:11px}
-  #view-learn .study-rating-panel{margin-top:0;padding:12px 10px 11px;border-radius:13px}
-  #view-learn .study-rating-heading{align-items:flex-start;flex-direction:column;gap:2px;margin:0 2px 9px}
-  #view-learn .study-rating-heading strong{font-size:11px}
-  #view-learn .study-rating-heading span{font-size:9px}
-  #view-learn .study-controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  #view-learn .study-rating-panel{margin-top:0;padding:9px;border-radius:13px}
+  #view-learn .study-controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
   #view-learn .study-controls button{
-    min-height:65px;flex-direction:column;gap:5px;padding:7px 3px;
+    min-height:62px;flex-direction:column;gap:5px;padding:7px 3px;
     border-radius:10px;font-size:10px;line-height:1.4;white-space:normal;
   }
   #view-learn .study-controls button svg{width:18px;height:18px}
