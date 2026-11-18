@@ -1847,5 +1847,7 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 @media(max-width:480px){.hero-art-logo{min-height:250px!important}.hero-art-logo .hero-logo-3d{width:min(70%,280px)}}
 
 
-/* Remove the main top header completely; the content starts at the top. */
-.main > .topbar{display:none!important}
+/* Remove the main top header and collapse its layout footprint. */
+.main > header.topbar,
+.main > .topbar{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;}
+.main{padding-top:0!important;}
