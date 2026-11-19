@@ -62,8 +62,8 @@ function renderStatsWeekChart(){const labels=["ش","ی","د","س","چ","پ","ج"
 function firstExample(w){return w.examples_de[0]||w.example_de||w.extra_examples_de[0]||""}
 function caseTokenHtml(value){
  const labels={Nominativ:"Nominativ",Akkusativ:"Akkusativ",Dativ:"Dativ",Genitiv:"Genitiv"};
- return safe(value).replace(/\\b(Nominativ|Akkusativ|Dativ|Genitiv)\\b/gi,match=>'<span class="case-token case-'+match.toLowerCase()+'">'+(labels[match[0].toUpperCase()+match.slice(1).toLowerCase()]||match)+'</span>')
- .replace(/\\b(Nom\\.?|Akk\\.?|Dat\\.?|Gen\\.?)\\b/gi,match=>{const key=match.toLowerCase().startsWith("nom")?"nominativ":match.toLowerCase().startsWith("akk")?"akkusativ":match.toLowerCase().startsWith("dat")?"dativ":"genitiv";return '<span class="case-token case-'+key+'">'+match+'</span>'})
+ return safe(value).replace(/\b(Nominativ|Akkusativ|Dativ|Genitiv)\b/gi,match=>'<span class="case-token case-'+match.toLowerCase()+'">'+(labels[match[0].toUpperCase()+match.slice(1).toLowerCase()]||match)+'</span>')
+ .replace(/\b(Nom\\.?|Akk\\.?|Dat\\.?|Gen\\.?)\b/gi,match=>{const key=match.toLowerCase().startsWith("nom")?"nominativ":match.toLowerCase().startsWith("akk")?"akkusativ":match.toLowerCase().startsWith("dat")?"dativ":"genitiv";return '<span class="case-token case-'+key+'">'+match+'</span>'})
 }
 function wordGrammarHtml(w){
  const kasus=String(w?.case_info??"").trim(),prep=String(w?.preposition??"").trim();
@@ -73,7 +73,7 @@ function wordGrammarHtml(w){
  return '<div class="word-grammar-meta" aria-label="اطلاعات دستوری">'+(kasus?'<section class="grammar-case-block"><div class="grammar-label">حالت دستوری · Kasus</div><div class="grammar-detail-list">'+caseRows+'</div></section>':"")+prepHtml+'</div>'
 }
 function highlightGermanArticles(value){
- return safe(value).replace(/\\b(der|die|das)\\b/gi,match=>'<span class="article-token article-'+match.toLowerCase()+'">'+match+'</span>')
+ return safe(value).replace(/\b(der|die|das)\b/gi,match=>'<span class="article-token article-'+match.toLowerCase()+'">'+match+'</span>')
 }
 function dailyMeaningHtml(value){
  const parts=String(value||"معنی فارسی ثبت نشده است.").split(/[؛;]+/).map(x=>x.trim()).filter(Boolean);
