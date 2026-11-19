@@ -63,7 +63,7 @@ function firstExample(w){return w.examples_de[0]||w.example_de||w.extra_examples
 function caseTokenHtml(value){
  const labels={Nominativ:"Nominativ",Akkusativ:"Akkusativ",Dativ:"Dativ",Genitiv:"Genitiv"};
  return safe(value).replace(/\b(Nominativ|Akkusativ|Dativ|Genitiv)\b/gi,match=>'<span class="case-token case-'+match.toLowerCase()+'">'+(labels[match[0].toUpperCase()+match.slice(1).toLowerCase()]||match)+'</span>')
- .replace(/\b(Nom\\.?|Akk\\.?|Dat\\.?|Gen\\.?)\b/gi,match=>{const key=match.toLowerCase().startsWith("nom")?"nominativ":match.toLowerCase().startsWith("akk")?"akkusativ":match.toLowerCase().startsWith("dat")?"dativ":"genitiv";return '<span class="case-token case-'+key+'">'+match+'</span>'})
+ .replace(/\b(Nom\.?|Akk\.?|Dat\.?|Gen\.?)\b/gi,match=>{const key=match.toLowerCase().startsWith("nom")?"nominativ":match.toLowerCase().startsWith("akk")?"akkusativ":match.toLowerCase().startsWith("dat")?"dativ":"genitiv";return '<span class="case-token case-'+key+'">'+match+'</span>'})
 }
 function wordGrammarHtml(w){
  const kasus=String(w?.case_info??"").trim(),prep=String(w?.preposition??"").trim();
