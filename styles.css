@@ -2296,3 +2296,14 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
  #view-daily .grammar-detail-row{gap:7px;padding:8px}
  #view-daily .grammar-detail-row p,#view-daily .grammar-preposition p{font-size:12px;line-height:1.85}
 }
+
+/* Keep the shared grammar renderer legible on flashcards as well. */
+#view-learn .flash-grammar-panel .word-grammar-meta{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;max-width:100%;margin:8px 0}
+#view-learn .flash-grammar-panel .grammar-case-block,
+#view-learn .flash-grammar-panel .grammar-preposition{padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.48)}
+#view-learn .flash-grammar-panel .grammar-detail-list{display:grid;gap:6px}
+#view-learn .flash-grammar-panel .grammar-detail-row{display:flex;gap:7px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.62)}
+#view-learn .flash-grammar-panel .grammar-detail-row p,
+#view-learn .flash-grammar-panel .grammar-preposition p{margin:0;font-size:11px;line-height:1.8;color:var(--text);overflow-wrap:anywhere}
+#view-learn .flash-grammar-panel .grammar-label{font-size:10px;margin-bottom:7px}
+#view-learn .flash-grammar-panel .case-token{font-size:10px;padding:1px 5px}
