@@ -2472,9 +2472,7 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 @media(max-width:620px){
   #view-learn #studyContent .study-card-actions{
     grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    grid-template-areas:
-      "reveal reveal reveal"
-      "previous audio save"!important;
+    grid-template-areas: "reveal reveal reveal" "previous audio save" !important;
     gap:8px!important;
     padding:0 2px!important;
     margin-top:10px!important;
