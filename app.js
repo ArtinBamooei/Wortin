@@ -219,8 +219,7 @@ function renderStudy(){
       '<button class="study-utility-button study-previous-action" id="studyPrevious" type="button" aria-label="رفتن به کارت قبلی" '+(study.index===0?"disabled":"")+'>'+svg("arrow")+'<span>کارت قبلی</span></button>'+
       '<button class="study-utility-button study-audio-action" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>شنیدن تلفظ</span></button>'+
       '<button class="study-utility-button study-save-action '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
-    '</div>'+
-;
+    '</div>';
   const toggleCard=()=>{
     study.revealed=!study.revealed;
     const card=$("flashcard");
