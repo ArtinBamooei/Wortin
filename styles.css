@@ -2317,3 +2317,58 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 #view-daily .daily-grammar-section .grammar-preposition{width:100%;box-sizing:border-box}
 #view-daily .daily-word-title .article-token{font-size:.72em;vertical-align:.12em;margin-inline-end:5px;padding:3px 8px;border-radius:8px}
 #view-daily .daily-example p .article-token{font-weight:800;padding:1px 4px;border-radius:4px}
+
+
+/* Daily learning controls: restore strong contrast in both themes. */
+#view-daily .daily-word-actions{gap:10px}
+#view-daily .daily-word-actions .btn-secondary,
+#view-daily .daily-word-footer #dailyPrev{
+  min-height:46px;
+  padding:11px 17px;
+  border:1px solid color-mix(in srgb,var(--blue) 32%,var(--line));
+  background:color-mix(in srgb,var(--blue) 12%,var(--panel));
+  color:var(--text);
+  font-size:13px;
+  font-weight:750;
+  opacity:1;
+  box-shadow:0 2px 8px rgba(20,40,60,.06);
+}
+#view-daily .daily-word-actions .btn-secondary svg,
+#view-daily .daily-word-footer #dailyPrev svg{
+  width:18px;height:18px;flex:none;color:var(--blue);opacity:1;
+}
+#view-daily #dailyBookmark{
+  border-color:color-mix(in srgb,var(--lime2) 42%,var(--line));
+  background:color-mix(in srgb,var(--lime) 19%,var(--panel));
+}
+#view-daily #dailyBookmark svg{color:var(--lime2)}
+#view-daily #dailySpeak{
+  border-color:color-mix(in srgb,var(--blue) 42%,var(--line));
+  background:color-mix(in srgb,var(--blue) 15%,var(--panel));
+}
+#view-daily #dailySpeak svg{color:var(--blue)}
+#view-daily .daily-word-actions .btn-secondary:hover,
+#view-daily .daily-word-footer #dailyPrev:hover:not(:disabled){
+  background:color-mix(in srgb,var(--blue) 23%,var(--panel));
+  border-color:var(--blue);
+  color:var(--text);
+  transform:translateY(-1px);
+  box-shadow:0 5px 14px rgba(20,40,60,.10);
+}
+#view-daily #dailyBookmark:hover{
+  background:color-mix(in srgb,var(--lime) 28%,var(--panel));
+  border-color:var(--lime2);
+}
+#view-daily .daily-word-footer #dailyPrev:disabled{
+  opacity:.78;
+  color:var(--muted);
+  background:var(--panel2);
+  border-color:var(--line);
+  box-shadow:none;
+  cursor:not-allowed;
+}
+#view-daily .daily-word-footer #dailyPrev:disabled svg{color:var(--muted);opacity:1}
+@media(max-width:620px){
+ #view-daily .daily-word-actions .btn-secondary,
+ #view-daily .daily-word-footer #dailyPrev{min-height:44px;padding:10px 13px;font-size:12px}
+}
