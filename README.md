@@ -31,6 +31,18 @@ The app uses the Supabase **publishable** key in the browser, not a service-role
 
 The migrations are repeatable for the intended schema baseline. Review changes before applying them to an existing production project.
 
+### Security hardening audit (2026-11-19)
+
+- `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
+- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT and UPDATE. Policies bind every operation to `auth.uid() = user_id`; anonymous access and DELETE are revoked.
+- No public views or `SECURITY DEFINER` functions were found in the exposed `public` schema. No tables were found in the `supabase_realtime` publication.
+- Browser source uses only the Supabase publishable key. Never replace it with a service-role or secret key.
+- The site CSP blocks inline scripts, `eval`, objects and unapproved frames. Inline styles remain allowed because the current UI uses inline style attributes.
+- The auth redirect is pinned to the canonical GitHub Pages URL. Third-party Aparat embeds are host-validated and sandboxed.
+- GitHub Pages does not provide configurable response headers for this static deployment. The HTML meta CSP and referrer policy do not replace HSTS, `X-Content-Type-Options`, `Permissions-Policy`, or `frame-ancestors` response headers. A CDN or custom host with response-header rules is required to enforce them.
+- Supabase Security Advisor reports `Leaked Password Protection Disabled`. Enable it under **Authentication → Sign In / Providers → Email → Prevent use of leaked passwords** if the plan supports it. This is a server-side setting and cannot be enforced by frontend validation.
+
+
 ## Publish with GitHub Pages
 
 In the repository, open **Settings → Pages** and select **GitHub Actions** under Build and deployment. Save. The workflow runs JavaScript syntax checks, security/source validation and automated learning-logic tests before deploying the static site. Open:
