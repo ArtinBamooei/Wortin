@@ -2265,3 +2265,34 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
   #view-learn .study-card-actions button,
   #view-learn .study-exit-button{transition:none!important;transform:none!important}
 }
+
+
+/* Daily learning: readable meanings, explicit case hierarchy, and article color coding. */
+#view-daily .daily-meaning-parts{display:grid;gap:8px;max-width:690px;margin:14px auto 22px;padding:0;list-style:none;text-align:right}
+#view-daily .daily-meaning-parts li{position:relative;padding:10px 14px 10px 16px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);font-size:clamp(15px,2vw,19px);font-weight:650;line-height:1.8}
+#view-daily .daily-meaning-parts li:before{content:"";position:absolute;right:0;top:10px;bottom:10px;width:3px;border-radius:4px;background:var(--study-accent,var(--accent))}
+#view-daily .grammar-case-block{min-width:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+#view-daily .grammar-label{display:block;margin:0 0 10px;color:var(--muted);font-size:11px;font-weight:750}
+#view-daily .grammar-detail-list{display:grid;gap:8px}
+#view-daily .grammar-detail-row{display:flex;align-items:flex-start;gap:9px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+#view-daily .grammar-row-index{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:7px;background:var(--panel3);color:var(--muted);font-size:10px}
+#view-daily .grammar-detail-row p,#view-daily .grammar-preposition p{margin:0;color:var(--text);font-size:13px;font-weight:600;line-height:1.9;overflow-wrap:anywhere}
+#view-daily .grammar-preposition{margin-top:9px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+#view-daily .case-token{display:inline-block;margin:1px 2px;padding:2px 7px;border:1px solid currentColor;border-radius:7px;font-size:.88em;font-weight:800;white-space:nowrap;direction:ltr}
+#view-daily .case-nominativ{color:#2768b2;background:#e8f1ff;border-color:#b8d1f4}
+#view-daily .case-akkusativ{color:#b65b24;background:#fff0e5;border-color:#f0c7a7}
+#view-daily .case-dativ{color:#24764d;background:#e7f5ec;border-color:#b9dfc8}
+#view-daily .case-genitiv{color:#7851a8;background:#f2ebfb;border-color:#d8c7ef}
+#view-daily .article-token{display:inline-block;padding:0 .12em;border-radius:5px;font-weight:850}
+#view-daily .article-der{color:#2468b5;background:#e8f1ff}
+#view-daily .article-die{color:#b4475c;background:#ffedf0}
+#view-daily .article-das{color:#258052;background:#e8f6ed}
+#view-daily .daily-word-title .article-token{padding:0 .16em}
+#view-daily .daily-example p .article-token{padding:0 .1em}
+@media(max-width:620px){
+ #view-daily .daily-meaning-parts{gap:6px;margin:12px auto 18px}
+ #view-daily .daily-meaning-parts li{padding:9px 12px;font-size:15px}
+ #view-daily .grammar-case-block{padding:10px}
+ #view-daily .grammar-detail-row{gap:7px;padding:8px}
+ #view-daily .grammar-detail-row p,#view-daily .grammar-preposition p{font-size:12px;line-height:1.85}
+}
