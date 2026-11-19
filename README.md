@@ -1,82 +1,86 @@
-# Wortin
+"use strict";
 
-**Wortin** is a Persian-first German vocabulary practice web app based on the supplied Goethe-Zertifikat B1 word-list dataset.
+const fs = require("node:fs");
+const path = require("node:path");
 
-## Features
+const root = path.resolve(__dirname, "..");
+const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
+const fail = (message) => {
+  console.error(`Site validation failed: ${message}`);
+  process.exitCode = 1;
+};
 
-- Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
-- Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows, a compact five-item mobile bar with a More panel, and keyboard-visible focus states.
-- Cached-first vocabulary loading with background refresh, fewer initial API requests, and lazy rendering of inactive dictionary/review/statistics views.
-- Vocabulary search across German words, Persian meanings and example sentences.
-- Word details, example sentences, grammar/case notes, prepositions and source page when present.
-- Flashcards, a four-option meaning quiz, German text-to-speech, saved words and spaced-review scheduling with 10-minute retries, 1-day and 3-day early intervals, then gradual expansion up to 180 days.
-- Personal progress, weekly activity, daily goal and mastery overview.
-- Supabase as the vocabulary source; progress is cached in per-user local storage and synchronized through `public.user_progress` for signed-in users.
+const requiredFiles = [
+  "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md",
+  "supabase/migrations/20261023084218_wortin_vocabulary_schema.sql",
+  "supabase/migrations/20261025065829_user_progress_security.sql"
+];
+for (const name of requiredFiles) if (!fs.existsSync(path.join(root, name))) fail(`Required file is missing: ${name}`);
+if (process.exitCode) process.exit(1);
 
-## Data
+const html = read("index.html"), app = read("app.js"), css = read("styles.css"), media = read("learning-media.js");
+const hasNoReferrer = html.includes('<meta name="referrer" content="no-referrer">');
+if (!hasNoReferrer) fail("Referrer policy must be no-referrer.");
+if (csp && !csp.includes("form-action 'self';")) fail("CSP form-action must be same-origin only.");
+if (csp && /(?:script-src|connect-src|frame-src)[^;]*\\*/.test(csp)) fail("CSP must not contain wildcard source expressions.");
+if (!app.includes('const SUPABASE_URL="https://')) fail("Supabase URL must use HTTPS.");
+if (!app.includes('const SUPABASE_KEY="sb_publishable_')) fail("Browser key must be a publishable key.");
+if (!app.includes('const AUTH_REDIRECT_URL="https://artinbamooei.github.io/Wortin/";')) fail("Auth redirect must use the canonical production URL.");
+if (!media.includes('sandbox="allow-scripts allow-same-origin allow-presentation"')) fail("Third-party video iframe must be sandboxed.");
+if (!media.includes('["aparat.com","www.aparat.com"].includes(u.hostname)')) fail("Video embeds must enforce the Aparat host allowlist.");
 
-The imported source file contained 2,995 alphabetic entries and 405 thematic entries (3,400 total). Each record keeps its source code, section, German headword, word type, Persian meaning, source examples, extra examples, verb case/preposition notes, thematic group/equivalent, and printed PDF page where available.
+const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
+if (!csp) fail("A Content-Security-Policy meta policy is required.");
+if (csp && !/default-src\s+'self'/.test(csp)) fail("CSP must retain default-src 'self'.");
+const scriptPolicy = csp?.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1] || "";
+if (!scriptPolicy.includes("'self'") || !scriptPolicy.includes("https://cdn.jsdelivr.net")) fail("CSP script-src must allow same-origin scripts and the Supabase CDN.");
+if (/\bunsafe-(?:inline|eval)\b/.test(scriptPolicy)) fail("CSP script-src must not allow unsafe-inline or unsafe-eval.");
+if (/\b(?:eval|Function)\s*\(/.test(app)) fail("Dynamic code execution sink detected in app.js.");
+if (/service_role|sb_secret_[A-Za-z0-9_]+/i.test(html + app)) fail("A server-side Supabase secret appears in public source.");
 
-The Persian meanings and grammar notes are user-supplied annotations from the source text, not independently certified by Goethe.
+for (const match of html.matchAll(/<script\b([^>]*)>/gi)) if (!/\bsrc\s*=/.test(match[1])) fail("Inline script tags are incompatible with the current CSP.");
+const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map((match) => match[1]);
+const duplicateIds = ids.filter((id, i) => ids.indexOf(id) !== i);
+if (duplicateIds.length) fail("Duplicate HTML id(s): " + [...new Set(duplicateIds)].join(", "));
 
-## Supabase setup
+for (const match of html.matchAll(/<(?:script|link)\b[^>]*>/gi)) {
+  const asset = match[0].match(/\b(?:src|href)=["'](\.\/[^"'?#]+)(?:\?[^"']*)?["']/i)?.[1];
+  if (asset && !fs.existsSync(path.join(root, asset.slice(2)))) fail(`Referenced local asset does not exist: ${asset}`);
+}
+const jsVersion = html.match(/<script\b[^>]*\bsrc=["']\.\/app\.js\?([^"']+)["']/i)?.[1];
+if (!jsVersion || !new URLSearchParams(jsVersion).get("v")) fail("app.js must have a non-empty cache version.");
+const cssVersion = html.match(/<link\b[^>]*\bhref=["']\.\/styles\.css\?([^"']+)["']/i)?.[1];
+if (!cssVersion || !new URLSearchParams(cssVersion).get("v")) fail("styles.css must have a non-empty cache version.");
 
-The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
+const views = [...html.matchAll(/\bdata-view=["']([^"']+)["']/g)].map((match) => match[1]);
+for (const view of new Set(views)) if (!html.includes(`id="view-${view}"`) && !html.includes(`id='view-${view}'`)) fail(`Navigation target has no view container: ${view}`);
 
-1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, then `supabase/migrations/20261025065829_user_progress_security.sql`.
-2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
-3. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
-4. Signed-in progress is stored in `public.user_progress`. RLS must restrict SELECT, INSERT and UPDATE to rows where `auth.uid() = user_id`; anonymous/public access is revoked by the security migration.
-5. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
+for (const token of [
+  "function buildDailyReviewQueue(", "function beginDailyReview(", "function renderDailyReview(",
+  "function scheduleReview(", "function saveWordState(", "function renderSaved(",
+  "const SAVED_PAGE_SIZE=100", 'data-saved-page="next"',
+  "saveWordState(w,scheduleReview(pFor(w),correct))"
+]) if (!app.includes(token)) fail(`Expected learning or pagination behavior is missing: ${token}`);
+if (media.split("function renderListening(){").length - 1 !== 1) fail("Listening renderer must be defined exactly once.");
+if (!media.includes("Array.isArray(v.questions)")) fail("Listening renderer must retain question rendering for future lessons.");
+if (!css.includes("prefers-reduced-motion:reduce")) fail("Reduced-motion support is required.");
+const cardIntegrity = css.slice(css.lastIndexOf("/* Flashcard display integrity — single source of truth for both faces. */"));
+for (const selector of [
+  "#view-learn #flashcard:not(.flipped) .flash-front",
+  "#view-learn #flashcard:not(.flipped) .flash-back",
+  "#view-learn #flashcard.flipped .flash-front",
+  "#view-learn #flashcard.flipped .flash-back"
+]) if (!cardIntegrity.includes(selector)) fail("Flashcard face state rule is missing: " + selector);
+if (!cardIntegrity.includes("visibility:visible!important")) fail("Flashcard faces must remain visible while cross-fading.");
+if (!cardIntegrity.includes("opacity:1")) fail("Flashcard active face must be fully opaque.");
+if (!cardIntegrity.includes("transform:none!important")) fail("Flashcard contents must not be pushed into a separate 3D text layer.");
+if (!cardIntegrity.includes("content:none!important;display:none!important")) fail("Decorative stacked card pseudo-layers must remain disabled.");
+if (!css.includes(":focus-visible")) fail("Visible keyboard focus styles are required.");
+if (!html.includes('href="#main-content"')) fail("A skip link to main content is required.");
 
-The migrations are repeatable for the intended schema baseline. Review changes before applying them to an existing production project.
+const readme = read("README.md");
+if (readme.includes("20261023120000_wortin_vocabulary_schema.sql")) fail("README references a migration file that does not exist.");
+if (readme.includes("not a multi-user account system")) fail("README describes the old pre-authentication architecture.");
 
-### Security hardening audit (2026-11-19)
-
-- `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
-- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT and UPDATE. Policies bind every operation to `auth.uid() = user_id`; anonymous access and DELETE are revoked.
-- No public views or `SECURITY DEFINER` functions were found in the exposed `public` schema. No tables were found in the `supabase_realtime` publication.
-- Browser source uses only the Supabase publishable key. Never replace it with a service-role or secret key.
-- The site CSP blocks inline scripts, `eval`, objects and unapproved frames. Inline styles remain allowed because the current UI uses inline style attributes.
-- The auth redirect is pinned to the canonical GitHub Pages URL. Third-party Aparat embeds are host-validated and sandboxed.
-- GitHub Pages does not provide configurable response headers for this static deployment. The HTML meta CSP and referrer policy do not replace HSTS, `X-Content-Type-Options`, `Permissions-Policy`, or `frame-ancestors` response headers. A CDN or custom host with response-header rules is required to enforce them.
-- Supabase Security Advisor reports `Leaked Password Protection Disabled`. Enable it under **Authentication → Sign In / Providers → Email → Prevent use of leaked passwords** if the plan supports it. This is a server-side setting and cannot be enforced by frontend validation.
-
-
-## Publish with GitHub Pages
-
-In the repository, open **Settings → Pages** and select **GitHub Actions** under Build and deployment. Save. The workflow runs JavaScript syntax checks, security/source validation and automated learning-logic tests before deploying the static site. Open:
-
-`https://artinbamooei.github.io/Wortin/`
-
-If the Pages deployment is already enabled, a push to `main` should trigger a rebuild.
-
-## Local preview
-
-Open `index.html` in a local static web server (recommended) or publish it with GitHub Pages. The app has no build step or frontend framework requirement; its only runtime backend dependency is the Supabase Data API.
-
-## Keyboard shortcuts
-
-- `Ctrl/Cmd + K`: global word search.
-- `Enter` or `Space` while a flashcard is focused: flip between the word and its meaning.
-- Use the three on-card controls to rate a word; numeric rating shortcuts are not enabled.
-
-## Notes
-
-- The interface is Persian-first and the German sentences render left-to-right.
-- Browser speech synthesis availability depends on the user's browser and installed German voice.
-- Reduced-motion preferences are respected.
-- Account registration and login use Supabase Auth. Anonymous learning progress stays on that browser; signed-in users sync progress through the user-owned `user_progress` table.
-- Browser security depends on the deployed CSP plus RLS in Supabase; the publishable key is not a substitute for row-level access policies.
-- Supabase's leaked-password protection was flagged as disabled by the security advisor in the 2026-11-17 audit. The setting is under **Authentication → Sign In / Providers → Email → Prevent use of leaked passwords** and is available on Supabase Pro and above. On lower plans, retain strong server-side minimum-length and character requirements where available; client-side validation alone is not an equivalent server-side control. Re-run the Security Advisor after changing Auth settings.
-
-
-## Checks
-
-Run the repository's dependency-free checks with Node.js:
-
-```sh
-node --check app.js
-node scripts/validate-site.cjs
-node --test tests/*.test.cjs
-```
+if (process.exitCode) process.exit(1);
+console.log("Wortin source/security/accessibility smoke checks passed.");
