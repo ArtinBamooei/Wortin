@@ -7,7 +7,7 @@ try{if(!localStorage.getItem(PROGRESS_KEY)&&localStorage.getItem("wortin.progres
 const $=id=>document.getElementById(id),faNum=n=>Number(n||0).toLocaleString("fa-IR"),safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),svg=(name)=>'<svg aria-hidden="true"><use href="#i-'+name+'"/></svg>';
 function isStrongPassword(value){const password=String(value||"");return password.length>=10&&/\p{L}/u.test(password)&&/\p{N}/u.test(password)}
 function storageGet(key){try{return localStorage.getItem(key)}catch(err){console.warn("Local storage read failed.",err);return null}}
-const AUTH_REDIRECT_URL=window.location.origin+window.location.pathname;
+const AUTH_REDIRECT_URL="https://artinbamooei.github.io/Wortin/";
 const authClient=window.supabase?.createClient?.(SUPABASE_URL,SUPABASE_KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true,flowType:"pkce"}})||null;
 let authUser=null,authMode="login",authBusy=false,cloudSyncTimer=null,cloudWriteInFlight=false,cloudWritePromise=null,cloudSyncPending=false,cloudSyncRevision=0,cloudSyncedRevision=0,cloudSyncFailures=0,cloudSyncWarned=false,cloudLoadGeneration=0;
 let words=[],wordById=new Map(),wordSearchIndex=new Map(),progress=loadProgress(),derivedWordSets=null,derivedWordSetsRevision=-1,progressRevision=0,activeView="home",study={mode:"flash",cards:[],index:0,revealed:false,correct:0,answered:0,locked:false},dictPage=0,savedPage=0,toastTimer=null,daily=loadDaily();
