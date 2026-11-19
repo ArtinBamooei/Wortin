@@ -151,11 +151,6 @@ $("statsStartLearning").addEventListener("click",()=>changeView("learn"));
 function startSession(mode="flash",specified=null){if(!words.length){toast("واژگان هنوز دریافت نشده‌اند.");return}const currentDue=dueWords().length;let pool;if(Array.isArray(specified)){pool=[...specified]}else if(mode==="saved"){pool=shuffleItems(savedWords())}else{const overdue=[...dueWords()].sort((a,b)=>(Number(pFor(a).due)||0)-(Number(pFor(b).due)||0));const unseen=shuffleItems(getDerivedWordSets().unseen);pool=[...overdue,...unseen];if(!pool.length)pool=shuffleItems(getDerivedWordSets().learning);if(!pool.length)pool=shuffleItems(words)}const unique=new Set();pool=pool.filter(w=>{const id=String(w.id);if(unique.has(id))return false;unique.add(id);return true});if(!pool.length)pool=shuffleItems(words);study.mode=mode;study.cards=pool.slice(0,mode==="single"?1:12);study.index=0;study.revealed=false;study.correct=0;study.answered=0;study.locked=false;const dueCount=$("studyDueCount");if(dueCount)dueCount.textContent=currentDue?faNum(currentDue)+" واژه موعد مرور دارند":"فعلاً واژه‌ی موعددار برای مرور نیست";changeView("learn");document.querySelectorAll("[data-study]").forEach(b=>b.classList.toggle("active",b.dataset.study===study.mode));renderStudy()}
 function renderStudy(){
   const shell=document.querySelector("#view-learn .study-shell");
-  const previous=$("studyPrevious");
-  if(previous){
-    previous.hidden=study.mode==="quiz";
-    previous.disabled=study.index===0||!study.cards.length;
-  }
   if(!study.cards.length){
     shell?.classList.remove("is-revealed");
     $("studyContent").innerHTML='<div class="review-empty"><svg><use href="#i-check"/></svg><h3>برای این مرحله واژه‌ای باقی نمانده است.</h3><p>این بخش را کامل کرده‌ای. برای یادگیری بیشتر از واژه‌نامه یک مسیر تازه انتخاب کن.</p><button class="btn-primary" id="goDict">رفتن به واژه‌نامه</button></div>';
@@ -214,10 +209,11 @@ function renderStudy(){
         '</div>'+
       '</div>'+
     '</div>'+
-    '<div class="study-card-actions">'+
+    '<div class="study-card-actions" role="group" aria-label="کنترل‌های فلش‌کارت">'+
       '<button class="study-reveal-button" id="studyReveal" type="button">'+svg(study.revealed?"eye-off":"eye")+'<span>'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</span></button>'+
-      '<button class="study-utility-button" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>تلفظ</span></button>'+
-      '<button class="study-utility-button '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
+      '<button class="study-utility-button study-previous-action" id="studyPrevious" type="button" aria-label="رفتن به کارت قبلی" '+(study.index===0?"disabled":"")+'>'+svg("arrow")+'<span>کارت قبلی</span></button>'+
+      '<button class="study-utility-button study-audio-action" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>شنیدن تلفظ</span></button>'+
+      '<button class="study-utility-button study-save-action '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
     '</div>'+
     '<section class="study-rating-panel" aria-label="ارزیابی یادگیری واژه">'+
       '<div class="study-controls">'+
@@ -249,7 +245,8 @@ function renderStudy(){
     button.setAttribute("aria-pressed",String(isSaved));
     button.innerHTML=svg("bookmark")+'<span>'+(isSaved?"نشان‌شده":"نشان‌کردن")+'</span>';
   };
-  if(previous)previous.onclick=()=>{
+  const previousButton=$("studyPrevious");
+  if(previousButton)previousButton.onclick=()=>{
     if(study.index>0){study.index--;study.revealed=false;study.locked=false;renderStudy()}
   };
   $("studyKnown").onclick=()=>gradeWord(w,"known");
