@@ -2307,3 +2307,13 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 #view-learn .flash-grammar-panel .grammar-preposition p{margin:0;font-size:11px;line-height:1.8;color:var(--text);overflow-wrap:anywhere}
 #view-learn .flash-grammar-panel .grammar-label{font-size:10px;margin-bottom:7px}
 #view-learn .flash-grammar-panel .case-token{font-size:10px;padding:1px 5px}
+
+/* Daily grammar is a vertical teaching layout, not a compressed inline row. */
+#view-daily .daily-grammar-section .word-grammar-meta{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:100%;max-width:100%;margin:0;justify-content:stretch}
+#view-daily .daily-grammar-section .grammar-case-block{width:100%;box-sizing:border-box}
+#view-daily .daily-grammar-section .grammar-detail-list{grid-template-columns:minmax(0,1fr)}
+#view-daily .daily-grammar-section .grammar-detail-row{align-items:flex-start}
+#view-daily .daily-grammar-section .grammar-detail-row p{font-size:14px;line-height:2}
+#view-daily .daily-grammar-section .grammar-preposition{width:100%;box-sizing:border-box}
+#view-daily .daily-word-title .article-token{font-size:.72em;vertical-align:.12em;margin-inline-end:5px;padding:3px 8px;border-radius:8px}
+#view-daily .daily-example p .article-token{font-weight:800;padding:1px 4px;border-radius:4px}
