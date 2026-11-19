@@ -2707,3 +2707,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     transition-duration:.01ms!important;
   }
 }
+
+
+/* Tablet navigation: retain the compact icon rail until the phone layout starts. */
+@media(min-width:621px) and (max-width:900px){
+  .sidebar{
+    display:flex!important;
+    width:75px!important;
+    padding:22px 10px!important;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  .brand{justify-content:center!important;padding:0 7px 30px!important}
+  .brand-copy,.nav-group-label,.nav-label,.nav button span,.nav .nav-count,
+  .streak-card,.side-footer{display:none!important}
+  .nav button{justify-content:center!important;padding:13px!important}
+  .nav button.active:before{right:-11px!important}
+  .main{margin-right:75px!important;padding-inline:22px!important}
+}
+@media(max-width:620px){
+  .sidebar{display:none!important}
+  .main{margin-right:0!important}
+  .mobile-nav{display:flex!important}
+}
