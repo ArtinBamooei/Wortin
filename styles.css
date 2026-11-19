@@ -2521,3 +2521,81 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
 @media(prefers-reduced-motion:reduce){
   #view-learn #studyContent .study-card-actions>button{transition:none!important}
 }
+
+
+/* Compact learning ratings live on the back of the flashcard. */
+#view-learn #studyContent .flash-back-content{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:clamp(8px,1.5vh,14px)!important;
+  min-height:0!important;
+}
+#view-learn #studyContent .flash-rating-inline{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  margin:4px 0 0!important;
+  padding:0!important;
+}
+#view-learn #studyContent .flash-rating-inline>button{
+  display:flex!important;
+  min-width:0!important;
+  min-height:39px!important;
+  padding:7px 8px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-direction:row!important;
+  gap:6px!important;
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+  font:750 11px/1.4 "Vazirmatn",sans-serif!important;
+  white-space:nowrap!important;
+  box-shadow:none!important;
+  opacity:1!important;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease!important;
+}
+#view-learn #studyContent .flash-rating-inline>button svg{
+  display:block!important;
+  width:15px!important;height:15px!important;
+  flex:0 0 15px!important;
+}
+#view-learn #studyContent .flash-rating-inline .study-rate-known{
+  color:#176b43!important;
+  background:#e9f6ee!important;
+  border-color:#c4e5d0!important;
+}
+#view-learn #studyContent .flash-rating-inline .study-rate-missed{
+  color:#a33b43!important;
+  background:#fff0f0!important;
+  border-color:#f0cece!important;
+}
+#view-learn #studyContent .flash-rating-inline .study-rate-again{
+  color:#8a641c!important;
+  background:#fff7e6!important;
+  border-color:#efdfb9!important;
+}
+#view-learn #studyContent .flash-rating-inline>button:hover{
+  transform:translateY(-1px)!important;
+  filter:brightness(.98)!important;
+}
+#view-learn #studyContent .flash-rating-inline>button:focus-visible{
+  outline:2px solid var(--blue)!important;
+  outline-offset:2px!important;
+}
+@media(max-width:620px){
+  #view-learn #studyContent .flash-back-content{gap:8px!important}
+  #view-learn #studyContent .flash-rating-inline{gap:6px!important;margin-top:2px!important}
+  #view-learn #studyContent .flash-rating-inline>button{
+    min-height:35px!important;
+    padding:6px 3px!important;
+    gap:4px!important;
+    border-radius:8px!important;
+    font-size:10px!important;
+  }
+  #view-learn #studyContent .flash-rating-inline>button svg{width:13px!important;height:13px!important;flex-basis:13px!important}
+}
+@media(max-width:360px){
+  #view-learn #studyContent .flash-rating-inline>button{font-size:9px!important}
+}
