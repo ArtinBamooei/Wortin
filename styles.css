@@ -2372,3 +2372,154 @@ body{background-image:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--b
  #view-daily .daily-word-actions .btn-secondary,
  #view-daily .daily-word-footer #dailyPrev{min-height:44px;padding:10px 13px;font-size:12px}
 }
+
+
+/* Flashcard controls — one consistent action bar across desktop and mobile. */
+#view-learn #studyContent .study-card-actions{
+  display:grid!important;
+  width:100%!important;
+  max-width:980px!important;
+  margin:14px auto 0!important;
+  padding:0!important;
+  gap:10px!important;
+  grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr))!important;
+  align-items:stretch!important;
+}
+#view-learn #studyContent .study-card-actions>button{
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:54px!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-direction:row!important;
+  gap:8px!important;
+  border-width:1px!important;
+  border-style:solid!important;
+  border-radius:13px!important;
+  font:750 12px/1.5 "Vazirmatn",sans-serif!important;
+  white-space:normal!important;
+  text-align:center!important;
+  opacity:1!important;
+}
+#view-learn #studyContent .study-card-actions>button svg{
+  display:block!important;
+  width:19px!important;
+  height:19px!important;
+  flex:0 0 19px!important;
+  opacity:1!important;
+}
+#view-learn #studyContent .study-card-actions .study-reveal-button{
+  background:linear-gradient(135deg,#1d3448,#294a61)!important;
+  border-color:#294a61!important;
+  color:#fff!important;
+  box-shadow:0 7px 18px rgba(22,49,70,.16)!important;
+}
+#view-learn #studyContent .study-card-actions .study-utility-button{
+  background:color-mix(in srgb,var(--blue) 11%,var(--panel))!important;
+  border-color:color-mix(in srgb,var(--blue) 30%,var(--line))!important;
+  color:var(--text)!important;
+  box-shadow:0 3px 10px rgba(12,28,44,.055)!important;
+}
+#view-learn #studyContent .study-card-actions .study-audio-action svg,
+#view-learn #studyContent .study-card-actions .study-previous-action svg{
+  color:var(--blue)!important;
+}
+#view-learn #studyContent .study-card-actions .study-save-action svg{
+  color:var(--lime2)!important;
+}
+#view-learn #studyContent .study-card-actions .study-save-action.is-saved{
+  background:color-mix(in srgb,var(--lime) 22%,var(--panel))!important;
+  border-color:color-mix(in srgb,var(--lime2) 58%,var(--line))!important;
+  color:var(--text)!important;
+}
+#view-learn #studyContent .study-card-actions .study-previous-action svg{
+  transform:scaleX(-1)!important;
+}
+#view-learn #studyContent .study-card-actions>button:hover:not(:disabled){
+  transform:translateY(-1px)!important;
+  box-shadow:0 7px 16px rgba(12,28,44,.11)!important;
+  filter:none!important;
+}
+#view-learn #studyContent .study-card-actions .study-utility-button:disabled{
+  opacity:.72!important;
+  color:var(--muted)!important;
+  background:var(--panel2)!important;
+  border-color:var(--line)!important;
+  box-shadow:none!important;
+  cursor:not-allowed!important;
+}
+#view-learn #studyContent .study-card-actions .study-utility-button:disabled svg{
+  color:var(--muted)!important;
+}
+#view-learn .study-top{
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+}
+#view-learn .study-top .progress-line{
+  min-width:0!important;
+  flex:1 1 auto!important;
+}
+@media(max-width:1000px){
+  #view-learn #studyContent .study-card-actions{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+}
+@media(max-width:620px){
+  #view-learn #studyContent .study-card-actions{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-areas:
+      "reveal reveal reveal"
+      "previous audio save"!important;
+    gap:8px!important;
+    padding:0 2px!important;
+    margin-top:10px!important;
+  }
+  #view-learn #studyContent .study-card-actions .study-reveal-button{grid-area:reveal}
+  #view-learn #studyContent .study-card-actions .study-previous-action{grid-area:previous}
+  #view-learn #studyContent .study-card-actions .study-audio-action{grid-area:audio}
+  #view-learn #studyContent .study-card-actions .study-save-action{grid-area:save}
+  #view-learn #studyContent .study-card-actions>button{
+    min-height:60px!important;
+    padding:8px 4px!important;
+    flex-direction:column!important;
+    gap:5px!important;
+    border-radius:12px!important;
+    font-size:10px!important;
+    line-height:1.45!important;
+  }
+  #view-learn #studyContent .study-card-actions .study-reveal-button{
+    min-height:49px!important;
+    flex-direction:row!important;
+    font-size:12px!important;
+  }
+  #view-learn #studyContent .study-card-actions>button span{
+    display:block!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow-wrap:anywhere!important;
+  }
+  #view-learn #studyContent .study-card-actions>button svg{
+    width:19px!important;height:19px!important;flex-basis:19px!important;
+  }
+  #view-learn .study-top{gap:8px!important;margin-bottom:9px!important}
+  #view-learn .study-progress-meta{min-width:90px!important}
+}
+@media(max-width:360px){
+  #view-learn #studyContent .study-card-actions{gap:6px!important}
+  #view-learn #studyContent .study-card-actions>button{
+    min-height:57px!important;
+    padding:7px 2px!important;
+    font-size:9px!important;
+  }
+  #view-learn #studyContent .study-card-actions .study-reveal-button{
+    min-height:47px!important;font-size:11px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #view-learn #studyContent .study-card-actions>button{transition:none!important}
+}
