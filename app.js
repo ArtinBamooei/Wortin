@@ -82,7 +82,7 @@ function dailyMeaningHtml(value){
 }
 function dailyWordTitleHtml(value){
  const word=String(value||"");
- const match=word.match(/^(der|die|das)(\\s+)(.*)$/i);
+ const match=word.match(/^(der|die|das)(\s+)(.*)$/i);
  if(!match)return safe(word);
  return '<span class="article-token article-'+match[1].toLowerCase()+'">'+match[1]+'</span>'+safe(match[2]+match[3])
 }
