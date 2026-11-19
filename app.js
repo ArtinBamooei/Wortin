@@ -204,6 +204,11 @@ function renderStudy(){
               '<p class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</p>'+
             '</section>'+
             backDetails+
+            '<div class="flash-rating-inline" role="group" aria-label="ارزیابی یادگیری واژه">'+
+              '<button class="study-rate-known" id="studyKnown" type="button" aria-label="بلدم">'+svg("check")+'<span>بلدم</span></button>'+
+              '<button class="study-rate-missed" id="studyMissed" type="button" aria-label="بلد نبودم">'+svg("close")+'<span>بلد نبودم</span></button>'+
+              '<button class="study-rate-again" id="studyAgain" type="button" aria-label="مرور مجدد">'+svg("clock")+'<span>مرور مجدد</span></button>'+
+            '</div>'+
           '</div>'+
           '<div class="flash-card-footer"><span>DEUTSCH / PERSISCH</span></div>'+
         '</div>'+
@@ -215,13 +220,7 @@ function renderStudy(){
       '<button class="study-utility-button study-audio-action" id="studyAudio" type="button" aria-label="شنیدن تلفظ واژه">'+svg("volume")+'<span>شنیدن تلفظ</span></button>'+
       '<button class="study-utility-button study-save-action '+(saved?"is-saved":"")+'" id="studySave" type="button" aria-pressed="'+String(saved)+'">'+svg("bookmark")+'<span>'+(saved?"نشان‌شده":"نشان‌کردن")+'</span></button>'+
     '</div>'+
-    '<section class="study-rating-panel" aria-label="ارزیابی یادگیری واژه">'+
-      '<div class="study-controls">'+
-        '<button class="study-rate-known" id="studyKnown" type="button">'+svg("check")+'<span>بلدم</span></button>'+
-        '<button class="study-rate-missed" id="studyMissed" type="button">'+svg("close")+'<span>بلد نبودم</span></button>'+
-        '<button class="study-rate-again" id="studyAgain" type="button">'+svg("clock")+'<span>مرور مجدد</span></button>'+
-      '</div>'+
-    '</section>';
+;
   const toggleCard=()=>{
     study.revealed=!study.revealed;
     const card=$("flashcard");
@@ -249,9 +248,10 @@ function renderStudy(){
   if(previousButton)previousButton.onclick=()=>{
     if(study.index>0){study.index--;study.revealed=false;study.locked=false;renderStudy()}
   };
-  $("studyKnown").onclick=()=>gradeWord(w,"known");
-  $("studyMissed").onclick=()=>gradeWord(w,"again");
-  $("studyAgain").onclick=()=>{
+  $("studyKnown").onclick=e=>{e.stopPropagation();gradeWord(w,"known")};
+  $("studyMissed").onclick=e=>{e.stopPropagation();gradeWord(w,"again")};
+  $("studyAgain").onclick=e=>{
+    e.stopPropagation();
     saveWordState(w,scheduleReview(pFor(w),false));
     study.cards.push(w);
     persistProgress();
