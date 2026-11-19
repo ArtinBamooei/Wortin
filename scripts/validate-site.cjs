@@ -13,23 +13,27 @@ const fail = (message) => {
 const requiredFiles = [
   "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md",
   "supabase/migrations/20261023084218_wortin_vocabulary_schema.sql",
-  "supabase/migrations/20261025065829_user_progress_security.sql"
+  "supabase/migrations/20261025065829_user_progress_security.sql",
+  "supabase/migrations/20261119104740_security_hardening_public_table_grants.sql"
 ];
 for (const name of requiredFiles) if (!fs.existsSync(path.join(root, name))) fail(`Required file is missing: ${name}`);
 if (process.exitCode) process.exit(1);
 
 const html = read("index.html"), app = read("app.js"), css = read("styles.css"), media = read("learning-media.js");
+const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 const hasNoReferrer = html.includes('<meta name="referrer" content="no-referrer">');
 if (!hasNoReferrer) fail("Referrer policy must be no-referrer.");
 if (csp && !csp.includes("form-action 'self';")) fail("CSP form-action must be same-origin only.");
-if (csp && /(?:script-src|connect-src|frame-src)[^;]*\\*/.test(csp)) fail("CSP must not contain wildcard source expressions.");
+if (csp && csp.includes("*")) fail("CSP must not contain wildcard source expressions.");
 if (!app.includes('const SUPABASE_URL="https://')) fail("Supabase URL must use HTTPS.");
 if (!app.includes('const SUPABASE_KEY="sb_publishable_')) fail("Browser key must be a publishable key.");
 if (!app.includes('const AUTH_REDIRECT_URL="https://artinbamooei.github.io/Wortin/";')) fail("Auth redirect must use the canonical production URL.");
 if (!media.includes('sandbox="allow-scripts allow-same-origin allow-presentation"')) fail("Third-party video iframe must be sandboxed.");
 if (!media.includes('["aparat.com","www.aparat.com"].includes(u.hostname)')) fail("Video embeds must enforce the Aparat host allowlist.");
+const grantsMigration = read("supabase/migrations/20261119104740_security_hardening_public_table_grants.sql");
+if (!grantsMigration.includes("revoke all privileges on table public.vocabulary")) fail("Vocabulary grants must be explicitly revoked before least-privilege grants.");
+if (!grantsMigration.includes("revoke all privileges on table public.user_progress")) fail("Progress grants must be explicitly revoked before least-privilege grants.");
 
-const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 if (!csp) fail("A Content-Security-Policy meta policy is required.");
 if (csp && !/default-src\s+'self'/.test(csp)) fail("CSP must retain default-src 'self'.");
 const scriptPolicy = csp?.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1] || "";
