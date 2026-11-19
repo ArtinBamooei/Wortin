@@ -68,7 +68,7 @@ function caseTokenHtml(value){
 function wordGrammarHtml(w){
  const kasus=String(w?.case_info??"").trim(),prep=String(w?.preposition??"").trim();
  if(!kasus&&!prep)return"";
- const caseRows=kasus.split(/[;；]+/).map(x=>x.trim()).filter(Boolean).map((value,i)=>'<div class="grammar-detail-row"><span class="grammar-row-index">'+faNum(i+1)+'</span><p>'+caseTokenHtml(value)+'</p></div>').join("");
+ const caseRows=kasus.split(/[;；؛]+/).map(x=>x.trim()).filter(Boolean).map((value,i)=>'<div class="grammar-detail-row"><span class="grammar-row-index">'+faNum(i+1)+'</span><p>'+caseTokenHtml(value)+'</p></div>').join("");
  const prepHtml=prep?'<div class="grammar-preposition"><span class="grammar-label">حرف اضافه و حالت وابسته</span><p lang="de" dir="auto">'+caseTokenHtml(prep)+'</p></div>':"";
  return '<div class="word-grammar-meta" aria-label="اطلاعات دستوری">'+(kasus?'<section class="grammar-case-block"><div class="grammar-label">حالت دستوری · Kasus</div><div class="grammar-detail-list">'+caseRows+'</div></section>':"")+prepHtml+'</div>'
 }
