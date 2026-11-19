@@ -205,15 +205,15 @@ function renderStudy(){
               '<p class="flash-meaning">'+safe(w.meaning_fa||"معنی ثبت نشده")+'</p>'+
             '</section>'+
             backDetails+
-            '<div class="flash-rating-inline" role="group" aria-label="ارزیابی یادگیری واژه">'+
-              '<button class="study-rate-known" id="studyKnown" type="button" aria-label="بلدم">'+svg("check")+'<span>بلدم</span></button>'+
-              '<button class="study-rate-missed" id="studyMissed" type="button" aria-label="بلد نبودم">'+svg("close")+'<span>بلد نبودم</span></button>'+
-              '<button class="study-rate-again" id="studyAgain" type="button" aria-label="مرور مجدد">'+svg("clock")+'<span>مرور مجدد</span></button>'+
-            '</div>'+
           '</div>'+
           '<div class="flash-card-footer"><span>DEUTSCH / PERSISCH</span></div>'+
         '</div>'+
       '</div>'+
+    '</div>'+
+    '<div class="flash-rating-inline" role="group" aria-label="ارزیابی یادگیری واژه">'+
+      '<button class="study-rate-known" id="studyKnown" type="button" aria-label="بلدم">'+svg("check")+'<span>بلدم</span></button>'+
+      '<button class="study-rate-missed" id="studyMissed" type="button" aria-label="بلد نبودم">'+svg("close")+'<span>بلد نبودم</span></button>'+
+      '<button class="study-rate-again" id="studyAgain" type="button" aria-label="مرور مجدد">'+svg("clock")+'<span>مرور مجدد</span></button>'+
     '</div>'+
     '<div class="study-card-actions" role="group" aria-label="کنترل‌های فلش‌کارت">'+
       '<button class="study-reveal-button" id="studyReveal" type="button">'+svg(study.revealed?"eye-off":"eye")+'<span>'+(study.revealed?"بازگشت به روی کارت":"نمایش پاسخ")+'</span></button>'+
