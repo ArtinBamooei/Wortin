@@ -2730,3 +2730,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .main{margin-right:0!important}
   .mobile-nav{display:flex!important}
 }
+
+.site-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 42px 28px 290px;padding:14px 0;border-top:1px solid var(--line);color:var(--muted2);font-size:10px}.site-footer p{margin:0}.site-footer a{color:var(--muted);text-decoration:none}.site-footer a:hover{color:var(--text)}@media(max-width:1200px){.site-footer{margin-right:262px;margin-left:28px}}@media(max-width:900px){.site-footer{margin-right:90px;margin-left:22px}}@media(max-width:620px){.site-footer{margin:8px 15px 95px;font-size:9px}}
