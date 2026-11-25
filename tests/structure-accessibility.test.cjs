@@ -84,17 +84,17 @@ test("hover-only styles require a hover-capable fine pointer", () => {
       }
       if (quote) {
         if (escaped) { escaped = false; continue; }
-        if (char === "\\\\") { escaped = true; continue; }
+        if (char === "\\") { escaped = true; continue; }
         if (char === quote) quote = null;
         continue;
       }
       if (char === "/" && next === "*") { comment = true; i++; continue; }
-      if (char === "\\"" || char === "'") { quote = char; continue; }
+      if (char === "\"" || char === "'") { quote = char; continue; }
       if (char === "{") {
         const prelude = css.slice(start, i).trim();
         if (!prelude.startsWith("@") && prelude.includes(":hover")) {
-          const finePointer = stack.some(item => /\\(hover\\s*:\\s*hover\\)/i.test(item) && /\\(pointer\\s*:\\s*fine\\)/i.test(item));
-          const touchOverride = stack.some(item => /\\(hover\\s*:\\s*none\\)|\\(pointer\\s*:\\s*coarse\\)/i.test(item));
+          const finePointer = stack.some(item => /\(hover\s*:\s*hover\)/i.test(item) && /\(pointer\s*:\s*fine\)/i.test(item));
+          const touchOverride = stack.some(item => /\(hover\s*:\s*none\)|\(pointer\s*:\s*coarse\)/i.test(item));
           if (!finePointer && !touchOverride) unguarded.push(prelude);
         }
         stack.push(prelude);
@@ -112,7 +112,7 @@ test("hover-only styles require a hover-capable fine pointer", () => {
   }
   const main = read("styles.css");
   const media = read("learning-media.css");
-  assert.match(main, /\\.mini-button\\.saved\\s*\\{/);
-  assert.match(main, /\\.field:focus-within/);
-  assert.match(media, /\\.reading-card\\.expanded\\s*\\{/);
+  assert.match(main, /\.mini-button\.saved\s*\{/);
+  assert.match(main, /\.field:focus-within/);
+  assert.match(media, /\.reading-card\.expanded\s*\{/);
 });
