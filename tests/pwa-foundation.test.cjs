@@ -20,7 +20,7 @@ test("service worker only handles same-origin GET requests", () => {
   const sw = read("sw.js");
   assert.match(sw, /request\.method !== "GET"/);
   assert.match(sw, /url\.origin !== self\.location\.origin/);
-  assert.match(sw, /wortin-shell-v\\d+/);
+  assert.match(sw, /wortin-shell-v\d+/);
   assert.ok(sw.includes("caches.match(request, { ignoreSearch: true })"));
   assert.doesNotMatch(sw, /supabase\.co|Authorization|sb_publishable/i);
 });
