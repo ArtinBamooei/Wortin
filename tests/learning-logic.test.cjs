@@ -23,30 +23,41 @@ function appFunctionWithContext(name, extraContext = {}) {
   return { fn: vm.runInContext(`(${line})`, context), context };
 }
 
-test("incorrect answers schedule a short retry and reset consecutive correct repetitions", () => {
+test("incorrect answers apply a partial lapse, preserve ease factor and schedule a short retry", () => {
   const scheduleReview = appFunction("scheduleReview");
   const now = 1_800_000_000_000;
-  const next = scheduleReview({ known: true, repetitions: 5, interval: 30 }, false, now);
+  const next = scheduleReview({ known: true, repetitions: 5, interval: 30, easeFactor: 2.5, seen: 4 }, false, now);
   assert.equal(next.known, false);
-  assert.equal(next.interval, 0);
+  assert.equal(next.interval, 6);
   assert.equal(next.repetitions, 0);
+  assert.equal(next.easeFactor, 2.3);
+  assert.equal(next.lapses, 1);
   assert.equal(next.due, now + 10 * 60 * 1000);
-  assert.equal(next.seen, 1);
+  assert.equal(next.seen, 5);
 });
 
-test("correct answers use 1 day, 3 days, then expanding intervals capped at 180 days", () => {
+test("mastery requires five correct reviews and intervals expand with a 180-day cap", () => {
   const scheduleReview = appFunction("scheduleReview");
+  const addLocalDays = appFunction("addLocalDays");
   const now = 1_800_000_000_000;
   let state = scheduleReview({}, true, now);
   assert.equal(state.repetitions, 1);
   assert.equal(state.interval, 1);
-  assert.equal(state.due, now + 24 * 60 * 60 * 1000);
+  assert.equal(state.due, addLocalDays(now, 1));
+  assert.equal(state.known, false);
   state = scheduleReview(state, true, now);
   assert.equal(state.repetitions, 2);
   assert.equal(state.interval, 3);
-  assert.equal(state.known, true);
+  assert.equal(state.known, false);
   state = scheduleReview(state, true, now);
   assert.equal(state.interval, 7);
+  assert.equal(state.known, false);
+  state = scheduleReview(state, true, now);
+  assert.equal(state.interval, 18);
+  assert.equal(state.known, false);
+  state = scheduleReview(state, true, now);
+  assert.equal(state.interval, 45);
+  assert.equal(state.known, true);
   for (let i = 0; i < 20 && state.interval < 180; i++) state = scheduleReview(state, true, now);
   assert.equal(state.interval, 180);
   assert.ok(state.interval <= 180);
@@ -147,8 +158,9 @@ test("local progress, daily state and dirty markers are isolated by authenticate
     PROGRESS_KEY: "",
     DAILY_KEY: "",
     LOCAL_CHANGE_KEY: "",
-    progress: {},
+    progress: { words: {} },
     daily: {},
+    migrateProgressKeys: () => {},
     progressRevision: 0,
     derivedWordSets: null,
     loadProgress: () => ({ scope: "progress" }),
