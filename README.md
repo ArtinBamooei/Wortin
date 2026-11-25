@@ -23,10 +23,11 @@ The Persian meanings and grammar notes are user-supplied annotations from the so
 
 The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
 
-1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, then `supabase/migrations/20261025065829_user_progress_security.sql`.
+1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, `supabase/migrations/20261025065829_user_progress_security.sql`, `supabase/migrations/20261119104740_security_hardening_public_table_grants.sql`, `supabase/migrations/20261125115143_user_progress_integrity.sql`, then `supabase/migrations/20261125115228_validate_user_progress_integrity_constraints.sql`.
 2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
-3. Apply `supabase/migrations/20261119104740_security_hardening_public_table_grants.sql` after the first two migrations to enforce least-privilege grants on both exposed tables.
-4. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
+3. The least-privilege grants migration keeps vocabulary read-only for visitors and restricts user progress to authenticated users.
+4. Apply the two November 25 migrations to enforce bounded JSON object/array shapes, 2 MiB / 512 KiB payload limits, server-side `updated_at`, and an owner-only DELETE policy. The second migration validates the constraints against existing rows.
+5. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
 5. Signed-in progress is stored in `public.user_progress`. RLS must restrict SELECT, INSERT and UPDATE to rows where `auth.uid() = user_id`; anonymous/public access is revoked by the security migration.
 6. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
 
@@ -35,7 +36,8 @@ The migrations are repeatable for the intended schema baseline. Review changes b
 ### Security hardening audit (2026-11-19)
 
 - `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
-- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT and UPDATE. Policies bind every operation to `auth.uid() = user_id`; anonymous access and DELETE are revoked.
+- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT, UPDATE and DELETE. Every policy binds access to `auth.uid() = user_id`; anonymous access is revoked.
+- `progress` and `daily` JSONB payloads have validated object/array shape constraints and hard byte-size limits. A database trigger sets `updated_at` from server time.
 - No public views or `SECURITY DEFINER` functions were found in the exposed `public` schema. No tables were found in the `supabase_realtime` publication.
 - Browser source uses only the Supabase publishable key. Never replace it with a service-role or secret key.
 - The site CSP blocks inline scripts, `eval`, objects and unapproved frames. Inline styles remain allowed because the current UI uses inline style attributes.
