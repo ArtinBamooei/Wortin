@@ -168,7 +168,7 @@ test("expensive CSS blur filters are capped for rendering performance", () => {
 
 test("interactive controls do not suppress native focus outlines", () => {
   const css = read("styles.css");
-  assert.doesNotMatch(css, /outline\\s*:\\s*(?:none|0)\\b/i);
+  assert.doesNotMatch(css, /outline\s*:\s*(?:none|0)\b/i);
   assert.match(css, /input:focus-visible/);
   assert.match(css, /button:focus-visible/);
   assert.match(css, /a:focus-visible/);
