@@ -27,6 +27,7 @@ if (csp && !csp.includes("form-action 'self';")) fail("CSP form-action must be s
 if (csp && csp.includes("*")) fail("CSP must not contain wildcard source expressions.");
 if (!app.includes('const SUPABASE_URL="https://')) fail("Supabase URL must use HTTPS.");
 if (!app.includes('const SUPABASE_KEY="sb_publishable_')) fail("Browser key must be a publishable key.");
+if (!app.includes("progress_key,record_section") || !app.includes("wortin.vocabulary.cache.v4")) fail("Vocabulary cache schema and stable progress key must be versioned.");
 if (!app.includes('const AUTH_REDIRECT_URL="https://artinbamooei.github.io/Wortin/";')) fail("Auth redirect must use the canonical production URL.");
 if (!media.includes('sandbox="allow-scripts allow-same-origin allow-presentation"')) fail("Third-party video iframe must be sandboxed.");
 if (!media.includes('["aparat.com","www.aparat.com"].includes(u.hostname)')) fail("Video embeds must enforce the Aparat host allowlist.");
