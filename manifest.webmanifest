@@ -1,0 +1,25 @@
+{
+  "name": "Wortin — یادگیری واژگان آلمانی",
+  "short_name": "Wortin",
+  "description": "یادگیری هوشمند واژگان آلمانی تا سطح B1",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f0f3f1",
+  "theme_color": "#f08a43",
+  "categories": [
+    "education",
+    "books"
+  ],
+  "icons": [
+    {
+      "src": "./assets/wortin-logo.webp",
+      "sizes": "any",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}
