@@ -100,6 +100,37 @@ test("daily review answers use the same spaced-repetition scheduler as regular p
 });
 
 
+test("legacy ID and record-code progress is merged into a shared lexical key", () => {
+  const mergeWordProgress = appFunction("mergeWordProgress");
+  const { fn, context } = appFunctionWithContext("migrateProgressKeys", {
+    words: [
+      { id: "1", record_code: "A1", progress_key: "A" },
+      { id: "2", record_code: "A2", progress_key: "A" }
+    ],
+    progress: {
+      words: {
+        "1": { saved: false, repetitions: 2, interval: 3, _updatedAt: 10 },
+        A1: { saved: true, repetitions: 4, interval: 18, _updatedAt: 20 },
+        "2": { repetitions: 1, interval: 1, _updatedAt: 15 },
+        A2: { saved: false, repetitions: 5, interval: 45, _updatedAt: 30 }
+      }
+    },
+    wordProgressKey: word => String(word.progress_key || word.record_code || word.id),
+    mergeWordProgress,
+    persistProgress: () => {}
+  });
+  fn();
+  assert.deepEqual(Object.keys(context.progress.words), ["A"]);
+  assert.equal(context.progress.words.A.saved, true);
+  assert.equal(context.progress.words.A.repetitions, 5);
+  assert.equal(context.progress.words.A.known, true);
+});
+
+test("UTC day keys do not shift when the local timezone changes", () => {
+  const dayKey = appFunction("dayKey");
+  assert.equal(dayKey(new Date("2026-11-25T23:30:00.000Z")), "2026-11-25");
+});
+
 test("progress merge preserves the newest per-word state and unions independent words", () => {
   const merge = appFunction("mergeProgressData");
   const remote = {
