@@ -28,7 +28,7 @@ test("view navigation supports direct links and browser history", () => {
 test("word progress uses stable record codes and conservative mastery", () => {
   const app = read("app.js");
   assert.match(app, /function wordProgressKey\(word\)\{return String\(word\.record_code\|\|word\.id\)\}/);
-  assert.match(app, /known:repetitions>=5&&interval>=21/);
+  assert.match(app, /known:repetitions>=5&&interval>=21/);\n  assert.ok(app.includes("progress_key,record_section"));\n  assert.ok(app.includes("wortin.vocabulary.cache.v4"));
   assert.match(app, /function addLocalDays/);
   assert.match(app, /date\.setDate\(date\.getDate\(\)\+days\)/);
 });
