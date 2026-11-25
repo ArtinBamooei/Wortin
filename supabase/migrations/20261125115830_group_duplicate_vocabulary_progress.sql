@@ -22,9 +22,19 @@ where lower(btrim(vocabulary.word)) = duplicate_groups.normalized_word
   and lower(btrim(vocabulary.word_type)) = duplicate_groups.normalized_type;
 
 alter table public.vocabulary alter column progress_key set not null;
-alter table public.vocabulary
-  add constraint vocabulary_progress_key_nonempty
-  check (btrim(progress_key) <> '') not valid;
+do $
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'vocabulary_progress_key_nonempty'
+      and conrelid = 'public.vocabulary'::regclass
+  ) then
+    alter table public.vocabulary
+      add constraint vocabulary_progress_key_nonempty
+      check (btrim(progress_key) <> '') not valid;
+  end if;
+end
+$;
 alter table public.vocabulary validate constraint vocabulary_progress_key_nonempty;
 
 create index if not exists vocabulary_progress_key_idx
