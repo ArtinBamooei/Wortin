@@ -16,9 +16,9 @@
   ],
   "icons": [
     {
-      "src": "./assets/wortin-logo.webp",
+      "src": "./assets/wortin-app-icon.svg",
       "sizes": "any",
-      "type": "image/webp",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]
