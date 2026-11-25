@@ -6,7 +6,7 @@
 
 - Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
 - Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows, a compact five-item mobile bar with a More panel, and keyboard-visible focus states.
-- Cached-first vocabulary loading with background refresh, fewer initial API requests, and lazy rendering of inactive dictionary/review/statistics views.
+- Cursor-based vocabulary pagination with bounded retries, timeouts, IndexedDB-first caching, and lazy rendering of inactive dictionary/review/statistics views.
 - Vocabulary search across German words, Persian meanings and example sentences.
 - Word details, example sentences, grammar/case notes, prepositions and source page when present.
 - Flashcards, a four-option meaning quiz, German text-to-speech, saved words and spaced-review scheduling with 10-minute retries, 1-day and 3-day early intervals, then gradual expansion up to 180 days.
@@ -20,6 +20,8 @@ The imported source file contained 2,995 alphabetic entries and 405 thematic ent
 The Persian meanings and grammar notes are user-supplied annotations from the source text, not independently certified by Goethe.
 
 ## Supabase setup
+
+Vocabulary cache data is stored in IndexedDB where available, with a versioned localStorage fallback. The service worker caches only the public app shell; it never caches authenticated API responses or session tokens.
 
 The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
 
@@ -56,7 +58,7 @@ If the Pages deployment is already enabled, a push to `main` should trigger a re
 
 ## Local preview
 
-Open `index.html` in a local static web server (recommended) or publish it with GitHub Pages. The app has no build step or frontend framework requirement; its only runtime backend dependency is the Supabase Data API.
+Run `npm run verify` with Node.js to validate, test and build the allowlisted `_site` artifact. For a local preview, serve `_site/` with any static HTTP server. The app uses no frontend framework; its runtime backend is the Supabase Data API.
 
 ## Keyboard shortcuts
 
@@ -79,7 +81,5 @@ Open `index.html` in a local static web server (recommended) or publish it with 
 Run the repository's dependency-free checks with Node.js:
 
 ```sh
-node --check app.js
-node scripts/validate-site.cjs
-node --test tests/*.test.cjs
+npm run verify
 ```
