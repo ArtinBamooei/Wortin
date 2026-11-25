@@ -30,9 +30,6 @@ begin
 end
 $;
 
-alter table public.user_progress validate constraint user_progress_progress_shape_check;
-alter table public.user_progress validate constraint user_progress_daily_shape_check;
-
 create or replace function public.wortin_set_user_progress_updated_at()
 returns trigger
 language plpgsql
