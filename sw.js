@@ -19,7 +19,7 @@ self.addEventListener("fetch", event => {
     }).catch(() => caches.match("./index.html")));
     return;
   }
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+  event.respondWith(caches.match(request, { ignoreSearch: true }).then(cached => cached || fetch(request).then(response => {
     if (response.ok && url.pathname.startsWith(self.location.pathname.replace(/[^/]*$/, ""))) {
       const copy = response.clone(); caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
     }
