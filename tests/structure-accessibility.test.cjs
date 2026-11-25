@@ -116,3 +116,13 @@ test("hover-only styles require a hover-capable fine pointer", () => {
   assert.match(main, /\.field:focus-within/);
   assert.match(media, /\.reading-card\.expanded\s*\{/);
 });
+
+test("theme tokens stay consolidated into one base, light and dark block", () => {
+  const css = read("styles.css");
+  assert.equal((css.match(/:root\\s*\\{/g) || []).length, 1);
+  assert.equal((css.match(/:root\\[data-theme=["']?light["']?\\]\\s*\\{/g) || []).length, 1);
+  assert.equal((css.match(/:root\\[data-theme=["']?dark["']?\\]\\s*\\{/g) || []).length, 1);
+  assert.match(css, /--bg:\\s*#111d2b/);
+  assert.match(css, /:root\\[data-theme="light"\\][\\s\\S]*?--bg:\\s*#f0f3f1/);
+  assert.match(css, /:root\\[data-theme="dark"\\][\\s\\S]*?--bg:\\s*#171a16/);
+});
