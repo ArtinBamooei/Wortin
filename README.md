@@ -49,6 +49,7 @@ The migrations are repeatable for the intended schema baseline. Review changes b
 - `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
 - `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT, UPDATE and DELETE. Every policy binds access to `auth.uid() = user_id`; anonymous access is revoked.
 - `progress` and `daily` JSONB payloads have validated object/array shape constraints and hard byte-size limits. A database trigger sets `updated_at` from server time.
+- Remaining platform controls: leaked-password protection still needs enabling in Supabase Auth settings if supported by the plan. GitHub Pages cannot set HSTS, X-Content-Type-Options or CSP frame-ancestors response headers; the current CSP also permits inline styles for generated chart/progress visuals.
 - No public views or `SECURITY DEFINER` functions were found in the exposed `public` schema. No tables were found in the `supabase_realtime` publication.
 - Browser source uses only the Supabase publishable key. Never replace it with a service-role or secret key.
 - The site CSP blocks inline scripts, `eval`, objects and unapproved frames. Inline styles remain allowed because the current UI uses inline style attributes.
