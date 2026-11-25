@@ -11,7 +11,7 @@ const fail = (message) => {
 };
 
 const requiredFiles = [
-  "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md", "404.html", "robots.txt", "sitemap.xml", "manifest.webmanifest", "sw.js", "theme-init.js", "pwa-register.js", "scripts/build-site.cjs",
+  "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md", "LICENSE", "SECURITY.md", ".gitignore", "package.json", "DATA-PROVENANCE.md", "404.html", "robots.txt", "sitemap.xml", "manifest.webmanifest", "sw.js", "theme-init.js", "pwa-register.js", "scripts/build-site.cjs",
   "supabase/migrations/20261023084218_wortin_vocabulary_schema.sql",
   "supabase/migrations/20261025065829_user_progress_security.sql",
   "supabase/migrations/20261119104740_security_hardening_public_table_grants.sql", "supabase/migrations/20261125115143_user_progress_integrity.sql", "supabase/migrations/20261125115228_validate_user_progress_integrity_constraints.sql"
