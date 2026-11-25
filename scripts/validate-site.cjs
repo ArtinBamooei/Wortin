@@ -64,7 +64,7 @@ if (!read("robots.txt").includes("Sitemap: https://artinbamooei.github.io/Wortin
 if (!read("sitemap.xml").includes("https://artinbamooei.github.io/Wortin/")) fail("Sitemap must contain the canonical site URL.");
 if (!read("sw.js").includes('const CACHE_NAME = "wortin-shell-v1"')) fail("A versioned offline shell cache is required.");
 const workflow = read(".github/workflows/pages.yml");
-if (!workflow.includes("node scripts/build-site.cjs") || !/path:\\s*_site/.test(workflow)) fail("GitHub Pages must deploy the curated _site artifact, not the repository root.");
+if (!workflow.includes("node scripts/build-site.cjs") || !/path:\s*_site/.test(workflow)) fail("GitHub Pages must deploy the curated _site artifact, not the repository root.");
 
 const views = [...html.matchAll(/\bdata-view=["']([^"']+)["']/g)].map((match) => match[1]);
 for (const view of new Set(views)) if (!html.includes(`id="view-${view}"`) && !html.includes(`id='view-${view}'`)) fail(`Navigation target has no view container: ${view}`);
