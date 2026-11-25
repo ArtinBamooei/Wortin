@@ -1,0 +1,48 @@
+name: Validate Wortin
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - "audit/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check learning-media.js
+          node --check theme-init.js
+          node --check pwa-register.js
+          node --check sw.js
+          node --check scripts/build-site.cjs
+      - name: Validate source and security boundaries
+        run: node scripts/validate-site.cjs
+      - name: Run automated tests
+        run: node --test tests/*.test.cjs
+      - name: Build deployment artifact
+        run: node scripts/build-site.cjs
+      - name: Verify deployment artifact excludes private project files
+        run: |
+          test -f _site/index.html
+          test -f _site/manifest.webmanifest
+          test -f _site/sw.js
+          test ! -d _site/supabase
+          test ! -d _site/scripts
+          test ! -d _site/tests
+          test ! -f _site/README.md
