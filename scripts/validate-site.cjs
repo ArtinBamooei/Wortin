@@ -14,7 +14,7 @@ const requiredFiles = [
   "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md", "404.html", "robots.txt", "sitemap.xml", "manifest.webmanifest", "sw.js", "theme-init.js", "pwa-register.js", "scripts/build-site.cjs",
   "supabase/migrations/20261023084218_wortin_vocabulary_schema.sql",
   "supabase/migrations/20261025065829_user_progress_security.sql",
-  "supabase/migrations/20261119104740_security_hardening_public_table_grants.sql", "supabase/migrations/20261125120000_user_progress_integrity.sql"
+  "supabase/migrations/20261119104740_security_hardening_public_table_grants.sql", "supabase/migrations/20261125115143_user_progress_integrity.sql"
 ];
 for (const name of requiredFiles) if (!fs.existsSync(path.join(root, name))) fail(`Required file is missing: ${name}`);
 if (process.exitCode) process.exit(1);
@@ -31,7 +31,7 @@ if (!app.includes('const AUTH_REDIRECT_URL="https://artinbamooei.github.io/Worti
 if (!media.includes('sandbox="allow-scripts allow-same-origin allow-presentation"')) fail("Third-party video iframe must be sandboxed.");
 if (!media.includes('["aparat.com","www.aparat.com"].includes(u.hostname)')) fail("Video embeds must enforce the Aparat host allowlist.");
 const grantsMigration = read("supabase/migrations/20261119104740_security_hardening_public_table_grants.sql");
-const integrityMigration = read("supabase/migrations/20261125120000_user_progress_integrity.sql");
+const integrityMigration = read("supabase/migrations/20261125115143_user_progress_integrity.sql");
 for (const token of ["user_progress_progress_shape_check", "user_progress_daily_shape_check", "wortin_user_progress_updated_at", "Users delete own progress", "grant delete on table public.user_progress to authenticated"]) if (!integrityMigration.toLowerCase().includes(token.toLowerCase())) fail("User progress integrity migration is missing: " + token);
 
 if (!grantsMigration.includes("revoke all privileges on table public.vocabulary")) fail("Vocabulary grants must be explicitly revoked before least-privilege grants.");
