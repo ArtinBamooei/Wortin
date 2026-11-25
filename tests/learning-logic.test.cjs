@@ -38,8 +38,8 @@ test("incorrect answers apply a partial lapse, preserve ease factor and schedule
 });
 
 test("mastery requires five correct reviews and intervals expand with a 180-day cap", () => {
-  const scheduleReview = appFunction("scheduleReview");
   const addLocalDays = appFunction("addLocalDays");
+  const scheduleReview = appFunction("scheduleReview", () => 0, { addLocalDays });
   const now = 1_800_000_000_000;
   let state = scheduleReview({}, true, now);
   assert.equal(state.repetitions, 1);
