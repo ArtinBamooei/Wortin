@@ -11,7 +11,7 @@ const fail = (message) => {
 };
 
 const requiredFiles = [
-  "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md",
+  "index.html", "app.js", "styles.css", "learning-media.js", "learning-media.css", "README.md", "404.html", "robots.txt", "sitemap.xml", "manifest.webmanifest", "sw.js", "theme-init.js", "pwa-register.js", "scripts/build-site.cjs",
   "supabase/migrations/20261023084218_wortin_vocabulary_schema.sql",
   "supabase/migrations/20261025065829_user_progress_security.sql",
   "supabase/migrations/20261119104740_security_hardening_public_table_grants.sql"
@@ -42,7 +42,7 @@ if (/\bunsafe-(?:inline|eval)\b/.test(scriptPolicy)) fail("CSP script-src must n
 if (/\b(?:eval|Function)\s*\(/.test(app)) fail("Dynamic code execution sink detected in app.js.");
 if (/service_role|sb_secret_[A-Za-z0-9_]+/i.test(html + app)) fail("A server-side Supabase secret appears in public source.");
 
-for (const match of html.matchAll(/<script\b([^>]*)>/gi)) if (!/\bsrc\s*=/.test(match[1])) fail("Inline script tags are incompatible with the current CSP.");
+for (const match of html.matchAll(/<script\b([^>]*)>/gi)) { const attrs = match[1]; const jsonLd = /\btype=["']application\/ld\+json["']/i.test(attrs); if (!/\bsrc\s*=/.test(attrs) && !jsonLd) fail("Executable inline script tags are incompatible with the current CSP."); }
 const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map((match) => match[1]);
 const duplicateIds = ids.filter((id, i) => ids.indexOf(id) !== i);
 if (duplicateIds.length) fail("Duplicate HTML id(s): " + [...new Set(duplicateIds)].join(", "));
@@ -55,6 +55,16 @@ const jsVersion = html.match(/<script\b[^>]*\bsrc=["']\.\/app\.js\?([^"']+)["']/
 if (!jsVersion || !new URLSearchParams(jsVersion).get("v")) fail("app.js must have a non-empty cache version.");
 const cssVersion = html.match(/<link\b[^>]*\bhref=["']\.\/styles\.css\?([^"']+)["']/i)?.[1];
 if (!cssVersion || !new URLSearchParams(cssVersion).get("v")) fail("styles.css must have a non-empty cache version.");
+
+const manifest = JSON.parse(read("manifest.webmanifest"));
+if (manifest.start_url !== "./" || manifest.scope !== "./" || manifest.display !== "standalone") fail("PWA manifest must use the GitHub Pages project scope and standalone display.");
+if (!html.includes('rel="manifest"') || !html.includes('rel="apple-touch-icon"')) fail("PWA manifest and Apple touch icon links are required.");
+for (const token of ['name="twitter:card"', 'property="og:image"', 'property="og:locale"', 'property="og:site_name"']) if (!html.includes(token)) fail("Required social metadata is missing: " + token);
+if (!read("robots.txt").includes("Sitemap: https://artinbamooei.github.io/Wortin/sitemap.xml")) fail("robots.txt must advertise the canonical sitemap.");
+if (!read("sitemap.xml").includes("https://artinbamooei.github.io/Wortin/")) fail("Sitemap must contain the canonical site URL.");
+if (!read("sw.js").includes('const CACHE_NAME = "wortin-shell-v1"')) fail("A versioned offline shell cache is required.");
+const workflow = read(".github/workflows/pages.yml");
+if (!workflow.includes("node scripts/build-site.cjs") || !/path:\\s*_site/.test(workflow)) fail("GitHub Pages must deploy the curated _site artifact, not the repository root.");
 
 const views = [...html.matchAll(/\bdata-view=["']([^"']+)["']/g)].map((match) => match[1]);
 for (const view of new Set(views)) if (!html.includes(`id="view-${view}"`) && !html.includes(`id='view-${view}'`)) fail(`Navigation target has no view container: ${view}`);
