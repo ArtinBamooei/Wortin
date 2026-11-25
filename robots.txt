@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://artinbamooei.github.io/Wortin/sitemap.xml
