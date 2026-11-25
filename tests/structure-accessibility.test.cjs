@@ -165,3 +165,12 @@ test("expensive CSS blur filters are capped for rendering performance", () => {
   for (const match of filters) assert.ok(Number(match[1]) <= 12, "filter blur exceeds 12px: " + match[0]);
   assert.match(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?\.auth-overlay[^}]*backdrop-filter:none/);
 });
+
+test("interactive controls do not suppress native focus outlines", () => {
+  const css = read("styles.css");
+  assert.doesNotMatch(css, /outline\\s*:\\s*(?:none|0)\\b/i);
+  assert.match(css, /input:focus-visible/);
+  assert.match(css, /button:focus-visible/);
+  assert.match(css, /a:focus-visible/);
+  assert.match(css, /textarea:focus-visible/);
+});
