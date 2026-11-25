@@ -21,3 +21,11 @@ If private vulnerability reporting is unavailable, contact the repository owner 
 - Keep the user_progress policies scoped to auth.uid() = user_id.
 - Do not cache authenticated API responses or session tokens in the service worker.
 - Review GitHub Actions permissions and pinned action revisions before changing deployment workflows.
+
+## Deployment and authentication limitations
+
+GitHub Pages does not provide repository-controlled response-header configuration. The current meta CSP cannot enforce `frame-ancestors`, HSTS, or `X-Content-Type-Options`. Use a host/CDN with response-header rules if those controls are required.
+
+The Supabase Auth setting for leaked-password protection is separate from SQL/RLS and must be enabled in the Supabase Dashboard when supported by the project plan. The browser Supabase SDK is pinned to a specific CDN version; its script currently has no verified Subresource Integrity hash.
+
+The current CSP permits inline styles because some chart and progress visuals use generated style attributes. Do not add executable inline scripts; structured-data JSON-LD is the only non-executable inline script block.
