@@ -49,3 +49,19 @@ test("listening answer selection does not rebuild the entire root", () => {
   assert.match(media, /question\.querySelectorAll\("\[data-answer\]"/);
   assert.doesNotMatch(media, /state\.answers\[b\.dataset\.answer\][^;]*;render\(\)/);
 });
+
+test("main and listening stylesheets keep positive pixel font sizes at or above 12px", () => {
+  for (const file of ["styles.css", "learning-media.css"]) {
+    const css = read(file);
+    const small = [];
+    for (const match of css.matchAll(/font-size\\s*:\\s*([^;{}]+)/gi)) {
+      const px = match[1].match(/^\\s*(\\d+(?:\\.\\d+)?)px\\b/i);
+      if (px && Number(px[1]) > 0 && Number(px[1]) < 12) small.push("font-size: " + px[1] + "px");
+    }
+    for (const match of css.matchAll(/\\bfont\\s*:\\s*([^;{}]+)/gi)) {
+      const px = match[1].match(/(?:^|\\s)(\\d+(?:\\.\\d+)?)px(?=\\/|\\s|$)/i);
+      if (px && Number(px[1]) > 0 && Number(px[1]) < 12) small.push("font: " + px[1] + "px");
+    }
+    assert.deepEqual(small, [], file + " contains text below the 12px minimum");
+  }
+});
