@@ -65,3 +65,54 @@ test("main and listening stylesheets keep positive pixel font sizes at or above 
     assert.deepEqual(small, [], file + " contains text below the 12px minimum");
   }
 });
+
+test("hover-only styles require a hover-capable fine pointer", () => {
+  for (const file of ["styles.css", "learning-media.css"]) {
+    const css = read(file);
+    const stack = [];
+    const unguarded = [];
+    let start = 0;
+    let quote = null;
+    let comment = false;
+    let escaped = false;
+    for (let i = 0; i < css.length; i++) {
+      const char = css[i];
+      const next = css[i + 1];
+      if (comment) {
+        if (char === "*" && next === "/") { comment = false; i++; }
+        continue;
+      }
+      if (quote) {
+        if (escaped) { escaped = false; continue; }
+        if (char === "\\\\") { escaped = true; continue; }
+        if (char === quote) quote = null;
+        continue;
+      }
+      if (char === "/" && next === "*") { comment = true; i++; continue; }
+      if (char === "\\"" || char === "'") { quote = char; continue; }
+      if (char === "{") {
+        const prelude = css.slice(start, i).trim();
+        if (!prelude.startsWith("@") && prelude.includes(":hover")) {
+          const finePointer = stack.some(item => /\\(hover\\s*:\\s*hover\\)/i.test(item) && /\\(pointer\\s*:\\s*fine\\)/i.test(item));
+          const touchOverride = stack.some(item => /\\(hover\\s*:\\s*none\\)|\\(pointer\\s*:\\s*coarse\\)/i.test(item));
+          if (!finePointer && !touchOverride) unguarded.push(prelude);
+        }
+        stack.push(prelude);
+        start = i + 1;
+      } else if (char === "}") {
+        assert.ok(stack.length, file + " has an unmatched closing brace");
+        stack.pop();
+        start = i + 1;
+      } else if (char === ";" && stack.length === 0) {
+        start = i + 1;
+      }
+    }
+    assert.equal(stack.length, 0, file + " has unclosed CSS blocks");
+    assert.deepEqual(unguarded, [], file + " has hover styles without an input-capability guard");
+  }
+  const main = read("styles.css");
+  const media = read("learning-media.css");
+  assert.match(main, /\\.mini-button\\.saved\\s*\\{/);
+  assert.match(main, /\\.field:focus-within/);
+  assert.match(media, /\\.reading-card\\.expanded\\s*\\{/);
+});
