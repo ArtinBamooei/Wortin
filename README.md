@@ -33,6 +33,7 @@ The app uses the Supabase **publishable** key in the browser, not a service-role
    - `20261125115228_validate_user_progress_integrity_constraints.sql`
    - `20261125115747_stable_vocabulary_record_codes.sql`
    - `20261125115830_group_duplicate_vocabulary_progress.sql`
+   - `20261125120320_drop_duplicate_record_code_index.sql`
 2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
 3. The grants migration keeps vocabulary read-only for visitors and restricts user progress to authenticated users.
 4. The integrity migrations enforce JSON object/array shapes, 2 MiB / 512 KiB payload limits, server-side `updated_at`, and an owner-only DELETE policy. The validation migration checks existing rows.
@@ -43,7 +44,7 @@ The app uses the Supabase **publishable** key in the browser, not a service-role
 
 The migrations are repeatable for the intended schema baseline. Review changes before applying them to an existing production project.
 
-### Security hardening audit (2026-11-19)
+### Security hardening audit (2026-11-25)
 
 - `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
 - `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT, UPDATE and DELETE. Every policy binds access to `auth.uid() = user_id`; anonymous access is revoked.
