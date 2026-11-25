@@ -36,9 +36,9 @@ test("word progress uses stable record codes and conservative mastery", () => {
 test("search normalization covers Persian variants, ZWNJ and German spellings", () => {
   const app = read("app.js");
   assert.match(app, /function searchForms/);
-  assert.match(app, /replace\(\/\[يى\]\//);
-  assert.match(app, /replace\(\/ä\/g,"ae"\)/);
-  assert.match(app, /replace\(\/ü\/g,"ue"\)/);
+  assert.ok(app.includes(".replace(/[يى]/g,\"ی\""));
+  assert.ok(app.includes(".replace(/ä/g,\"ae\""));
+  assert.ok(app.includes(".replace(/ü/g,\"ue\""));
 });
 
 test("listening answer selection does not rebuild the entire root", () => {
