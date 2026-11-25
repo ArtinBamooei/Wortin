@@ -159,9 +159,9 @@ test("text and muted tokens meet WCAG AA contrast on all theme surfaces", () => 
 
 test("expensive CSS blur filters are capped for rendering performance", () => {
   const css = read("styles.css");
-  const backdrop = [...css.matchAll(/(?:-webkit-)?backdrop-filter\\s*:\\s*blur\\((\\d+(?:\\.\\d+)?)px\\)/gi)];
-  const filters = [...css.matchAll(/(?:^|[;{])\\s*filter\\s*:\\s*blur\\((\\d+(?:\\.\\d+)?)px\\)/gi)];
+  const backdrop = [...css.matchAll(/(?:-webkit-)?backdrop-filter\s*:\s*blur\((\d+(?:\.\d+)?)px\)/gi)];
+  const filters = [...css.matchAll(/(?:^|[;{])\s*filter\s*:\s*blur\((\d+(?:\.\d+)?)px\)/gi)];
   for (const match of backdrop) assert.ok(Number(match[1]) <= 6, "backdrop blur exceeds 6px: " + match[0]);
   for (const match of filters) assert.ok(Number(match[1]) <= 12, "filter blur exceeds 12px: " + match[0]);
-  assert.match(css, /@media\\s*\\(max-width:\\s*620px\\)[\\s\\S]*?\.auth-overlay[^}]*backdrop-filter:none/);
+  assert.match(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?\.auth-overlay[^}]*backdrop-filter:none/);
 });
