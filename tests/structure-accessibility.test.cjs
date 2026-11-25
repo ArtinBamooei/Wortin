@@ -130,9 +130,9 @@ test("theme tokens stay consolidated into one base, light and dark block", () =>
 test("text and muted tokens meet WCAG AA contrast on all theme surfaces", () => {
   const css = read("styles.css");
   const selectors = [
-    [":root", /:root\s*\{/],
-    [':root[data-theme="light"]', /:root\[data-theme="light"\]\s*\{/],
-    [':root[data-theme="dark"]', /:root\[data-theme="dark"\]\s*\{/]
+    [":root", /:root\s*\{([^}]+)\}/],
+    [':root[data-theme="light"]', /:root\[data-theme="light"\]\s*\{([^}]+)\}/],
+    [':root[data-theme="dark"]', /:root\[data-theme="dark"\]\s*\{([^}]+)\}/]
   ];
   const luminance = (hex) => {
     const channels = hex.slice(1).match(/.{2}/g).map(value => parseInt(value, 16) / 255);
@@ -145,7 +145,7 @@ test("text and muted tokens meet WCAG AA contrast on all theme surfaces", () => 
     return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   };
   for (const [label, selector] of selectors) {
-    const match = css.match(new RegExp(selector.source + "([^}]+)\\}"));
+    const match = css.match(selector);
     assert.ok(match, label + " theme block is missing");
     const tokens = Object.fromEntries([...match[1].matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-f]{6})/gi)].map(item => [item[1], item[2]]));
     for (const foreground of ["--text", "--muted", "--muted2"]) {
