@@ -9,7 +9,7 @@
   const levels=["A1","A2","B1"];
   function render(){
     root.innerHTML=`
-      <div class="media-intro"><div><span class="media-eyebrow">HÖREN · VERSTEHEN</span><h1>شنیداری آلمانی</h1><p>تمرین شنیدن آلمانی از سطح A1 تا B1؛ ویدیوها مستقیماً در همین صفحه پخش می‌شوند.</p></div><div class="media-orb" aria-hidden="true"><span>♫</span><i></i></div></div>
+      <div class="media-intro"><div><span class="media-eyebrow">HÖREN · VERSTEHEN</span><h2>شنیداری آلمانی</h2><p>تمرین شنیدن آلمانی از سطح A1 تا B1؛ ویدیوها مستقیماً در همین صفحه پخش می‌شوند.</p></div><div class="media-orb" aria-hidden="true"><span>♫</span><i></i></div></div>
       <div class="media-levels" role="group" aria-label="سطح زبان">${levels.map(l=>`<button type="button" data-level="${l}" class="${state.level===l?"active":""}" aria-pressed="${state.level===l}"><strong>${l}</strong><span>${({A1:"مقدماتی",A2:"پایه",B1:"متوسط"})[l]}</span></button>`).join("")}</div>
       <div class="media-toolbar"><div><span class="media-eyebrow">HÖRTRAINING / ${state.level}</span><h2>ویدیوهای سطح ${state.level}</h2><p>ویدیو را ببین، دوباره گوش بده و به پرسش‌های درک مطلب پاسخ بده.</p></div></div>
       ${renderListening()}
