@@ -3,7 +3,7 @@ const SUPABASE_URL="https://gfsghvyotfkchjwqhorl.supabase.co";
 const SUPABASE_KEY="sb_publishable_CiAz7Kyz80SC-j3djY0LoQ_ZpPNb1qW";
 const CACHE_KEY="wortin.vocabulary.cache.v4",THEME_KEY="wortin.theme.v2",PROGRESS_BASE_KEY="wortin.progress.v2",DAILY_BASE_KEY="wortin.daily.v2",LOCAL_CHANGE_BASE_KEY="wortin.progress.modifiedAt.v1";
 let PROGRESS_KEY=PROGRESS_BASE_KEY+".anon",DAILY_KEY=DAILY_BASE_KEY+".anon",LOCAL_CHANGE_KEY=LOCAL_CHANGE_BASE_KEY+".anon";
-try{if(!localStorage.getItem(PROGRESS_KEY)&&localStorage.getItem("wortin.progress.v1"))localStorage.setItem(PROGRESS_KEY,localStorage.getItem("wortin.progress.v1"));if(!localStorage.getItem(DAILY_KEY)&&localStorage.getItem("wortin.daily.v1"))localStorage.setItem(DAILY_KEY,localStorage.getItem("wortin.daily.v1"))}catch{}
+try{if(!localStorage.getItem(PROGRESS_KEY)&&localStorage.getItem("wortin.progress.v1"))localStorage.setItem(PROGRESS_KEY,localStorage.getItem("wortin.progress.v1"));if(!localStorage.getItem(DAILY_KEY)&&localStorage.getItem("wortin.daily.v1"))localStorage.setItem(DAILY_KEY,localStorage.getItem("wortin.daily.v1"))}catch(err){console.warn("Legacy local progress migration failed.",err)}
 const $=id=>document.getElementById(id),faNum=n=>Number(n||0).toLocaleString("fa-IR"),safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),svg=(name)=>'<svg aria-hidden="true"><use href="#i-'+name+'"/></svg>';
 function isStrongPassword(value){const password=String(value||"");return password.length>=10&&/\p{L}/u.test(password)&&/\p{N}/u.test(password)}
 function storageGet(key){try{return localStorage.getItem(key)}catch(err){console.warn("Local storage read failed.",err);return null}}
