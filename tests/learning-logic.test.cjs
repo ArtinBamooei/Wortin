@@ -24,7 +24,8 @@ function appFunctionWithContext(name, extraContext = {}) {
 }
 
 test("incorrect answers apply a partial lapse, preserve ease factor and schedule a short retry", () => {
-  const scheduleReview = appFunction("scheduleReview");
+  const addLocalDays = appFunction("addLocalDays");
+  const scheduleReview = appFunction("scheduleReview", () => 0, { addLocalDays });
   const now = 1_800_000_000_000;
   const next = scheduleReview({ known: true, repetitions: 5, interval: 30, easeFactor: 2.5, seen: 4 }, false, now);
   assert.equal(next.known, false);
