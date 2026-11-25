@@ -1,0 +1,24 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Node and test output
+node_modules/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Build output
+_site/
+dist/
+build/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
