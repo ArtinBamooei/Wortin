@@ -323,4 +323,4 @@ if(authClient){authClient.auth.onAuthStateChange((event,session)=>{if(event==="P
 function flushPendingProgressForLifecycle(){if(!authUser||!cloudSyncPending)return;clearTimeout(cloudSyncTimer);cloudSyncTimer=null;flushCloudSync().catch(err=>console.warn("Progress remains cached locally until sync can retry.",err))}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushPendingProgressForLifecycle()});
 window.addEventListener("pagehide",flushPendingProgressForLifecycle);window.addEventListener("online",()=>{if(authUser&&cloudSyncPending)flushPendingProgressForLifecycle()});
-const today=new Date();setTheme(storageGet(THEME_KEY)||"light");renderWeekChart();renderGoal();loadWords();
+const today=new Date();setTheme(storageGet(THEME_KEY)||(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));renderWeekChart();renderGoal();loadWords();
