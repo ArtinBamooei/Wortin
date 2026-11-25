@@ -25,11 +25,11 @@ Vocabulary cache data is stored in IndexedDB where available, with a versioned l
 
 The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
 
-1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, `supabase/migrations/20261025065829_user_progress_security.sql`, `supabase/migrations/20261119104740_security_hardening_public_table_grants.sql`, `supabase/migrations/20261125115143_user_progress_integrity.sql`, then `supabase/migrations/20261125115228_validate_user_progress_integrity_constraints.sql`.
+1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, `supabase/migrations/20261025065829_user_progress_security.sql`, `supabase/migrations/20261119104740_security_hardening_public_table_grants.sql`, `supabase/migrations/20261125115143_user_progress_integrity.sql`, then `supabase/migrations/20261125115228_validate_user_progress_integrity_constraints.sql`, and finally `supabase/migrations/20261125115747_stable_vocabulary_record_codes.sql`.
 2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
 3. The least-privilege grants migration keeps vocabulary read-only for visitors and restricts user progress to authenticated users.
 4. Apply the two November 25 migrations to enforce bounded JSON object/array shapes, 2 MiB / 512 KiB payload limits, server-side `updated_at`, and an owner-only DELETE policy. The second migration validates the constraints against existing rows.
-5. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
+5. `vocabulary.record_code` is required and unique; the client uses it as the stable progress key so identity-column reimports do not orphan review history.\n6. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
 5. Signed-in progress is stored in `public.user_progress`. RLS must restrict SELECT, INSERT and UPDATE to rows where `auth.uid() = user_id`; anonymous/public access is revoked by the security migration.
 6. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
 
