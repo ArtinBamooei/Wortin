@@ -71,7 +71,7 @@ if (!html.includes('rel="manifest"') || !html.includes('rel="apple-touch-icon"')
 for (const token of ['name="twitter:card"', 'property="og:image"', 'property="og:locale"', 'property="og:site_name"']) if (!html.includes(token)) fail("Required social metadata is missing: " + token);
 if (!read("robots.txt").includes("Sitemap: https://artinbamooei.github.io/Wortin/sitemap.xml")) fail("robots.txt must advertise the canonical sitemap.");
 if (!read("sitemap.xml").includes("https://artinbamooei.github.io/Wortin/")) fail("Sitemap must contain the canonical site URL.");
-if (!read("sw.js").includes('const CACHE_NAME = "wortin-shell-v1"')) fail("A versioned offline shell cache is required.");
+if (!read("sw.js").includes('const CACHE_NAME = "wortin-shell-v2"')) fail("A versioned offline shell cache is required.");
 const workflow = read(".github/workflows/pages.yml");
 if (!workflow.includes("node scripts/build-site.cjs") || !/path:\s*_site/.test(workflow)) fail("GitHub Pages must deploy the curated _site artifact, not the repository root.");
 
