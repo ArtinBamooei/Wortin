@@ -23,7 +23,9 @@ const html = read("index.html"), app = read("app.js"), css = read("styles.css"),
 const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 const hasNoReferrer = html.includes('<meta name="referrer" content="no-referrer">');
 if (!hasNoReferrer) fail("Referrer policy must be no-referrer.");
-const supabaseScript = html.match(/<script[^>]*supabase-js@2\\.117\\.3[^>]*>/i)?.[0] || "";
+const supabaseScriptStart = html.indexOf('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"');
+const supabaseScriptEnd = supabaseScriptStart >= 0 ? html.indexOf(">", supabaseScriptStart) : -1;
+const supabaseScript = supabaseScriptEnd >= 0 ? html.slice(supabaseScriptStart, supabaseScriptEnd + 1) : "";
 if (!supabaseScript.includes('src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"')) fail("Supabase SDK must use the explicit pinned UMD asset.");
 if (!supabaseScript.includes('integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R"')) fail("Supabase SDK must use the verified SHA-384 integrity hash.");
 if (!supabaseScript.includes('crossorigin="anonymous"')) fail("Supabase CDN script must use anonymous CORS for SRI.");
