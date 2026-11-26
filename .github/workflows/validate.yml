@@ -19,7 +19,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,6 +31,7 @@ jobs:
           node --check pwa-register.js
           node --check sw.js
           node --check scripts/build-site.cjs
+          node --check tests/browser-smoke.cjs
       - name: Validate source and security boundaries
         run: node scripts/validate-site.cjs
       - name: Run automated tests
@@ -46,3 +47,23 @@ jobs:
           test ! -d _site/scripts
           test ! -d _site/tests
           test ! -f _site/README.md
+      - name: Install pinned Playwright
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Serve built application
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory _site >/tmp/wortin-http.log 2>&1 &
+          echo $! >/tmp/wortin-http.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/wortin-http.log
+          exit 1
+      - name: Run desktop and mobile browser tests
+        run: node tests/browser-smoke.cjs
