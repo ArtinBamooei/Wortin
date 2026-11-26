@@ -74,6 +74,31 @@ test("progress status classification uses a precomputed progress object", () => 
   assert.equal(statusForProgress({ seen: 5, known: true, due: now + 1 }, now), "mastered");
 });
 
+test("vocabulary search indexes build in bounded batches without losing records", async () => {
+  const words = Array.from({ length: 3400 }, (_, index) => ({
+    id: index + 1,
+    word: "Wort" + (index + 1),
+    meaning_fa: "معنی " + (index + 1),
+    examples_de: ["Beispiel " + (index + 1)],
+    extra_examples_de: [],
+    example_de: "",
+    thematic_group: "Gruppe"
+  }));
+  const { fn: rebuildWordIndexes, context } = appFunctionWithContext("rebuildWordIndexes", {
+    words,
+    wordById: new Map(),
+    wordSearchIndex: new Map(),
+    searchForms: value => [String(value).toLocaleLowerCase("de")],
+    setTimeout: callback => callback()
+  });
+
+  await rebuildWordIndexes();
+  assert.equal(context.wordById.size, 3400);
+  assert.equal(context.wordSearchIndex.size, 3400);
+  assert.equal(context.wordById.get("250").word, "Wort250");
+  assert.match(context.wordSearchIndex.get("3400"), /beispiel 3400/);
+});
+
 test("daily review samples 60% of at most the latest ten studied, eligible words", () => {
   const buildQueue = appFunction("buildDailyReviewQueue", () => 0);
   const words = Array.from({ length: 24 }, (_, i) => ({ id: String(i + 1), word: `Wort${i + 1}`, meaning_fa: `معنی ${i + 1}` }));
