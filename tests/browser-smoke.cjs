@@ -160,8 +160,15 @@ async function run() {
     await mobile.locator('.mobile-nav [data-view="learn"]').click();
     await mobile.locator("#view-learn.active").waitFor();
     await mobile.locator("#studyContent #flashcard").waitFor({ timeout: 5000 });
-    await mobile.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-    await mobile.waitForTimeout(100);
+    await mobile.evaluate(() => {
+      document.documentElement.style.scrollBehavior = "auto";
+      document.body.style.scrollBehavior = "auto";
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    await mobile.waitForFunction(() => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      return max <= 0 || window.scrollY >= max - 2;
+    }, null, { timeout: 3000 });
     const studyScroll = await mobile.evaluate(() => {
       const action = document.querySelector("#study-card-actions, .study-card-actions");
       const nav = document.querySelector(".mobile-nav");
