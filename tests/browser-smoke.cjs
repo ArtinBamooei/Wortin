@@ -24,7 +24,7 @@ const vocabularyFixture = [{
   equivalent: null
 }];
 
-async function mockBackend(page) {
+async function mockBackend(page, options = {}) {
   await page.route("**/npm/@supabase/supabase-js@2.117.3", route =>
     route.fulfill({
       status: 200,
@@ -33,9 +33,10 @@ async function mockBackend(page) {
     })
   );
 
-  await page.route("**/rest/v1/vocabulary*", route =>
-    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) })
-  );
+  await page.route("**/rest/v1/vocabulary*", async route => {
+    if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });
+  });
 
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
@@ -53,6 +54,19 @@ async function run() {
   const failures = [];
 
   try {
+    const coldStart = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
+    await mockBackend(coldStart, { vocabularyDelayMs: 900 });
+    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
+    await coldStart.locator("#view-learn.active").waitFor();
+    await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
+    assert.equal(await coldStart.locator("#flashcard").count(), 0,
+      "A flashcard must not be rendered from an empty vocabulary list while loading.");
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
+    assert.notEqual(await coldStart.locator("#toast").innerText(), "واژگان هنوز دریافت نشده‌اند.",
+      "A temporary vocabulary-loading state must not show a false unavailable-vocabulary error.");
+    await coldStart.close();
+
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 } });
     desktop.on("pageerror", error => failures.push("Desktop page error: " + error.message));
     await mockBackend(desktop);

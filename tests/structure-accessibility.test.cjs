@@ -42,6 +42,15 @@ test("view navigation supports direct links and browser history", () => {
   assert.match(app, /history\[method\]\(\{view\}/);
 });
 
+test("flashcard deep links wait for vocabulary and resume after cache or network load", () => {
+  const app = read("app.js");
+  assert.match(app, /vocabularyLoading=true/);
+  assert.ok(app.includes("function resumeStudyViewAfterVocabularyLoad()"));
+  assert.ok(app.includes("renderAll();resumeStudyViewAfterVocabularyLoad()"));
+  assert.ok(app.includes('if(view==="learn"&&words.length&&'));
+  assert.ok(app.includes('if(vocabularyLoading){changeView(mode==="quiz"?"quiz":"learn");return}'));
+});
+
 test("word progress uses stable record codes and conservative mastery", () => {
   const app = read("app.js");
   assert.ok(app.includes("function wordProgressKey(word){return String(word.progress_key||word.record_code||word.id)}"));
