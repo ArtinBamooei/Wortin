@@ -193,7 +193,7 @@ async function run() {
     }
 
     // Reset study state after checking all views so the flashcard clearance test starts a fresh flash session.
-    await mobile.reload({ waitUntil: "domcontentloaded" });
+    await mobile.goto(BASE_URL, { waitUntil: "domcontentloaded" });
     await waitForVocabulary(mobile);
 
     // A long study view must extend the document and scroll above the fixed mobile navigation.
