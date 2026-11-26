@@ -155,6 +155,43 @@ async function run() {
       }
     }
 
+    // Check every primary and secondary view at narrow and standard phone widths.
+    const primaryViews = ["home", "learn", "daily", "listening"];
+    const secondaryViews = ["dictionary", "reading", "quiz", "review", "stats", "official-exams"];
+    for (const width of [320, 390]) {
+      await mobile.setViewportSize({ width, height: 844 });
+      const verifyActiveView = async view => {
+        await mobile.locator("#view-" + view + ".active").waitFor({ timeout: 5000 });
+        await mobile.waitForTimeout(120);
+        const geometry = await mobile.evaluate(viewId => {
+          const node = document.getElementById("view-" + viewId);
+          const rect = node.getBoundingClientRect();
+          return {
+            viewport: document.documentElement.clientWidth,
+            pageWidth: document.documentElement.scrollWidth,
+            viewWidth: node.scrollWidth,
+            left: rect.left,
+            right: rect.right
+          };
+        }, view);
+        assert.ok(geometry.pageWidth <= geometry.viewport + 1,
+          "Horizontal document overflow in " + view + " at " + width + "px: " + JSON.stringify(geometry));
+        assert.ok(geometry.viewWidth <= geometry.viewport + 1,
+          "Section content overflow in " + view + " at " + width + "px: " + JSON.stringify(geometry));
+        assert.ok(geometry.left >= -1 && geometry.right <= geometry.viewport + 1,
+          "Section exceeds viewport in " + view + " at " + width + "px: " + JSON.stringify(geometry));
+      };
+      for (const view of primaryViews) {
+        await mobile.locator('.mobile-nav [data-view="' + view + '"]').click();
+        await verifyActiveView(view);
+      }
+      for (const view of secondaryViews) {
+        await mobile.locator("#mobileMoreToggle").click();
+        await mobile.locator("#mobileMorePanel [data-view='" + view + "']").click();
+        await verifyActiveView(view);
+      }
+    }
+
     // A long study view must extend the document and scroll above the fixed mobile navigation.
     await mobile.setViewportSize({ width: 390, height: 844 });
     await mobile.locator('.mobile-nav [data-view="learn"]').click();
