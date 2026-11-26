@@ -65,6 +65,45 @@ jobs:
           exit 1
       - name: Run desktop and mobile browser tests
         run: node tests/browser-smoke.cjs
+      - name: Run Lighthouse on the built desktop and mobile site
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome_path="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
+          target_url='http://127.0.0.1:4173/'
+          npx --yes lighthouse@13.5.0 "$target_url" \
+            --chrome-path="$chrome_path" \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output-path=/tmp/wortin-lighthouse-mobile.json --quiet
+          npx --yes lighthouse@13.5.0 "$target_url" \
+            --chrome-path="$chrome_path" \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --preset=desktop \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output-path=/tmp/wortin-lighthouse-desktop.json --quiet
+          node <<'NODE'
+          const fs = require('node:fs');
+          for (const mode of ['mobile', 'desktop']) {
+            const report = JSON.parse(fs.readFileSync('/tmp/wortin-lighthouse-' + mode + '.json', 'utf8'));
+            console.log('\n=== Lighthouse ' + mode.toUpperCase() + ' ===');
+            for (const [key, category] of Object.entries(report.categories || {})) {
+              console.log(key + ': ' + (category.score == null ? 'N/A' : Math.round(category.score * 100) + '/100'));
+            }
+            for (const key of ['first-contentful-paint', 'largest-contentful-paint', 'speed-index', 'total-blocking-time', 'cumulative-layout-shift']) {
+              const audit = report.audits?.[key];
+              if (audit && audit.numericValue != null) console.log(key + ': ' + Math.round(audit.numericValue));
+            }
+          }
+          NODE
+      - name: Save Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wortin-lighthouse-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/wortin-lighthouse-*.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Calculate exact pinned Supabase SDK integrity digest
         shell: bash
         run: |
