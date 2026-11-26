@@ -23,33 +23,80 @@ function appFunctionWithContext(name, extraContext = {}) {
   return { fn: vm.runInContext(`(${line})`, context), context };
 }
 
-test("incorrect answers schedule a short retry and reset consecutive correct repetitions", () => {
-  const scheduleReview = appFunction("scheduleReview");
+test("incorrect answers apply a partial lapse, preserve ease factor and schedule a short retry", () => {
+  const addLocalDays = appFunction("addLocalDays");
+  const scheduleReview = appFunction("scheduleReview", () => 0, { addLocalDays });
   const now = 1_800_000_000_000;
-  const next = scheduleReview({ known: true, repetitions: 5, interval: 30 }, false, now);
+  const next = scheduleReview({ known: true, repetitions: 5, interval: 30, easeFactor: 2.5, seen: 4 }, false, now);
   assert.equal(next.known, false);
-  assert.equal(next.interval, 0);
+  assert.equal(next.interval, 6);
   assert.equal(next.repetitions, 0);
+  assert.equal(next.easeFactor, 2.3);
+  assert.equal(next.lapses, 1);
   assert.equal(next.due, now + 10 * 60 * 1000);
-  assert.equal(next.seen, 1);
+  assert.equal(next.seen, 5);
 });
 
-test("correct answers use 1 day, 3 days, then expanding intervals capped at 180 days", () => {
-  const scheduleReview = appFunction("scheduleReview");
+test("mastery requires five correct reviews and intervals expand with a 180-day cap", () => {
+  const addLocalDays = appFunction("addLocalDays");
+  const scheduleReview = appFunction("scheduleReview", () => 0, { addLocalDays });
   const now = 1_800_000_000_000;
   let state = scheduleReview({}, true, now);
   assert.equal(state.repetitions, 1);
   assert.equal(state.interval, 1);
-  assert.equal(state.due, now + 24 * 60 * 60 * 1000);
+  assert.equal(state.due, addLocalDays(now, 1));
+  assert.equal(state.known, false);
   state = scheduleReview(state, true, now);
   assert.equal(state.repetitions, 2);
   assert.equal(state.interval, 3);
-  assert.equal(state.known, true);
+  assert.equal(state.known, false);
   state = scheduleReview(state, true, now);
   assert.equal(state.interval, 7);
+  assert.equal(state.known, false);
+  state = scheduleReview(state, true, now);
+  assert.equal(state.interval, 18);
+  assert.equal(state.known, false);
+  state = scheduleReview(state, true, now);
+  assert.equal(state.interval, 45);
+  assert.equal(state.known, true);
   for (let i = 0; i < 20 && state.interval < 180; i++) state = scheduleReview(state, true, now);
   assert.equal(state.interval, 180);
   assert.ok(state.interval <= 180);
+});
+
+test("progress status classification uses a precomputed progress object", () => {
+  const statusForProgress = appFunction("statusForProgress");
+  const now = 1_800_000_000_000;
+  assert.equal(statusForProgress({ seen: 0, known: false, due: 0 }, now), "new");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: 0 }, now), "due");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: now - 1 }, now), "due");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: now + 1 }, now), "learning");
+  assert.equal(statusForProgress({ seen: 5, known: true, due: now + 1 }, now), "mastered");
+});
+
+test("vocabulary search indexes build in bounded batches without losing records", async () => {
+  const words = Array.from({ length: 3400 }, (_, index) => ({
+    id: index + 1,
+    word: "Wort" + (index + 1),
+    meaning_fa: "معنی " + (index + 1),
+    examples_de: ["Beispiel " + (index + 1)],
+    extra_examples_de: [],
+    example_de: "",
+    thematic_group: "Gruppe"
+  }));
+  const { fn: rebuildWordIndexes, context } = appFunctionWithContext("rebuildWordIndexes", {
+    words,
+    wordById: new Map(),
+    wordSearchIndex: new Map(),
+    searchForms: value => [String(value).toLocaleLowerCase("de")],
+    setTimeout: callback => callback()
+  });
+
+  await rebuildWordIndexes();
+  assert.equal(context.wordById.size, 3400);
+  assert.equal(context.wordSearchIndex.size, 3400);
+  assert.equal(context.wordById.get("250").word, "Wort250");
+  assert.match(context.wordSearchIndex.get("3400"), /beispiel 3400/);
 });
 
 test("daily review samples 60% of at most the latest ten studied, eligible words", () => {
@@ -87,6 +134,37 @@ test("daily review answers use the same spaced-repetition scheduler as regular p
   assert.match(app, /saveWordState\(w,scheduleReview\(pFor\(w\),correct\)\)/);
 });
 
+
+test("legacy ID and record-code progress is merged into a shared lexical key", () => {
+  const mergeWordProgress = appFunction("mergeWordProgress");
+  const { fn, context } = appFunctionWithContext("migrateProgressKeys", {
+    words: [
+      { id: "1", record_code: "A1", progress_key: "A" },
+      { id: "2", record_code: "A2", progress_key: "A" }
+    ],
+    progress: {
+      words: {
+        "1": { saved: false, repetitions: 2, interval: 3, _updatedAt: 10 },
+        A1: { saved: true, repetitions: 4, interval: 18, _updatedAt: 20 },
+        "2": { repetitions: 1, interval: 1, _updatedAt: 15 },
+        A2: { saved: false, repetitions: 5, interval: 45, _updatedAt: 30 }
+      }
+    },
+    wordProgressKey: word => String(word.progress_key || word.record_code || word.id),
+    mergeWordProgress,
+    persistProgress: () => {}
+  });
+  fn();
+  assert.deepEqual(Object.keys(context.progress.words), ["A"]);
+  assert.equal(context.progress.words.A.saved, true);
+  assert.equal(context.progress.words.A.repetitions, 5);
+  assert.equal(context.progress.words.A.known, true);
+});
+
+test("UTC day keys do not shift when the local timezone changes", () => {
+  const dayKey = appFunction("dayKey");
+  assert.equal(dayKey(new Date("2026-11-25T23:30:00.000Z")), "2026-11-25");
+});
 
 test("progress merge preserves the newest per-word state and unions independent words", () => {
   const merge = appFunction("mergeProgressData");
@@ -147,8 +225,9 @@ test("local progress, daily state and dirty markers are isolated by authenticate
     PROGRESS_KEY: "",
     DAILY_KEY: "",
     LOCAL_CHANGE_KEY: "",
-    progress: {},
+    progress: { words: {} },
     daily: {},
+    migrateProgressKeys: () => {},
     progressRevision: 0,
     derivedWordSets: null,
     loadProgress: () => ({ scope: "progress" }),

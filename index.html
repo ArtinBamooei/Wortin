@@ -3,8 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111d2b">
+<meta name="theme-color" content="#f3efe6">
+<meta name="color-scheme" content="light dark">
 <meta name="referrer" content="no-referrer">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="Wortin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Wortin — واژه‌ها، ماندگار می‌شوند">
+<meta name="twitter:description" content="یادگیری هوشمند واژگان آلمانی تا سطح B1 با مثال، فلش‌کارت و مرور فاصله‌دار.">
+<meta name="twitter:image" content="https://artinbamooei.github.io/Wortin/assets/wortin-logo.webp">
+<meta property="og:image" content="https://artinbamooei.github.io/Wortin/assets/wortin-logo.webp">
+<meta property="og:image:alt" content="Wortin — یادگیری واژگان آلمانی">
+<link rel="apple-touch-icon" sizes="180x180" type="image/png" href="./assets/apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://gfsghvyotfkchjwqhorl.supabase.co; frame-src https://www.aparat.com https://aparat.com; upgrade-insecure-requests">
 <meta name="description" content="Wortin — یادگیری هوشمند واژگان آلمانی تا سطح B1 با فلش‌کارت، مرور فاصله‌دار و مثال‌های واقعی.">
 <meta property="og:type" content="website">
@@ -12,15 +23,18 @@
 <meta property="og:description" content="یادگیری هوشمند واژگان آلمانی تا سطح B1 با مثال، فلش‌کارت و مرور فاصله‌دار.">
 <meta property="og:url" content="https://artinbamooei.github.io/Wortin/">
 <link rel="canonical" href="https://artinbamooei.github.io/Wortin/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Wortin","applicationCategory":"EducationalApplication","operatingSystem":"Web, Android","url":"https://artinbamooei.github.io/Wortin/","description":"یادگیری هوشمند واژگان آلمانی تا سطح B1 با فلش‌کارت، مرور فاصله‌دار و مثال.","inLanguage":["fa","de"],"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
 <title>Wortin — واژه‌ها، ماندگار می‌شوند</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://gfsghvyotfkchjwqhorl.supabase.co" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="./styles.css?v=performance-audit-18">
+<script src="./theme-init.js"></script>
+<link rel="stylesheet" href="./styles.css?v=foundation-hardening-29">
 
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/webp" href="./assets/wortin-logo.webp">
 </head>
 <body>
 <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
@@ -52,26 +66,26 @@
   <div class="brand"><div class="brand-mark"><img src="./assets/wortin-logo.webp" alt="" width="42" height="42"></div><div class="brand-copy"><div class="brand-name">WORTIN</div><div class="brand-tag">DEUTSCH • B1</div></div></div>
   <nav class="nav" aria-label="منوی اصلی">
     <div class="nav-group-label">خانه</div>
-    <button class="active" data-view="home" title="داشبورد"><svg><use href="#i-home"/></svg><span>داشبورد</span></button>
+    <button type="button" class="active" data-view="home" title="داشبورد"><svg><use href="#i-home"/></svg><span>داشبورد</span></button>
 
     <div class="nav-group-label">یادگیری کلمات</div>
-    <button data-view="learn" title="فلش‌کارت‌ها"><svg><use href="#i-layers"/></svg><span>فلش‌کارت‌ها</span><span class="nav-count" id="dueNav">—</span></button>
-    <button data-view="dictionary" title="همه‌ی کلمات"><svg><use href="#i-book"/></svg><span>همه‌ی کلمات</span></button>
+    <button type="button" data-view="learn" title="فلش‌کارت‌ها"><svg><use href="#i-layers"/></svg><span>فلش‌کارت‌ها</span><span class="nav-count" id="dueNav">—</span></button>
+    <button type="button" data-view="dictionary" title="همه‌ی کلمات"><svg><use href="#i-book"/></svg><span>همه‌ی کلمات</span></button>
 
     <div class="nav-group-label">تمرین مهارت‌ها</div>
-    <button data-view="daily" title="یادگیری روزانه"><svg><use href="#i-spark"/></svg><span>یادگیری روزانه</span></button>
-    <button data-view="listening" title="شنیداری"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button>
-    <button data-view="reading" title="خواندن"><svg><use href="#i-book"/></svg><span>خواندن</span></button>
+    <button type="button" data-view="daily" title="یادگیری روزانه"><svg><use href="#i-spark"/></svg><span>یادگیری روزانه</span></button>
+    <button type="button" data-view="listening" title="شنیداری"><svg><use href="#i-volume"/></svg><span>شنیداری</span></button>
+    <button type="button" data-view="reading" title="خواندن"><svg><use href="#i-book"/></svg><span>خواندن</span></button>
 
     <div class="nav-group-label">مرور و پیشرفت</div>
-    <button data-view="review" title="مرور کلمات نشان‌شده"><svg><use href="#i-bookmark"/></svg><span>مرور کلمات نشان‌شده</span><span class="nav-count" id="savedNav">0</span></button>
-    <button data-view="stats" title="پیشرفت من"><svg><use href="#i-chart"/></svg><span>پیشرفت من</span></button>
+    <button type="button" data-view="review" title="مرور کلمات نشان‌شده"><svg><use href="#i-bookmark"/></svg><span>مرور کلمات نشان‌شده</span><span class="nav-count" id="savedNav">0</span></button>
+    <button type="button" data-view="stats" title="پیشرفت من"><svg><use href="#i-chart"/></svg><span>پیشرفت من</span></button>
 
     <div class="nav-group-label">تمرین واژگان</div>
-    <button data-view="quiz" title="آزمون چهارگزینه‌ای"><svg><use href="#i-target"/></svg><span>آزمون چهارگزینه‌ای</span></button>
+    <button type="button" data-view="quiz" title="آزمون چهارگزینه‌ای"><svg><use href="#i-target"/></svg><span>آزمون چهارگزینه‌ای</span></button>
 
     <div class="nav-group-label">آزمون‌ها</div>
-    <button data-view="official-exams" title="نمونه آزمون‌های رسمی"><svg><use href="#i-target"/></svg><span>نمونه آزمون‌های رسمی</span></button>
+    <button type="button" data-view="official-exams" title="نمونه آزمون‌های رسمی"><svg><use href="#i-target"/></svg><span>نمونه آزمون‌های رسمی</span></button>
   </nav>
   <div class="sidebar-bottom">
     <div class="side-footer"><span><i class="online-dot"></i>ساخته‌شده برای یادگیری</span><span>v1.0</span></div>
@@ -81,9 +95,9 @@
   <header class="topbar">
     <div class="breadcrumb"><span>فضای من</span><span> / </span><strong id="crumbCurrent">داشبورد</strong></div>
     <div class="top-actions">
-      <div class="connection loading" id="dbStatus"><b></b><span>اتصال به واژگان</span></div>
-      <button class="search-trigger" id="openSearch" aria-label="جست‌وجو در واژگان... ⌘ K" ><svg><use href="#i-search"/></svg><span>جست‌وجو در واژگان...</span><kbd>⌘ K</kbd></button>
-      <button class="icon-button" id="themeToggle" aria-label="تغییر پوسته"><svg><use href="#i-sun"/></svg></button>
+      <div class="connection loading" id="dbStatus" role="status" aria-live="polite"><b></b><span>اتصال به واژگان</span></div>
+      <button type="button" class="search-trigger" id="openSearch" aria-label="جست‌وجو در واژگان... ⌘ K" ><svg><use href="#i-search"/></svg><span>جست‌وجو در واژگان...</span><kbd>⌘ K</kbd></button>
+      <button type="button" class="icon-button" id="themeToggle" aria-label="تغییر پوسته"><svg><use href="#i-sun"/></svg></button>
       <button class="auth-open-button" id="authOpen" type="button"  title="ورود یا ساخت حساب"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="authOpenLabel">ورود / ثبت‌نام</span></button>
       <button class="auth-logout-button" id="authSignOutTop" type="button" hidden ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3m9-7h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>خروج</span></button>
     </div>
@@ -93,9 +107,9 @@
     <section class="hero">
       <div class="hero-copy">
         <div class="hero-kicker"><b></b><span>مسیر یادگیری تا B1</span></div>
-        <h2>واژه‌ها را یاد بگیر.<br><span>واقعاً به خاطر بسپار.</span></h2>
+        <h1>واژه‌ها را یاد بگیر.<br><span>واقعاً به خاطر بسپار.</span></h1>
         <p>تمرین هدفمند، مثال‌های واقعی و مرور هوشمند؛ یک تجربه‌ی تازه برای ساختن دایره‌ی واژگان آلمانی تو.</p>
-        <div class="hero-buttons"><button class="btn-primary" id="heroStart"><svg><use href="#i-bolt"/></svg>شروع تمرین امروز</button><button class="btn-secondary" id="heroDictionary">کشف واژه‌ها <svg><use href="#i-arrow"/></svg></button></div>
+        <div class="hero-buttons"><button type="button" class="btn-primary" id="heroStart"><svg><use href="#i-bolt"/></svg>شروع تمرین امروز</button><button type="button" class="btn-secondary" id="heroDictionary">کشف واژه‌ها <svg><use href="#i-arrow"/></svg></button></div>
       </div>
       <div class="hero-art hero-art-logo" aria-label="لوگوی سه‌بعدی Wortin">
         
@@ -110,14 +124,14 @@
       <article class="stat-card"><div class="stat-head"><span>نیازمند مرور</span><span class="stat-icon"><svg><use href="#i-refresh"/></svg></span></div><div class="stat-value" id="statDue">0</div><div class="stat-foot">برای تثبیت در حافظه</div></article>
       <article class="stat-card"><div class="stat-head"><span>جلسات تمرین</span><span class="stat-icon"><svg><use href="#i-target"/></svg></span></div><div class="stat-value" id="statSessions">0</div><div class="stat-foot">جلسه‌های تکمیل‌شده</div></article>
     </div>
-    <div class="section-head"><div><h3>انتخاب کن و شروع کن</h3><p>روشی را انتخاب کن که با هدف امروزت هماهنگ است.</p></div></div>
+    <div class="section-head"><div><h2>انتخاب کن و شروع کن</h2><p>روشی را انتخاب کن که با هدف امروزت هماهنگ است.</p></div></div>
     <div class="modes-grid">
-      <article class="mode-card" data-mode="flash" role="button" tabindex="0"><div class="mode-icon lime"><svg><use href="#i-layers"/></svg></div><h4>فلش‌کارت هوشمند</h4><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
-      <article class="mode-card" data-mode="quiz" role="button" tabindex="0"><div class="mode-icon violet"><svg><use href="#i-target"/></svg></div><h4>آزمون سریع</h4><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
-      <article class="mode-card" data-mode="saved" role="button" tabindex="0"><div class="mode-icon blue"><svg><use href="#i-bookmark"/></svg></div><h4>واژه‌های نشان‌شده</h4><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="flash" role="button" tabindex="0"><div class="mode-icon lime"><svg><use href="#i-layers"/></svg></div><h3>فلش‌کارت هوشمند</h3><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="quiz" role="button" tabindex="0"><div class="mode-icon violet"><svg><use href="#i-target"/></svg></div><h3>آزمون سریع</h3><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
+      <article class="mode-card" data-mode="saved" role="button" tabindex="0"><div class="mode-icon blue"><svg><use href="#i-bookmark"/></svg></div><h3>واژه‌های نشان‌شده</h3><span class="go"><svg><use href="#i-arrow"/></svg></span></article>
     </div>
     <div class="home-lower">
-      <section class="lower-card"><div class="weekly-head"><h4>ریتم یادگیری تو</h4><span>۷ روز اخیر</span></div><div class="chart-bars" id="weekChart"></div></section>
+      <section class="lower-card"><div class="weekly-head"><h3>ریتم یادگیری تو</h3><span>۷ روز اخیر</span></div><div class="chart-bars" id="weekChart"></div></section>
       <section class="lower-card"><div class="goal-head"><div class="goal-ring" id="goalRing" style="--progress:0%"><b id="goalPercent">0%</b></div><div class="goal-copy"><strong>هدف روزانه</strong><span>۱۰ واژه در روز، بدون فشار</span></div></div><div class="goal-progress"><span id="goalBar" style="width:0%"></span></div><div class="goal-note"><span id="goalCount">۰ از ۱۰ واژه</span><span>تمرکز روی استمرار</span></div></section>
     </div>
   </section>
@@ -125,12 +139,12 @@
   <section class="view" id="view-listening"><div id="learning-media"><div class="empty">در حال آماده‌سازی بخش شنیداری…</div></div></section>
 
   <section class="view" id="view-reading">
-    <div class="page-heading"><div><div class="eyebrow">LESEN · VERSTEHEN</div><h1>خواندن</h1><p>متن‌های آلمانی سطح‌بندی‌شده و تمرین درک مطلب.</p></div></div>
+    <div class="page-heading"><div><div class="eyebrow">LESEN · VERSTEHEN</div><h2>خواندن</h2><p>متن‌های آلمانی سطح‌بندی‌شده و تمرین درک مطلب.</p></div></div>
     <div class="review-empty"><svg aria-hidden="true"><use href="#i-book"/></svg><h3>بخش خواندن در حال آماده‌سازی است.</h3><p>این بخش برای متن‌های آلمانی و تمرین درک مطلب در نظر گرفته شده است؛ هنوز محتوایی به آن متصل نشده است.</p></div>
   </section>
 
   <section class="view" id="view-official-exams">
-    <div class="page-heading"><div><div class="eyebrow">PRÜFUNGSVORBEREITUNG</div><h1>نمونه آزمون‌های رسمی</h1><p>دسترسی به نمونه‌سؤال‌ها و منابع رسمی آمادگی آزمون زبان آلمانی.</p></div></div>
+    <div class="page-heading"><div><div class="eyebrow">PRÜFUNGSVORBEREITUNG</div><h2>نمونه آزمون‌های رسمی</h2><p>دسترسی به نمونه‌سؤال‌ها و منابع رسمی آمادگی آزمون زبان آلمانی.</p></div></div>
     <div class="review-empty"><svg aria-hidden="true"><use href="#i-target"/></svg><h3>بخش آزمون‌ها در حال آماده‌سازی است.</h3><p>نمونه‌ها پس از بررسی و اتصال منابع معتبر در اینجا قرار می‌گیرند؛ فعلاً آزمون رسمی‌ای در سایت بارگذاری نشده است.</p></div>
   </section>
 
@@ -139,7 +153,7 @@
       <header class="study-heading-row">
         <div class="study-heading-copy">
           <div class="study-kicker"><span></span> WORTIN / STUDY SPACE</div>
-          <h1>فلش‌کارت‌ها</h1>
+          <h2>فلش‌کارت‌ها</h2>
           
         </div>
         <button class="study-exit-button" id="exitStudy" type="button" aria-label="خروج از تمرین">
@@ -164,7 +178,7 @@
       <header class="study-heading-row">
         <div class="study-heading-copy">
           <div class="study-kicker"><span></span> WORTIN / QUIZ</div>
-          <h1>آزمون چهارگزینه‌ای</h1>
+          <h2>آزمون چهارگزینه‌ای</h2>
         </div>
         <button class="study-exit-button" id="exitQuiz" type="button" aria-label="خروج از آزمون">
           <svg aria-hidden="true"><use href="#i-close"/></svg><span>خروج از آزمون</span>
@@ -184,28 +198,28 @@
   </section>
 
   <section class="view" id="view-daily">
-    <div class="page-heading"><div><div class="eyebrow">TÄGLICH LERNEN</div><h1>یادگیری روزانه</h1><p>هر صفحه یک واژه؛ بعد از هر ۱۰ واژه، مرور خودکار از واژه‌های خوانده‌شده.</p></div><div class="date-label" id="dailyTodayCount">امروز: ۰ واژه</div></div>
+    <div class="page-heading"><div><div class="eyebrow">TÄGLICH LERNEN</div><h2>یادگیری روزانه</h2><p>هر صفحه یک واژه؛ بعد از هر ۱۰ واژه، مرور خودکار از واژه‌های خوانده‌شده.</p></div><div class="date-label" id="dailyTodayCount">امروز: ۰ واژه</div></div>
     <div class="daily-shell">
-      <div class="daily-overview"><span class="daily-counter" id="dailyCounter">۰ / ۰ واژه</span><div class="progress-line"><span id="dailyProgress"></span></div><span class="daily-cycle" id="dailyCycle">یادگیری</span></div>
+      <div class="daily-overview"><span class="daily-counter" id="dailyCounter">۰ / ۰ واژه</span><div class="progress-line"><span id="dailyProgress" role="progressbar" aria-label="پیشرفت یادگیری روزانه" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></span></div><span class="daily-cycle" id="dailyCycle">یادگیری</span></div>
       <div id="dailyContent"><div class="empty">در حال آماده‌سازی واژه‌ها…</div></div>
     </div>
   </section>
 
   <section class="view" id="view-dictionary">
-    <div class="page-heading"><div><div class="eyebrow">WORTSCHATZ</div><h1>واژه‌نامه‌ی آلمانی</h1><p>معنی، جمله‌ی نمونه و نکات دستوری را در یک‌جا ببین.</p></div><div class="date-label" id="dictCount">در حال بارگذاری</div></div>
-    <div class="list-tools"><label class="field"><svg><use href="#i-search"/></svg><input id="dictSearch" placeholder="جست‌وجوی واژه، معنی یا عبارت آلمانی…" autocomplete="off"></label><select class="select" id="typeFilter" aria-label="نوع واژه"><option value="all">همه‌ی انواع</option><option value="Nomen">اسم‌ها</option><option value="Verb">فعل‌ها</option><option value="Adjektiv">صفت‌ها</option><option value="Adverb">قیدها</option><option value="Präposition">حروف اضافه</option><option value="Konjunktion">حروف ربط</option><option value="Pronomen">ضمیرها</option><option value="Determinativ">تعیین‌گرها</option><option value="Partikel">ذره‌های دستوری</option><option value="Interjektion">واژه‌های ندایی</option><option value="Numerale">عددواژه‌ها</option><option value="Wortgruppe">عبارت‌ها و گروه‌های واژگانی</option><option value="Wortbildungselement">اجزای واژه‌سازی</option><option value="Verbpartikel">اجزای فعلی جداشدنی</option><option value="Operator">عملگرهای ریاضی</option><option value="Abkürzung">مخفف‌ها</option></select><select class="select" id="groupFilter" aria-label="گروه موضوعی"><option value="all">همه‌ی گروه‌ها</option><option value="saved">نشان‌شده‌ها</option><option value="known">یادگرفته‌شده</option><option value="due">نیازمند مرور</option></select></div>
-    <div class="table-card"><div class="table-header"><span>واژه</span><span>معنی فارسی</span><span>مثال آلمانی</span><span>کنش</span></div><div id="wordList"><div class="empty">در حال دریافت واژه‌ها از دیتابیس…</div></div><div class="list-footer"><span id="listCount">—</span><div class="pagination"><button id="prevPage" aria-label="صفحه قبل" disabled>‹</button><button id="nextPage" aria-label="صفحه بعد" disabled>›</button></div></div></div>
+    <div class="page-heading"><div><div class="eyebrow">WORTSCHATZ</div><h2>واژه‌نامه‌ی آلمانی</h2><p>معنی، جمله‌ی نمونه و نکات دستوری را در یک‌جا ببین.</p></div><div class="date-label" id="dictCount">در حال بارگذاری</div></div>
+    <div class="list-tools"><label class="field"><svg><use href="#i-search"/></svg><input id="dictSearch" type="search" aria-label="جست‌وجوی واژه، معنی یا عبارت آلمانی" placeholder="جست‌وجوی واژه، معنی یا عبارت آلمانی…" autocomplete="off"></label><select class="select" id="typeFilter" aria-label="نوع واژه"><option value="all">همه‌ی انواع</option><option value="Nomen">اسم‌ها</option><option value="Verb">فعل‌ها</option><option value="Adjektiv">صفت‌ها</option><option value="Adverb">قیدها</option><option value="Präposition">حروف اضافه</option><option value="Konjunktion">حروف ربط</option><option value="Pronomen">ضمیرها</option><option value="Determinativ">تعیین‌گرها</option><option value="Partikel">ذره‌های دستوری</option><option value="Interjektion">واژه‌های ندایی</option><option value="Numerale">عددواژه‌ها</option><option value="Wortgruppe">عبارت‌ها و گروه‌های واژگانی</option><option value="Wortbildungselement">اجزای واژه‌سازی</option><option value="Verbpartikel">اجزای فعلی جداشدنی</option><option value="Operator">عملگرهای ریاضی</option><option value="Abkürzung">مخفف‌ها</option></select><select class="select" id="groupFilter" aria-label="گروه موضوعی"><option value="all">همه‌ی گروه‌ها</option><option value="saved">نشان‌شده‌ها</option><option value="known">یادگرفته‌شده</option><option value="due">نیازمند مرور</option></select></div>
+    <div class="table-card"><div class="table-header"><span>واژه</span><span>معنی فارسی</span><span>مثال آلمانی</span><span>کنش</span></div><div id="wordList"><div class="empty">در حال دریافت واژه‌ها از دیتابیس…</div></div><div class="list-footer"><span id="listCount">—</span><div class="pagination"><button type="button" id="prevPage" aria-label="صفحه قبل" disabled>‹</button><button type="button" id="nextPage" aria-label="صفحه بعد" disabled>›</button></div></div></div>
   </section>
 
   <section class="view" id="view-review">
-    <div class="page-heading"><div><div class="eyebrow">YOUR COLLECTION</div><h1>مرور و مجموعه‌ی من</h1><p>کلمات دشوار را نشان کن تا هیچ‌وقت از دست نروند.</p></div></div>
+    <div class="page-heading"><div><div class="eyebrow">YOUR COLLECTION</div><h2>مرور و مجموعه‌ی من</h2><p>کلمات دشوار را نشان کن تا هیچ‌وقت از دست نروند.</p></div></div>
     <div class="stats-grid"><article class="stat-card"><div class="stat-head"><span>نشان‌شده‌ها</span><span class="stat-icon"><svg><use href="#i-bookmark"/></svg></span></div><div class="stat-value" id="savedTotal">0</div><div class="stat-foot">مجموعه‌ی شخصی تو</div></article><article class="stat-card"><div class="stat-head"><span>در انتظار مرور</span><span class="stat-icon"><svg><use href="#i-clock"/></svg></span></div><div class="stat-value" id="reviewTotal">0</div><div class="stat-foot">برای تمرین بعدی</div></article><article class="stat-card"><div class="stat-head"><span>یادگرفته‌شده</span><span class="stat-icon"><svg><use href="#i-check"/></svg></span></div><div class="stat-value" id="reviewKnown">0</div><div class="stat-foot">کلمات تثبیت‌شده</div></article><article class="stat-card"><div class="stat-head"><span>جلسات کامل</span><span class="stat-icon"><svg><use href="#i-target"/></svg></span></div><div class="stat-value" id="reviewSessions">0</div><div class="stat-foot">تا این لحظه</div></article></div>
-    <div class="section-head"><div><h3>واژه‌های نشان‌شده</h3><p>فهرست شخصی برای مرور هدفمند.</p></div><button class="btn-primary" id="reviewSavedBtn"><svg><use href="#i-bolt"/></svg>تمرین این کلمات</button></div>
+    <div class="section-head"><div><h3>واژه‌های نشان‌شده</h3><p>فهرست شخصی برای مرور هدفمند.</p></div><button type="button" class="btn-primary" id="reviewSavedBtn"><svg><use href="#i-bolt"/></svg>تمرین این کلمات</button></div>
     <div class="table-card"><div class="table-header"><span>واژه</span><span>معنی فارسی</span><span>مثال آلمانی</span><span>کنش</span></div><div id="savedList"><div class="empty">هنوز واژه‌ای نشان نکرده‌ای.</div></div></div>
   </section>
 
   <section class="view stats-view" id="view-stats">
-    <div class="stats-page-head"><div><div class="eyebrow">YOUR LEARNING JOURNEY</div><h1>آمار و مسیر پیشرفت</h1><p>پیشرفتت را ببین؛ قدم‌های کوچک، نتیجه‌های ماندگار می‌سازند.</p></div><div class="stats-live-chip"><i></i> نمای زنده‌ی یادگیری</div></div>
+    <div class="stats-page-head"><div><div class="eyebrow">YOUR LEARNING JOURNEY</div><h2>آمار و مسیر پیشرفت</h2><p>پیشرفتت را ببین؛ قدم‌های کوچک، نتیجه‌های ماندگار می‌سازند.</p></div><div class="stats-live-chip"><i></i> نمای زنده‌ی یادگیری</div></div>
     <section class="stats-hero-3d"><div class="stats-hero-noise"></div><div class="stats-hero-copy"><span class="stats-kicker"><svg><use href="#i-spark"/></svg> نمای کلی عملکرد</span><h2>هر واژه، یک قدم<br><em>به تسلط نزدیک‌تر.</em></h2><p>پیشرفتت از روی واژه‌هایی محاسبه می‌شود که واقعاً یاد گرفته‌ای؛ نه تخمین و عددهای ساختگی.</p><div class="stats-hero-facts"><div><strong id="statsHeroKnown">۰</strong><span>واژه‌ی یادگرفته‌شده</span></div><div><strong id="statsHeroDays">۰</strong><span>روز استمرار</span></div></div></div>
       <div class="stats-orb-stage" aria-label="نمایش سه‌بعدی میزان تسلط"><div class="stats-orb-halo halo-a"></div><div class="stats-orb-halo halo-b"></div><div class="stats-orb-ring ring-a"></div><div class="stats-orb-ring ring-b"></div><div class="stats-orb"><div class="stats-orb-shine"></div><div class="stats-orb-core"><span id="statsOrbPercent">۰٪</span><small>تسلط کلی</small></div></div><div class="stats-orb-chip orb-chip-a"><span></span><b id="statsOrbKnown">۰</b><small>یادگرفته‌شده</small></div><div class="stats-orb-chip orb-chip-b"><svg><use href="#i-bolt"/></svg><b id="statsOrbStreak">۰</b><small>روز پیاپی</small></div><div class="stats-orb-particle particle-a"></div><div class="stats-orb-particle particle-b"></div><div class="stats-orb-particle particle-c"></div></div>
       <div class="stats-hero-bottom"><span>WORTIN / PROGRESS SYSTEM</span><span><i></i> آمار بر اساس فعالیت ثبت‌شده</span></div>
@@ -224,6 +238,7 @@
     <div class="stats-source-note"><svg><use href="#i-book"/></svg><p><strong>درباره‌ی آمار</strong><br>این داشبورد فقط از داده‌های واقعی ثبت‌شده در حساب یا همین دستگاه استفاده می‌کند. واژه‌های «یادگرفته‌شده» بر اساس وضعیت یادگیری تو هستند؛ داده‌ی جدید یا پیشرفت فرضی ساخته نمی‌شود.</p></div>
   </section>
 </main>
+<footer class="site-footer" role="contentinfo"><p>Wortin · یادگیری واژگان آلمانی تا سطح B1</p><a href="https://github.com/ArtinBamooei/Wortin" rel="noopener noreferrer">منبع پروژه</a></footer>
 <nav class="mobile-nav" aria-label="پیمایش موبایل">
 <button class="active" type="button" data-view="home"><svg aria-hidden="true"><use href="#i-home"/></svg><span>خانه</span></button>
 <button type="button" data-view="learn"><svg aria-hidden="true"><use href="#i-layers"/></svg><span>فلش‌کارت</span></button>
@@ -244,19 +259,21 @@
 </div>
 </div>
 <div class="detail-overlay" id="detailOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جزئیات واژه"><div class="detail-modal" id="detailModal"></div></div>
-<div class="command-overlay" id="commandOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جست‌وجوی واژه"><div class="command-box"><div class="command-input"><svg><use href="#i-search"/></svg><input id="commandSearch" placeholder="واژه یا معنی را بنویس…" autocomplete="off"><button class="mini-button" id="closeSearch" aria-label="بستن"><svg><use href="#i-close"/></svg></button></div><div class="command-results" id="commandResults"></div></div></div>
+<div class="command-overlay" id="commandOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="جست‌وجوی واژه"><div class="command-box"><div class="command-input"><svg><use href="#i-search"/></svg><input id="commandSearch" type="search" aria-label="جست‌وجوی واژه یا معنی" placeholder="واژه یا معنی را بنویس…" autocomplete="off"><button type="button" class="mini-button" id="closeSearch" aria-label="بستن"><svg><use href="#i-close"/></svg></button></div><div class="command-results" id="commandResults"></div></div></div>
 <div class="auth-overlay" id="authOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="authTitle"><section class="auth-card">
 <div class="auth-head"><div><h2 id="authTitle">حساب Wortin</h2><p id="authSubtitle">برای ذخیره‌ی امن پیشرفتت وارد شو.</p></div><button type="button" class="auth-close" id="authClose" aria-label="بستن پنجره">×</button></div>
 <div id="authGuestPanel"><div class="auth-tabs" id="authTabs" role="group" aria-label="نوع حساب"><button type="button" id="authLoginTab" class="active" aria-pressed="true">ورود</button><button type="button" id="authSignupTab" aria-pressed="false">ساخت حساب</button></div>
 <form id="authForm" novalidate><div class="auth-field" id="authEmailWrap"><label for="authEmail">ایمیل</label><input id="authEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required maxlength="254"></div>
-<div class="auth-field" id="authPasswordWrap"><label for="authPassword">رمز عبور</label><div class="auth-password-control"><input id="authPassword" name="password" type="password" inputmode="text" autocomplete="current-password" required maxlength="128" placeholder="رمز عبور را وارد کن"><button type="button" class="auth-password-toggle" id="authPasswordToggle" aria-label="نمایش رمز عبور" aria-pressed="false">نمایش</button></div></div>
+<div class="auth-field" id="authPasswordWrap"><label for="authPassword">رمز عبور</label><div class="auth-password-control"><input id="authPassword" name="password" type="password" autocomplete="current-password" required maxlength="128" placeholder="رمز عبور را وارد کن"><button type="button" class="auth-password-toggle" id="authPasswordToggle" aria-label="نمایش رمز عبور" aria-pressed="false">نمایش</button></div></div>
 <div class="auth-field" id="authConfirmWrap" hidden><label for="authConfirm">تکرار رمز عبور جدید</label><div class="auth-password-control"><input id="authConfirm" name="confirmPassword" type="password" inputmode="text" autocomplete="new-password" minlength="10" maxlength="128" placeholder="رمز عبور را دوباره وارد کن"><button type="button" class="auth-password-toggle" id="authConfirmToggle" aria-label="نمایش تکرار رمز عبور" aria-pressed="false">نمایش</button></div></div>
 <p class="auth-hint" id="authHint">از ایمیلی استفاده کن که به آن دسترسی داری. برای ساخت حساب، رمز عبور باید حداقل ۱۰ نویسه و شامل حروف و عدد باشد.</p><div class="auth-error" id="authMessage" role="alert" aria-live="polite"></div><button type="submit" class="btn-primary auth-submit" id="authSubmit">ورود به حساب</button><button type="button" class="auth-forgot" id="authForgot">رمز عبورت را فراموش کرده‌ای؟</button></form></div>
 <div id="authUserPanel" hidden><div class="auth-account"><strong id="authUserEmail"></strong><span>حساب واردشده در نشست فعلی</span></div><p class="auth-hint">پیشرفت یادگیری این حساب جدا از حساب‌های دیگر ذخیره می‌شود.</p><div class="auth-error" id="authUserMessage" role="status" aria-live="polite"></div><button type="button" class="btn-secondary auth-submit" id="authSignOut">خروج از حساب</button></div>
 </section></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-<script src="./app.js?v=security-hardening-19" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="./app.js?v=foundation-hardening-27" defer></script>
+<script src="./pwa-register.js" defer></script>
+<noscript><p>برای استفاده از Wortin، اجرای JavaScript را در مرورگر فعال کنید.</p></noscript>
 
 </body>
 </html>

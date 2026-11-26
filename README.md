@@ -6,7 +6,7 @@
 
 - Quiet, minimal interface with warm ivory and sage colors, generous spacing, restrained 3D artwork and light/dark themes.
 - Responsive desktop, tablet and mobile layouts with comfortable mobile tap targets, readable dictionary rows, a compact five-item mobile bar with a More panel, and keyboard-visible focus states.
-- Cached-first vocabulary loading with background refresh, fewer initial API requests, and lazy rendering of inactive dictionary/review/statistics views.
+- Cursor-based vocabulary pagination with bounded retries, timeouts, IndexedDB-first caching, and lazy rendering of inactive dictionary/review/statistics views.
 - Vocabulary search across German words, Persian meanings and example sentences.
 - Word details, example sentences, grammar/case notes, prepositions and source page when present.
 - Flashcards, a four-option meaning quiz, German text-to-speech, saved words and spaced-review scheduling with 10-minute retries, 1-day and 3-day early intervals, then gradual expansion up to 180 days.
@@ -21,21 +21,35 @@ The Persian meanings and grammar notes are user-supplied annotations from the so
 
 ## Supabase setup
 
+Vocabulary cache data is stored in IndexedDB where available, with a versioned localStorage fallback. The service worker caches only the public app shell; it never caches authenticated API responses or session tokens.
+
 The app uses the Supabase **publishable** key in the browser, not a service-role key. This is appropriate only because the vocabulary table has RLS enabled and a read-only public SELECT policy. Do not add write policies for anonymous visitors or expose any service/secret key in `index.html`.
 
-1. Apply the migrations in timestamp order: `supabase/migrations/20261023084218_wortin_vocabulary_schema.sql`, then `supabase/migrations/20261025065829_user_progress_security.sql`.
+1. Apply the migrations in timestamp order:
+   - `20261023084218_wortin_vocabulary_schema.sql`
+   - `20261025065829_user_progress_security.sql`
+   - `20261119104740_security_hardening_public_table_grants.sql`
+   - `20261125115143_user_progress_integrity.sql`
+   - `20261125115228_validate_user_progress_integrity_constraints.sql`
+   - `20261125115747_stable_vocabulary_record_codes.sql`
+   - `20261125115830_group_duplicate_vocabulary_progress.sql`
+   - `20261125120320_drop_duplicate_record_code_index.sql`
 2. Import the source data into `public.vocabulary` (the linked project already contains the 3,400-word dataset).
-3. Apply `supabase/migrations/20261119104740_security_hardening_public_table_grants.sql` after the first two migrations to enforce least-privilege grants on both exposed tables.
-4. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
-5. Signed-in progress is stored in `public.user_progress`. RLS must restrict SELECT, INSERT and UPDATE to rows where `auth.uid() = user_id`; anonymous/public access is revoked by the security migration.
-6. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
+3. The grants migration keeps vocabulary read-only for visitors and restricts user progress to authenticated users.
+4. The integrity migrations enforce JSON object/array shapes, 2 MiB / 512 KiB payload limits, server-side `updated_at`, and an owner-only DELETE policy. The validation migration checks existing rows.
+5. The stable-code migration requires unique, non-null `record_code` values. The duplicate-progress migration assigns one `progress_key` to repeated headwords with the same part of speech; different parts of speech remain separate.
+6. Keep anonymous vocabulary access read-only. The `public.vocabulary` table uses RLS with a public SELECT policy; do not add anonymous write policies.
+7. Signed-in progress is stored in `public.user_progress`. RLS restricts SELECT, INSERT, UPDATE and DELETE to rows where `auth.uid() = user_id`; anonymous/public access is revoked.
+8. The browser uses a Supabase **publishable** key. It is designed to be public; never put a service-role or `sb_secret_...` key in client code.
 
 The migrations are repeatable for the intended schema baseline. Review changes before applying them to an existing production project.
 
-### Security hardening audit (2026-11-19)
+### Security hardening audit (2026-11-25)
 
 - `public.vocabulary`: RLS enabled; `anon` and `authenticated` have SELECT only. INSERT, UPDATE, DELETE and TRUNCATE are revoked.
-- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT and UPDATE. Policies bind every operation to `auth.uid() = user_id`; anonymous access and DELETE are revoked.
+- `public.user_progress`: RLS and FORCE RLS enabled; only `authenticated` has SELECT, INSERT, UPDATE and DELETE. Every policy binds access to `auth.uid() = user_id`; anonymous access is revoked.
+- `progress` and `daily` JSONB payloads have validated object/array shape constraints and hard byte-size limits. A database trigger sets `updated_at` from server time.
+- Remaining platform controls: leaked-password protection still needs enabling in Supabase Auth settings if supported by the plan. GitHub Pages cannot set HSTS, X-Content-Type-Options or CSP frame-ancestors response headers; the current CSP also permits inline styles for generated chart/progress visuals.
 - No public views or `SECURITY DEFINER` functions were found in the exposed `public` schema. No tables were found in the `supabase_realtime` publication.
 - Browser source uses only the Supabase publishable key. Never replace it with a service-role or secret key.
 - The site CSP blocks inline scripts, `eval`, objects and unapproved frames. Inline styles remain allowed because the current UI uses inline style attributes.
@@ -54,7 +68,7 @@ If the Pages deployment is already enabled, a push to `main` should trigger a re
 
 ## Local preview
 
-Open `index.html` in a local static web server (recommended) or publish it with GitHub Pages. The app has no build step or frontend framework requirement; its only runtime backend dependency is the Supabase Data API.
+Run `npm run verify` with Node.js to validate, test and build the allowlisted `_site` artifact. For a local preview, serve `_site/` with any static HTTP server. The app uses no frontend framework; its runtime backend is the Supabase Data API.
 
 ## Keyboard shortcuts
 
@@ -77,7 +91,5 @@ Open `index.html` in a local static web server (recommended) or publish it with 
 Run the repository's dependency-free checks with Node.js:
 
 ```sh
-node --check app.js
-node scripts/validate-site.cjs
-node --test tests/*.test.cjs
+npm run verify
 ```
