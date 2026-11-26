@@ -23,6 +23,10 @@ const html = read("index.html"), app = read("app.js"), css = read("styles.css"),
 const csp = html.match(/<meta\b(?=[^>]*http-equiv=["']Content-Security-Policy["'])[^>]*content="([^"]+)"/i)?.[1];
 const hasNoReferrer = html.includes('<meta name="referrer" content="no-referrer">');
 if (!hasNoReferrer) fail("Referrer policy must be no-referrer.");
+const supabaseScript = html.match(/<script\\b(?=[^>]*\\bsrc=["']https:\\/\\/cdn\\.jsdelivr\\.net\\/npm\\/@supabase\\/supabase-js@2\\.117\\.3\\/dist\\/umd\\/supabase\\.js["'])([^>]*)>/i)?.[1] || "";
+if (!supabaseScript.includes('integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R"')) fail("Supabase SDK must use the verified SHA-384 integrity hash.");
+if (!/\\bcrossorigin=["']anonymous["']/i.test(supabaseScript)) fail("Supabase CDN script must use anonymous CORS for SRI.");
+if (!/\\breferrerpolicy=["']no-referrer["']/i.test(supabaseScript)) fail("Supabase CDN script must not receive referrer data.");
 if (csp && !csp.includes("form-action 'self';")) fail("CSP form-action must be same-origin only.");
 if (csp && csp.includes("*")) fail("CSP must not contain wildcard source expressions.");
 if (!app.includes('const SUPABASE_URL="https://')) fail("Supabase URL must use HTTPS.");
