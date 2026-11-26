@@ -45,10 +45,10 @@ test("view navigation supports direct links and browser history", () => {
 test("flashcard deep links wait for vocabulary and resume after cache or network load", () => {
   const app = read("app.js");
   assert.match(app, /vocabularyLoading=true/);
-  assert.match(app, /function resumeStudyViewAfterVocabularyLoad\\(\\)/);
-  assert.match(app, /renderAll\\(\\);resumeStudyViewAfterVocabularyLoad\\(\\)/);
-  assert.match(app, /if\\(view==="learn"&&words\\.length&&/);
-  assert.match(app, /if\\(vocabularyLoading\\)\\{changeView\\(mode==="quiz"\\?"quiz":"learn"\\);return\\}/);
+  assert.ok(app.includes("function resumeStudyViewAfterVocabularyLoad()"));
+  assert.ok(app.includes("renderAll();resumeStudyViewAfterVocabularyLoad()"));
+  assert.ok(app.includes('if(view==="learn"&&words.length&&'));
+  assert.ok(app.includes('if(vocabularyLoading){changeView(mode==="quiz"?"quiz":"learn");return}'));
 });
 
 test("word progress uses stable record codes and conservative mastery", () => {
