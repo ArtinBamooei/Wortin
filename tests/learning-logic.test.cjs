@@ -64,6 +64,16 @@ test("mastery requires five correct reviews and intervals expand with a 180-day 
   assert.ok(state.interval <= 180);
 });
 
+test("progress status classification uses a precomputed progress object", () => {
+  const statusForProgress = appFunction("statusForProgress");
+  const now = 1_800_000_000_000;
+  assert.equal(statusForProgress({ seen: 0, known: false, due: 0 }, now), "new");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: 0 }, now), "due");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: now - 1 }, now), "due");
+  assert.equal(statusForProgress({ seen: 2, known: false, due: now + 1 }, now), "learning");
+  assert.equal(statusForProgress({ seen: 5, known: true, due: now + 1 }, now), "mastered");
+});
+
 test("daily review samples 60% of at most the latest ten studied, eligible words", () => {
   const buildQueue = appFunction("buildDailyReviewQueue", () => 0);
   const words = Array.from({ length: 24 }, (_, i) => ({ id: String(i + 1), word: `Wort${i + 1}`, meaning_fa: `معنی ${i + 1}` }));
