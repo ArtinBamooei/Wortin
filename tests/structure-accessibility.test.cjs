@@ -177,7 +177,7 @@ test("interactive controls do not suppress native focus outlines", () => {
 
 test("animated UI does not keep persistent will-change compositor hints", () => {
   const css = read("styles.css");
-  const active = [...css.matchAll(/will-change\\s*:\\s*([^;}]+)/gi)]
+  const active = [...css.matchAll(/will-change\s*:\\s*([^;}]+)/gi)]
     .map(match => match[1].trim())
     .filter(value => value.toLowerCase() !== "auto");
   assert.deepEqual(active, [], "persistent will-change hints can retain unnecessary GPU layers");
