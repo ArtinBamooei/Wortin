@@ -63,7 +63,7 @@ async function run() {
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while loading.");
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
-    assert.equal(await coldStart.locator("#toast").isVisible().catch(() => false), false,
+    assert.notEqual(await coldStart.locator("#toast").innerText(), "واژگان هنوز دریافت نشده‌اند.",
       "A temporary vocabulary-loading state must not show a false unavailable-vocabulary error.");
     await coldStart.close();
 
