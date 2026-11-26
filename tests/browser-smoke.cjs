@@ -116,6 +116,66 @@ async function run() {
     assert.equal(new URL(mobile.url()).hash, "#stats",
       "Mobile More navigation should open the selected view.");
 
+    // Verify the complete responsive shell at phone, tablet and compact desktop widths.
+    const responsiveWidths = [320, 360, 390, 430, 520, 620, 621, 768, 900, 1024];
+    for (const width of responsiveWidths) {
+      await mobile.setViewportSize({ width, height: 844 });
+      const layout = await mobile.evaluate(() => {
+        const main = document.querySelector("#main-content");
+        const rect = main.getBoundingClientRect();
+        const nav = document.querySelector(".mobile-nav");
+        const sidebar = document.querySelector(".sidebar");
+        return {
+          viewport: document.documentElement.clientWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          mainLeft: rect.left,
+          mainRight: rect.right,
+          mainWidth: rect.width,
+          navDisplay: getComputedStyle(nav).display,
+          sidebarDisplay: getComputedStyle(sidebar).display
+        };
+      });
+      assert.ok(layout.documentWidth <= layout.viewport + 1,
+        "Horizontal page overflow at " + width + "px: " + JSON.stringify(layout));
+      assert.ok(layout.mainLeft >= -1 && layout.mainLeft <= 1,
+        "Main content must start at the viewport edge at " + width + "px: " + JSON.stringify(layout));
+      assert.ok(layout.mainRight <= layout.viewport + 1,
+        "Main content exceeds the viewport at " + width + "px: " + JSON.stringify(layout));
+      if (width <= 620) {
+        assert.ok(layout.mainWidth >= width - 1,
+          "Phone content must use the full viewport width at " + width + "px: " + JSON.stringify(layout));
+        assert.equal(layout.navDisplay, "flex", "The mobile navigation must be visible at " + width + "px.");
+        assert.equal(layout.sidebarDisplay, "none", "The desktop sidebar must be hidden at " + width + "px.");
+      } else if (width <= 900) {
+        assert.equal(layout.navDisplay, "none", "The mobile navigation must be hidden on tablets.");
+        assert.notEqual(layout.sidebarDisplay, "none", "The compact tablet sidebar must remain available.");
+      }
+    }
+
+    // A long study view must extend the document and scroll above the fixed mobile navigation.
+    await mobile.setViewportSize({ width: 390, height: 844 });
+    await mobile.locator('.mobile-nav [data-view="learn"]').click();
+    await mobile.locator("#view-learn.active").waitFor();
+    await mobile.locator("#studyContent #flashcard").waitFor({ timeout: 5000 });
+    await mobile.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await mobile.waitForTimeout(100);
+    const studyScroll = await mobile.evaluate(() => {
+      const action = document.querySelector("#study-card-actions, .study-card-actions");
+      const nav = document.querySelector(".mobile-nav");
+      const actionRect = action?.getBoundingClientRect();
+      const navRect = nav.getBoundingClientRect();
+      return {
+        scrollY: window.scrollY,
+        maxScroll: document.documentElement.scrollHeight - window.innerHeight,
+        actionBottom: actionRect?.bottom ?? null,
+        navTop: navRect.top
+      };
+    });
+    assert.ok(studyScroll.maxScroll >= 0, "The study page must have a valid document scroll range.");
+    assert.ok(studyScroll.actionBottom !== null && studyScroll.actionBottom <= studyScroll.navTop + 1,
+      "Study actions must be reachable above the fixed mobile navigation: " + JSON.stringify(studyScroll));
+
+
     assert.deepEqual(failures, [], "The application must not emit uncaught browser errors.");
     console.log("Browser smoke tests passed: desktop load, vocabulary fetch, dictionary search, theme toggle, auth dialog, browser history, mobile navigation, and uncaught-error check.");
   } finally {
