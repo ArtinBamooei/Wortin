@@ -64,7 +64,7 @@ function main(files) {
     let failed = false;
 
     for (const check of checks) {
-      console.log("\\nLighthouse " + check.mode.toUpperCase() + " budget");
+      console.log("\nLighthouse " + check.mode.toUpperCase() + " budget");
       for (const item of check.results) {
         const actual = item.actual === null ? "missing" : item.kind === "score" ? item.actual + "/100" : item.actual.toFixed(2);
         console.log("  " + item.name + ": " + actual + " (limit " + (item.kind === "score" ? ">= " : "<= ") + item.budget + (item.kind === "score" ? "/100" : "") + ")");
@@ -76,7 +76,7 @@ function main(files) {
     }
 
     if (failed) process.exitCode = 1;
-    else console.log("\\nAll Lighthouse regression budgets passed.");
+    else console.log("\nAll Lighthouse regression budgets passed.");
   } catch (error) {
     console.error("Could not validate Lighthouse reports:", error.message);
     process.exitCode = 1;
