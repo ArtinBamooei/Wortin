@@ -33,7 +33,10 @@ async function mockBackend(page, options = {}) {
     })
   );
 
-  await page.route("**/rest/v1/vocabulary*", async route => {\n    if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));\n    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });\n  });
+  await page.route("**/rest/v1/vocabulary*", async route => {
+    if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });
+  });
 
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
