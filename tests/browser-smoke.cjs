@@ -137,7 +137,7 @@ async function run() {
       });
       assert.ok(layout.documentWidth <= layout.viewport + 1,
         "Horizontal page overflow at " + width + "px: " + JSON.stringify(layout));
-      const allowedGutter = width <= 620 ? 16 : 1;
+      const allowedGutter = 16;
       assert.ok(layout.mainLeft >= -1 && layout.mainLeft <= allowedGutter,
         "Main content has an unexpected left gutter at " + width + "px: " + JSON.stringify(layout));
       assert.ok(layout.mainRight <= layout.viewport + 1,
@@ -148,6 +148,8 @@ async function run() {
         assert.equal(layout.navDisplay, "flex", "The mobile navigation must be visible at " + width + "px.");
         assert.equal(layout.sidebarDisplay, "none", "The desktop sidebar must be hidden at " + width + "px.");
       } else if (width <= 900) {
+        assert.ok(layout.mainWidth >= width - 110 && layout.mainRight <= width - 74,
+          "Tablet content must use the space beside the compact sidebar at " + width + "px: " + JSON.stringify(layout));
         assert.equal(layout.navDisplay, "none", "The mobile navigation must be hidden on tablets.");
         assert.notEqual(layout.sidebarDisplay, "none", "The compact tablet sidebar must remain available.");
       }
