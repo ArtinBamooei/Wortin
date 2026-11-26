@@ -73,5 +73,7 @@ jobs:
           curl --fail --silent --show-error --location --retry 3 "$url" -o /tmp/wortin-supabase-sdk.js
           test -s /tmp/wortin-supabase-sdk.js
           digest="sha384-$(openssl dgst -sha384 -binary /tmp/wortin-supabase-sdk.js | openssl base64 -A)"
-          echo "Exact Supabase SDK SRI: $digest"
+          expected="$(node -e 'const fs=require("node:fs"); const html=fs.readFileSync("index.html","utf8"); const tag=html.match(/<script\\b(?=[^>]*supabase-js@2\\.117\\.3\\/dist\\/umd\\/supabase\\.js)([^>]*)>/i); const sri=tag?.[1].match(/\\bintegrity=["\\x27](sha384-[A-Za-z0-9+/=]+)["\\x27]/i)?.[1]; if(!sri) process.exit(1); process.stdout.write(sri);')"
+          test "$digest" = "$expected"
+          echo "Supabase SDK SRI verified against the exact CDN bytes: $digest"
 
