@@ -2732,3 +2732,60 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   }
   .auth-overlay{background:rgba(4,12,22,.84)}
 }
+
+
+/* Responsive viewport contract: natural document height, full-width phone layout and clear fixed navigation. */
+html,body{width:100%;min-height:100%;overflow-x:hidden;overflow-y:auto}
+.app{height:auto;min-height:100svh}
+#main-content{min-width:0;box-sizing:border-box}
+.view{min-width:0;max-width:100%}
+.view>*{min-width:0;max-width:100%}
+@media(min-width:621px) and (max-width:900px){
+  #main-content.main{
+    width:auto;max-width:none;margin-left:0!important;margin-right:75px!important;
+    padding-inline:20px;box-sizing:border-box;
+  }
+  .site-footer{margin-right:90px;margin-left:20px}
+}
+@media(max-width:620px){
+  .app{width:100%;height:auto;min-height:100svh}
+  #main-content.main{
+    display:block;width:100%;max-width:none;min-width:0;
+    margin:0!important;padding:0 14px calc(116px + env(safe-area-inset-bottom));
+    box-sizing:border-box;
+  }
+  #main-content>.topbar,
+  #main-content>.view{
+    width:100%;max-width:100%;min-width:0;
+  }
+  #main-content>.view>*{min-width:0;max-width:100%}
+  #view-learn>.study-shell,
+  #view-quiz>.study-shell,
+  #view-daily>.daily-shell,
+  #view-listening>#learning-media{
+    width:100%;max-width:100%;min-width:0;margin-inline:auto;
+  }
+  #studyContent,#quizStudyContent,.study-card-scene,.flashcard,
+  .study-card-actions,.study-rating-panel,.daily-word-card,
+  .table-card,.saved-list,.word-list,.reading-grid,.listening-video-grid{
+    width:100%;max-width:100%;min-width:0;
+  }
+  .mobile-nav{
+    position:fixed;z-index:40;right:0;left:0;bottom:0;width:100%;
+    min-height:calc(66px + env(safe-area-inset-bottom));
+    padding:6px 5px calc(6px + env(safe-area-inset-bottom));
+    box-sizing:border-box;
+  }
+  .mobile-nav button{
+    flex:1 1 0;width:auto;min-width:0;max-width:none;
+    min-height:48px;padding:5px 1px;white-space:nowrap;
+  }
+  .site-footer{
+    width:auto;max-width:none;margin:12px 14px calc(116px + env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:380px){
+  #main-content.main{padding-right:11px;padding-left:11px}
+  .mobile-nav{padding-right:3px;padding-left:3px}
+  .mobile-nav button{min-width:0;padding-inline:0;font-size:12px}
+}
