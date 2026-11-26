@@ -67,3 +67,13 @@ jobs:
           exit 1
       - name: Run desktop and mobile browser tests
         run: node tests/browser-smoke.cjs
+      - name: Calculate exact pinned Supabase SDK integrity digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js'
+          curl --fail --silent --show-error --location --retry 3 "$url" -o /tmp/wortin-supabase-sdk.js
+          test -s /tmp/wortin-supabase-sdk.js
+          digest="sha384-$(openssl dgst -sha384 -binary /tmp/wortin-supabase-sdk.js | openssl base64 -A)"
+          echo "Exact Supabase SDK SRI: $digest"
+
