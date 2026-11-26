@@ -17,6 +17,23 @@ test("HTML has one primary heading, explicit button types and labeled search inp
   assert.match(html, /<footer\b/);
 });
 
+test("home page heading levels follow a valid accessible hierarchy", () => {
+  const html = read("index.html");
+  const start = html.indexOf('id="view-home"');
+  const end = html.indexOf('id="view-reading"', start);
+  assert.ok(start >= 0 && end > start, "home view boundaries must exist");
+  const home = html.slice(start, end);
+  const headings = [...home.matchAll(/<h([1-6])\\b[^>]*>([\\s\\S]*?)<\\/h\\1>/gi)]
+    .map(match => ({ level: Number(match[1]), text: match[2].replace(/<[^>]+>/g, "").trim() }));
+  assert.deepEqual(headings.map(item => item.level), [1, 2, 3, 3, 3, 3]);
+  assert.equal(headings[1].text, "انتخاب کن و شروع کن");
+  assert.ok(headings.slice(2).every(item => item.text.length > 0));
+  const css = read("styles.css");
+  assert.match(css, /\\.section-head h2,\\.section-head h3/);
+  assert.match(css, /\\.mode-card h3/);
+  assert.match(css, /\\.weekly-head h3/);
+});
+
 test("view navigation supports direct links and browser history", () => {
   const app = read("app.js");
   assert.match(app, /window\.addEventListener\("popstate"/);
