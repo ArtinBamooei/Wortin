@@ -72,6 +72,7 @@ async function run() {
     assert.equal(await desktop.locator("#wordList .word-row").count(), 1,
       "Dictionary search should retain the matching record.");
     await desktop.locator("#dictSearch").fill("not-a-real-word");
+    await desktop.locator("#wordList .empty").waitFor({ timeout: 2000 });
     assert.equal(await desktop.locator("#wordList .word-row").count(), 0,
       "Dictionary search should return no rows for an unmatched query.");
 
@@ -85,7 +86,8 @@ async function run() {
     await desktop.locator("#authOverlay.open").waitFor();
     assert.equal(await desktop.locator("#authOverlay").getAttribute("aria-hidden"), "false");
     await desktop.locator("#authClose").click();
-    await desktop.locator("#authOverlay").waitFor({ state: "hidden" });
+    assert.equal(await desktop.locator("#authOverlay").evaluate(el => el.classList.contains("open")), false,
+      "Closing the authentication dialog should remove its open state.");
     assert.equal(await desktop.locator("#authOverlay").getAttribute("aria-hidden"), "true",
       "Closing the authentication dialog should restore its hidden state.");
 
