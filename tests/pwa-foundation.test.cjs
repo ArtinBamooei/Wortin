@@ -33,6 +33,14 @@ test("deployment build is allowlist-based and never copies repository root", () 
   assert.doesNotMatch(build, /supabase\/migrations|README\.md|tests\/|scripts\//);
 });
 
+test("Supabase CDN SDK is version-pinned and protected by verified SRI", () => {
+  const html = read("index.html");
+  assert.match(html, /<script\\b[^>]*src="https:\\/\\/cdn\\.jsdelivr\\.net\\/npm\\/@supabase\\/supabase-js@2\\.117\\.3\\/dist\\/umd\\/supabase\\.js"/);
+  assert.ok(html.includes('integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R"'));
+  assert.match(html, /crossorigin="anonymous"/);
+  assert.match(html, /referrerpolicy="no-referrer"/);
+});
+
 test("SEO and PWA entry points exist in the document", () => {
   const html = read("index.html");
   for (const token of ['rel="manifest"', 'rel="apple-touch-icon"', 'name="twitter:card"', 'property="og:image"', 'application/ld+json']) {
