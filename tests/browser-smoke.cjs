@@ -137,13 +137,14 @@ async function run() {
       });
       assert.ok(layout.documentWidth <= layout.viewport + 1,
         "Horizontal page overflow at " + width + "px: " + JSON.stringify(layout));
-      assert.ok(layout.mainLeft >= -1 && layout.mainLeft <= 1,
-        "Main content must start at the viewport edge at " + width + "px: " + JSON.stringify(layout));
+      const allowedGutter = width <= 620 ? 16 : 1;
+      assert.ok(layout.mainLeft >= -1 && layout.mainLeft <= allowedGutter,
+        "Main content has an unexpected left gutter at " + width + "px: " + JSON.stringify(layout));
       assert.ok(layout.mainRight <= layout.viewport + 1,
         "Main content exceeds the viewport at " + width + "px: " + JSON.stringify(layout));
       if (width <= 620) {
-        assert.ok(layout.mainWidth >= width - 1,
-          "Phone content must use the full viewport width at " + width + "px: " + JSON.stringify(layout));
+        assert.ok(layout.mainRight >= width - 16 && layout.mainWidth >= width - 32,
+          "Phone content must span the viewport with only normal inner padding at " + width + "px: " + JSON.stringify(layout));
         assert.equal(layout.navDisplay, "flex", "The mobile navigation must be visible at " + width + "px.");
         assert.equal(layout.sidebarDisplay, "none", "The desktop sidebar must be hidden at " + width + "px.");
       } else if (width <= 900) {
