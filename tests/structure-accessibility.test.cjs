@@ -183,6 +183,14 @@ test("expensive CSS blur filters are capped for rendering performance", () => {
   assert.match(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?\.auth-overlay[^}]*backdrop-filter:none/);
 });
 
+test("responsive shell uses natural document height and a full-width phone layout", () => {
+  const css = read("styles.css");
+  assert.match(css, /\.app\{height:auto;min-height:100svh\}/);
+  assert.match(css, /#main-content\.main\{[\s\S]*?width:100%[\s\S]*?margin:0!important/);
+  assert.match(css, /@media\(max-width:620px\)[\s\S]*?\.mobile-nav\{[\s\S]*?position:fixed/);
+  assert.match(css, /@media\(min-width:621px\) and \(max-width:900px\)/);
+});
+
 test("interactive controls do not suppress native focus outlines", () => {
   const css = read("styles.css");
   assert.doesNotMatch(css, /outline\s*:\s*(?:none|0)\b/i);
