@@ -1,5 +1,5 @@
 "use strict";
-const CACHE_NAME = "wortin-shell-v10";
+const CACHE_NAME = "wortin-shell-v11";
 const SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./learning-media.js", "./learning-media.css", "./favicon.svg", "./manifest.webmanifest", "./theme-init.js", "./pwa-register.js", "./404.html", "./assets/wortin-logo.webp", "./assets/wortin-app-icon.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
