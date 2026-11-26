@@ -44,7 +44,7 @@ async function mockBackend(page) {
 async function waitForVocabulary(page) {
   await page.locator("#dbStatus.ok").waitFor({ timeout: 15000 });
   await page.locator("#statTotal").waitFor({ timeout: 5000 });
-  assert.match(await page.locator("#statTotal").innerText(), /1/,
+  assert.match(await page.locator("#statTotal").innerText(), /^[۱1]$/,
     "The loaded vocabulary count should be one.");
 }
 
