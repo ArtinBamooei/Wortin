@@ -29,6 +29,7 @@ jobs:
           node --check pwa-register.js
           node --check sw.js
           node --check scripts/build-site.cjs
+          node --check scripts/check-lighthouse.cjs
           node --check tests/browser-smoke.cjs
       - name: Validate source and security boundaries
         run: node scripts/validate-site.cjs
@@ -96,6 +97,8 @@ jobs:
             }
           }
           NODE
+      - name: Enforce Lighthouse regression budgets
+        run: node scripts/check-lighthouse.cjs /tmp/wortin-lighthouse-mobile.json /tmp/wortin-lighthouse-desktop.json
       - name: Save Lighthouse reports
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
