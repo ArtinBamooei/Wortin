@@ -81,12 +81,31 @@ async function run() {
 
   try {
     const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 900 };
-    const coldStart = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    const coldContext = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      serviceWorkers: "block"
+    });
+    const coldStart = await coldContext.newPage();
     coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
     await mockBackend(coldStart, cacheCounters);
-    const coldStartUrl = new URL(BASE_URL);
-    coldStartUrl.hostname = "localhost";
-    await coldStart.goto(coldStartUrl.href + "#learn", { waitUntil: "domcontentloaded" });
+    let forceEmptyVocabularyCache = true;
+    await coldStart.route("**/app.js*", async route => {
+      const response = await route.fetch();
+      if (!forceEmptyVocabularyCache) {
+        await route.fulfill({ response });
+        return;
+      }
+      forceEmptyVocabularyCache = false;
+      const source = await response.text();
+      const originalReader = "async function readVocabularyCache(){try{";
+      assert.ok(source.includes(originalReader), "The application cache reader must be found for an isolated cold-start test.");
+      const isolatedSource = source.replace(
+        originalReader,
+        "async function readVocabularyCache(){return null}\\nasync function readLegacyVocabularyCache(){try{"
+      );
+      await route.fulfill({ response, body: isolatedSource });
+    });
+    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
     await coldStart.locator("#view-learn.active").waitFor();
     await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
     const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
@@ -132,6 +151,7 @@ async function run() {
     assert.equal(cacheCounters.vocabularyRequests, 2,
       "Manifest failure with a valid local snapshot must not cause a full database download.");
     await coldStart.close();
+    await coldContext.close();
 
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 } });
     desktop.on("pageerror", error => failures.push("Desktop page error: " + error.message));
