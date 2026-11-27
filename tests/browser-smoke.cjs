@@ -84,7 +84,9 @@ async function run() {
     const coldStart = await browser.newPage({ viewport: { width: 390, height: 844 } });
     coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
     await mockBackend(coldStart, cacheCounters);
-    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
+    const coldStartUrl = new URL(BASE_URL);
+    coldStartUrl.hostname = "localhost";
+    await coldStart.goto(coldStartUrl.href + "#learn", { waitUntil: "domcontentloaded" });
     await coldStart.locator("#view-learn.active").waitFor();
     await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
     const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
