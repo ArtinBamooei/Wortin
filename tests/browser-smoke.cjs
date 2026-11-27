@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 1500 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 7000 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
