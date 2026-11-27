@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 12000 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 3000 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -107,19 +107,20 @@ async function run() {
       await route.fulfill({ response, body: isolatedSource });
     });
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "commit" });
-    await coldStart.locator("#view-learn.active").waitFor();
     await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
     const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
       className: el.className,
-      visibility: getComputedStyle(el).visibility,
-      opacity: getComputedStyle(el).opacity,
-      bodyClass: document.body.className,
-      manifestRequests: 0
+      visibility: getComputedStyle(el).visibility
     }));
-    const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(initialLoaderState.className.split(/\\s+/).includes("is-visible"),
-      "A cold start must keep the full-screen vocabulary loader visible: " + JSON.stringify({ ...initialLoaderState, forcedReaderWasUsed, cacheCounters }));
+      "The full-screen loader must be present in the initial HTML before app initialization.");
+    await coldStart.locator("#view-learn.active").waitFor();
+    const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
+    assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
+    await coldStart.waitForFunction(() => document.querySelector("#loaderHeadline")?.textContent.includes("در حال دریافت نخستین نسخه"));
+    const transferLoaderVisible = await coldStart.locator("#vocabularyLoader").evaluate(el => el.classList.contains("is-visible"));
+    assert.ok(transferLoaderVisible, "The full-screen loader must remain visible while the first vocabulary snapshot is downloading: " + JSON.stringify(cacheCounters));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 30000 });
