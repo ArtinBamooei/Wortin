@@ -86,7 +86,16 @@ async function run() {
     await mockBackend(coldStart, cacheCounters);
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
     await coldStart.locator("#view-learn.active").waitFor();
-    await coldStart.locator("#vocabularyLoader.is-visible").waitFor();
+    await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
+    const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
+      className: el.className,
+      visibility: getComputedStyle(el).visibility,
+      opacity: getComputedStyle(el).opacity,
+      bodyClass: document.body.className,
+      manifestRequests: 0
+    }));
+    assert.ok(initialLoaderState.className.split(/\\s+/).includes("is-visible"),
+      "A cold start must keep the full-screen vocabulary loader visible: " + JSON.stringify(initialLoaderState));
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
