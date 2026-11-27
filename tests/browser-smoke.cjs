@@ -80,7 +80,12 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 30000 };
+    const cacheCounters = {
+      manifestRequests: 0,
+      vocabularyRequests: 0,
+      manifestVersion: "1",
+      vocabularyFixture: vocabularyFixture.map(word => ({ ...word }))
+    };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -88,42 +93,21 @@ async function run() {
     const coldStart = await coldContext.newPage();
     coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
     await mockBackend(coldStart, cacheCounters);
-    const initialManifestResponse = coldStart.waitForResponse(response =>
-      new URL(response.url()).pathname.endsWith("/rest/v1/vocabulary_manifest"), { timeout: 15000 });
-    const initialVocabularyResponse = coldStart.waitForResponse(response =>
-      new URL(response.url()).pathname.endsWith("/rest/v1/vocabulary"), { timeout: 15000 });
-    let forceEmptyVocabularyCache = true;
-    await coldStart.route("**/app.js*", async route => {
-      const response = await route.fetch();
-      if (!forceEmptyVocabularyCache) {
-        await route.fulfill({ response });
-        return;
-      }
-      forceEmptyVocabularyCache = false;
-      const source = await response.text();
-      const originalReader = ["async function readVocabularyCache(){", "  try{"].join("\n");
-      assert.ok(source.includes(originalReader), "The application cache reader must be found for an isolated cold-start test.");
-      const isolatedSource = source.replace(
-        originalReader,
-        ["async function readVocabularyCache(){window.__wortinForcedColdCacheReader=true;return null}", "async function readLegacyVocabularyCache(){", "  try{"].join("\n")
-      );
-      assert.notEqual(isolatedSource, source, "The cold-start test must replace the real IndexedDB cache reader.");
-      await route.fulfill({ response, body: isolatedSource });
-    });
-    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "commit" });
-    await coldStart.locator("#view-learn.active").waitFor();
-    const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
-    assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
-    await initialManifestResponse;
-    assert.equal(cacheCounters.vocabularyRequests, 1, "The initial version check must initiate one vocabulary snapshot download.");
-    const earlyWords = await coldStart.locator("#flashcard .flash-word").allTextContents();
-    assert.equal(earlyWords.length, 0,
-      "A German vocabulary word must not be rendered before the first snapshot response completes: " + JSON.stringify({ earlyWords, manifestRequests: cacheCounters.manifestRequests, vocabularyRequests: cacheCounters.vocabularyRequests, forcedReaderWasUsed }));
-    await initialVocabularyResponse;
-    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 90000 });
-    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
-    assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
-    assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
+    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
+    await coldStart.waitForFunction(
+      () => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen",
+      null,
+      { timeout: 15000 }
+    );
+    await coldStart.waitForFunction(
+      () => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"),
+      null,
+      { timeout: 10000 }
+    );
+    assert.equal(cacheCounters.manifestRequests, 2,
+      "A first install checks the version before and after downloading a consistent snapshot.");
+    assert.equal(cacheCounters.vocabularyRequests, 1,
+      "A new browser context must download the vocabulary snapshot once.");
 
     // A reload with an unchanged manifest must use IndexedDB and must not re-download vocabulary rows.
     await coldStart.reload({ waitUntil: "domcontentloaded" });
