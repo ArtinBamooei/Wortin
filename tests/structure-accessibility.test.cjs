@@ -55,17 +55,17 @@ test("vocabulary startup uses a versioned IndexedDB snapshot and a tiny manifest
   assert.ok(app.includes("function downloadVocabularySnapshot(initialManifest)"));
   assert.ok(app.includes("cacheMatchesManifest(cached,manifest)"));
   assert.ok(app.includes("async function writeVocabularyCache(snapshot)"));
-  assert.ok(app.includes("manifest version"));
+  assert.ok(app.includes("Vocabulary manifest returned "));
   assert.ok(html.includes('id="vocabularyLoader"'));
   assert.ok(html.includes('id="loaderRetry"'));
   assert.ok(css.includes(".loader-orbit-one"));
   assert.ok(css.includes("@keyframes wortinOrbitOne"));
   assert.ok(css.includes("@media(prefers-reduced-motion:reduce)"));
-  assert.match(migration, /create table public\\.vocabulary_manifest/);
-  assert.match(migration, /enable row level security/);
-  assert.match(migration, /grant select on table public\\.vocabulary_manifest to anon, authenticated, service_role/);
-  assert.match(migration, /after insert or update or delete or truncate on public\\.vocabulary/);
-  assert.match(migration, /for each statement/);
+  assert.ok(migration.includes("create table public.vocabulary_manifest"));
+  assert.ok(migration.includes("enable row level security"));
+  assert.ok(migration.includes("grant select on table public.vocabulary_manifest to anon, authenticated, service_role"));
+  assert.ok(migration.includes("after insert or update or delete or truncate on public.vocabulary"));
+  assert.ok(migration.includes("for each statement"));
 });
 
 test("flashcard deep links wait for vocabulary and resume after cache or network load", () => {
