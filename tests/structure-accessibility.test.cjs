@@ -62,7 +62,7 @@ test("vocabulary loading uses a versioned local snapshot and a manifest-only fre
   assert.ok(html.includes('id="vocabularyLoaderProgress"'));
   assert.match(css, /\.loader-orbit-ring-a[\s\S]*?animation:loader-spin-a/);
   assert.match(css, /prefers-reduced-motion:reduce[\s\S]*?\.loader-content[\s\S]*?animation:none/);
-  assert.ok(sw.includes('wortin-shell-v13'));
+  assert.ok(sw.includes('wortin-shell-v14'));
 });
 
 test("word progress uses stable record codes and conservative mastery", () => {
