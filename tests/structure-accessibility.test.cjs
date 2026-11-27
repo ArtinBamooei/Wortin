@@ -51,6 +51,20 @@ test("flashcard deep links wait for vocabulary and resume after cache or network
   assert.ok(app.includes('if(vocabularyLoading){changeView(mode==="quiz"?"quiz":"learn");return}'));
 });
 
+test("vocabulary loading uses a versioned local snapshot and a manifest-only freshness check", () => {
+  const app = read("app.js"), html = read("index.html"), css = read("styles.css"), sw = read("sw.js");
+  assert.ok(app.includes("async function fetchVocabularyManifest()"));
+  assert.ok(app.includes("cachedRecord.schemaVersion===5&&cachedRecord.manifestVersion===manifest.version&&cachedRecord.rowCount===manifest.row_count"));
+  assert.ok(app.includes("schemaVersion:5,manifestVersion:manifest.version,rowCount:manifest.row_count"));
+  assert.ok(app.includes("Vocabulary snapshot incomplete"));
+  assert.ok(app.includes("Vocabulary changed repeatedly during synchronization"));
+  assert.ok(html.includes('id="vocabularyLoader"'));
+  assert.ok(html.includes('id="vocabularyLoaderProgress"'));
+  assert.match(css, /\.loader-orbit-ring-a[\s\S]*?animation:loader-spin-a/);
+  assert.match(css, /prefers-reduced-motion:reduce[\s\S]*?\.loader-content[\s\S]*?animation:none/);
+  assert.ok(sw.includes('wortin-shell-v13'));
+});
+
 test("word progress uses stable record codes and conservative mastery", () => {
   const app = read("app.js");
   assert.ok(app.includes("function wordProgressKey(word){return String(word.progress_key||word.record_code||word.id)}"));

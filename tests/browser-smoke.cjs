@@ -25,6 +25,8 @@ const vocabularyFixture = [{
 }];
 
 async function mockBackend(page, options = {}) {
+  options.manifestVersion ??= 7;
+  options.vocabularyRequests ??= 0;
   await page.route("**/npm/@supabase/supabase-js@2.117.3", route =>
     route.fulfill({
       status: 200,
@@ -33,18 +35,25 @@ async function mockBackend(page, options = {}) {
     })
   );
 
-  await page.route("**/rest/v1/vocabulary*", async route => {
+  await page.route("**/rest/v1/vocabulary_manifest*", async route => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify([{ version: options.manifestVersion, row_count: vocabularyFixture.length, updated_at: "2026-11-27T00:00:00Z" }]) });
+  });
+
+  await page.route(url => new URL(url).pathname.endsWith("/rest/v1/vocabulary"), async route => {
+    options.vocabularyRequests++;
     if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });
   });
 
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
+  return options;
 }
 
 async function waitForVocabulary(page) {
   await page.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("ok"), null, { timeout: 15000 });
   await page.locator("#statTotal").waitFor({ timeout: 5000 });
+  await page.waitForFunction(() => ["current", "updated", "offline", "error"].includes(document.documentElement.dataset.vocabularySyncState), null, { timeout: 15000 });
   assert.match(await page.locator("#statTotal").innerText(), /^[۱1]$/,
     "The loaded vocabulary count should be one.");
 }
@@ -66,6 +75,21 @@ async function run() {
     assert.notEqual(await coldStart.locator("#toast").innerText(), "واژگان هنوز دریافت نشده‌اند.",
       "A temporary vocabulary-loading state must not show a false unavailable-vocabulary error.");
     await coldStart.close();
+
+    const cachePage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    cachePage.on("pageerror", error => failures.push("Cache page error: " + error.message));
+    const cacheBackend = await mockBackend(cachePage);
+    await cachePage.goto(BASE_URL, { waitUntil: "domcontentloaded" });
+    await waitForVocabulary(cachePage);
+    assert.equal(cacheBackend.vocabularyRequests, 1, "A first visit must download the full vocabulary snapshot exactly once.");
+    await cachePage.reload({ waitUntil: "domcontentloaded" });
+    await waitForVocabulary(cachePage);
+    assert.equal(cacheBackend.vocabularyRequests, 1, "A reload with the same manifest version must not download vocabulary rows again.");
+    cacheBackend.manifestVersion++;
+    await cachePage.reload({ waitUntil: "domcontentloaded" });
+    await waitForVocabulary(cachePage);
+    assert.equal(cacheBackend.vocabularyRequests, 2, "A changed manifest version must trigger exactly one complete vocabulary refresh.");
+    await cachePage.close();
 
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 } });
     desktop.on("pageerror", error => failures.push("Desktop page error: " + error.message));
