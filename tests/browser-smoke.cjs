@@ -92,14 +92,14 @@ async function run() {
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
-    assert.equal(cacheCounters.manifestRequests, 1, "A cold start should check the manifest once.");
+    assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
     assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
 
     // A reload with an unchanged manifest must use IndexedDB and must not re-download vocabulary rows.
     await coldStart.reload({ waitUntil: "domcontentloaded" });
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
-    assert.equal(cacheCounters.manifestRequests, 2, "Every app entry checks the tiny version manifest.");
+    assert.equal(cacheCounters.manifestRequests, 3, "A warm reload checks only the tiny version manifest.");
     assert.equal(cacheCounters.vocabularyRequests, 1,
       "An unchanged database version must not trigger a vocabulary download after reload.");
 
@@ -107,14 +107,11 @@ async function run() {
     cacheCounters.manifestVersion = "2";
     cacheCounters.vocabularyFixture = [{ ...vocabularyFixture[0], word: "spielen", meaning_fa: "بازی کردن" }];
     await coldStart.reload({ waitUntil: "domcontentloaded" });
-    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"), null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "spielen", null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
+    assert.equal(cacheCounters.manifestRequests, 5, "A changed-version reload verifies the manifest before and after its replacement download.");
     assert.equal(cacheCounters.vocabularyRequests, 2,
       "A changed manifest version must trigger one replacement snapshot download.");
-    await coldStart.locator('.mobile-nav [data-view="dictionary"]').click();
-    await coldStart.locator("#view-dictionary.active").waitFor();
-    await coldStart.waitForFunction(() => document.querySelector("#wordList")?.innerText.includes("spielen"), null, { timeout: 5000 });
-    assert.match(await coldStart.locator("#wordList").innerText(), /spielen/,
-      "The replacement snapshot must become the active in-memory vocabulary.");
 
     // A temporary manifest outage must keep the usable cache and must not start a full download.
     cacheCounters.failManifest = true;
