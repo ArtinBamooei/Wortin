@@ -25,6 +25,12 @@ const vocabularyFixture = [{
 }];
 
 async function mockBackend(page, options = {}) {
+  options.manifestRequests ??= 0;
+  options.vocabularyRequests ??= 0;
+  options.manifestVersion ??= "1";
+  options.vocabularyFixture ??= vocabularyFixture;
+  options.failManifest ??= false;
+
   await page.route("**/npm/@supabase/supabase-js@2.117.3", route =>
     route.fulfill({
       status: 200,
@@ -33,9 +39,29 @@ async function mockBackend(page, options = {}) {
     })
   );
 
-  await page.route("**/rest/v1/vocabulary*", async route => {
+  await page.route(url => url.pathname.endsWith("/rest/v1/vocabulary_manifest"), async route => {
+    options.manifestRequests++;
+    if (options.failManifest) return route.abort();
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify([{
+        singleton: true,
+        version: options.manifestVersion,
+        row_count: options.vocabularyFixture.length,
+        updated_at: "2026-11-27T00:00:00Z"
+      }])
+    });
+  });
+
+  await page.route(url => url.pathname.endsWith("/rest/v1/vocabulary"), async route => {
+    options.vocabularyRequests++;
     if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(options.vocabularyFixture)
+    });
   });
 
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
@@ -54,17 +80,49 @@ async function run() {
   const failures = [];
 
   try {
+    const cacheCounters = { vocabularyFixture: vocabularyFixture.map(word => ({ ...word })) };
     const coldStart = await browser.newPage({ viewport: { width: 390, height: 844 } });
     coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
-    await mockBackend(coldStart, { vocabularyDelayMs: 900 });
+    await mockBackend(coldStart, { ...cacheCounters, vocabularyDelayMs: 900 });
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
     await coldStart.locator("#view-learn.active").waitFor();
+    await coldStart.locator("#vocabularyLoader.is-visible").waitFor();
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
-      "A flashcard must not be rendered from an empty vocabulary list while loading.");
+      "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
-    assert.notEqual(await coldStart.locator("#toast").innerText(), "واژگان هنوز دریافت نشده‌اند.",
-      "A temporary vocabulary-loading state must not show a false unavailable-vocabulary error.");
+    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
+    assert.equal(cacheCounters.manifestRequests, 1, "A cold start should check the manifest once.");
+    assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
+
+    // A reload with an unchanged manifest must use IndexedDB and must not re-download vocabulary rows.
+    await coldStart.reload({ waitUntil: "domcontentloaded" });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
+    assert.equal(cacheCounters.manifestRequests, 2, "Every app entry checks the tiny version manifest.");
+    assert.equal(cacheCounters.vocabularyRequests, 1,
+      "An unchanged database version must not trigger a vocabulary download after reload.");
+
+    // A changed manifest downloads one complete replacement and then becomes cache-stable.
+    cacheCounters.manifestVersion = "2";
+    cacheCounters.vocabularyFixture = [{ ...vocabularyFixture[0], word: "spielen", meaning_fa: "بازی کردن" }];
+    await coldStart.reload({ waitUntil: "domcontentloaded" });
+    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"), null, { timeout: 15000 });
+    assert.equal(cacheCounters.vocabularyRequests, 2,
+      "A changed manifest version must trigger one replacement snapshot download.");
+    await coldStart.locator('.mobile-nav [data-view="dictionary"]').click();
+    await coldStart.locator("#view-dictionary.active").waitFor();
+    await coldStart.waitForFunction(() => document.querySelector("#wordList")?.innerText.includes("spielen"), null, { timeout: 5000 });
+    assert.match(await coldStart.locator("#wordList").innerText(), /spielen/,
+      "The replacement snapshot must become the active in-memory vocabulary.");
+
+    // A temporary manifest outage must keep the usable cache and must not start a full download.
+    cacheCounters.failManifest = true;
+    await coldStart.reload({ waitUntil: "domcontentloaded" });
+    await coldStart.waitForFunction(() => document.querySelector("#wordList")?.innerText.includes("spielen"), null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
+    assert.equal(cacheCounters.vocabularyRequests, 2,
+      "Manifest failure with a valid local snapshot must not cause a full database download.");
     await coldStart.close();
 
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 } });
