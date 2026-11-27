@@ -1,7 +1,7 @@
 "use strict";
 const SUPABASE_URL="https://gfsghvyotfkchjwqhorl.supabase.co";
 const SUPABASE_KEY="sb_publishable_CiAz7Kyz80SC-j3djY0LoQ_ZpPNb1qW";
-const CACHE_KEY="wortin.vocabulary.cache.v4",THEME_KEY="wortin.theme.v2",PROGRESS_BASE_KEY="wortin.progress.v2",DAILY_BASE_KEY="wortin.daily.v2",LOCAL_CHANGE_BASE_KEY="wortin.progress.modifiedAt.v1";
+const CACHE_KEY="wortin.vocabulary.cache.v5",THEME_KEY="wortin.theme.v2",PROGRESS_BASE_KEY="wortin.progress.v2",DAILY_BASE_KEY="wortin.daily.v2",LOCAL_CHANGE_BASE_KEY="wortin.progress.modifiedAt.v1";
 let PROGRESS_KEY=PROGRESS_BASE_KEY+".anon",DAILY_KEY=DAILY_BASE_KEY+".anon",LOCAL_CHANGE_KEY=LOCAL_CHANGE_BASE_KEY+".anon";
 try{if(!localStorage.getItem(PROGRESS_KEY)&&localStorage.getItem("wortin.progress.v1"))localStorage.setItem(PROGRESS_KEY,localStorage.getItem("wortin.progress.v1"));if(!localStorage.getItem(DAILY_KEY)&&localStorage.getItem("wortin.daily.v1"))localStorage.setItem(DAILY_KEY,localStorage.getItem("wortin.daily.v1"))}catch(err){console.warn("Legacy local progress migration failed.",err)}
 const $=id=>document.getElementById(id),faNum=n=>Number(n||0).toLocaleString("fa-IR"),safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),svg=(name)=>'<svg aria-hidden="true"><use href="#i-'+name+'"/></svg>';
@@ -59,10 +59,287 @@ function searchMatches(index,query){return searchForms(query).some(term=>index.i
 function rebuildWordIndexes(){return new Promise(resolve=>{let cursor=0;const byId=new Map(),search=new Map(),chunk=()=>{const end=Math.min(cursor+250,words.length);for(;cursor<end;cursor++){const w=words[cursor],id=String(w.id);byId.set(id,w);search.set(id,searchForms(w.word+" "+w.meaning_fa+" "+w.examples_de.join(" ")+" "+w.extra_examples_de.join(" ")+" "+w.example_de+" "+(w.thematic_group||"")).join(" "))}if(cursor<words.length)setTimeout(chunk,0);else{wordById=byId;wordSearchIndex=search;resolve()}};chunk()})}
 function openVocabularyCacheDb(){if(!("indexedDB" in window))return Promise.reject(new Error("IndexedDB unavailable"));if(!window.__wortinCacheDbPromise){window.__wortinCacheDbPromise=new Promise((resolve,reject)=>{const request=indexedDB.open("wortin-cache",1);request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains("cache"))db.createObjectStore("cache")};request.onsuccess=()=>{const db=request.result;db.onversionchange=()=>db.close();resolve(db)};request.onerror=()=>reject(request.error||new Error("IndexedDB open failed"))})}return window.__wortinCacheDbPromise}
 function idbRequest(request){return new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error||new Error("IndexedDB request failed"))})}
-async function readVocabularyCache(){try{const db=await openVocabularyCacheDb();const tx=db.transaction("cache","readonly");const record=await idbRequest(tx.objectStore("cache").get("vocabulary"));if(record&&record.version===4&&Array.isArray(record.items))return record.items}catch(err){console.warn("IndexedDB vocabulary cache read failed; checking legacy cache.",err)}try{const raw=localStorage.getItem(CACHE_KEY)||localStorage.getItem("wortin.vocabulary.cache.v3")||localStorage.getItem("wortin.vocabulary.cache.v2")||"[]";const value=JSON.parse(raw);return Array.isArray(value)?value:[]}catch(err){console.warn("Legacy vocabulary cache is unreadable.",err);return[]}}
-async function writeVocabularyCache(items){try{const db=await openVocabularyCacheDb();const tx=db.transaction("cache","readwrite");tx.objectStore("cache").put({version:4,items},"vocabulary");await new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error("IndexedDB transaction failed"));tx.onabort=()=>reject(tx.error||new Error("IndexedDB transaction aborted"))});return}catch(err){console.warn("IndexedDB vocabulary cache write failed; using local storage fallback.",err)}try{localStorage.setItem(CACHE_KEY,JSON.stringify(items))}catch(err){console.warn("Vocabulary cache could not be persisted in this browser.",err)}}
-async function fetchWordPage(afterId=0){const params=new URLSearchParams({select:"id,source_number,record_code,progress_key,record_section,word,word_type,meaning_fa,example_de,examples_de,extra_examples_de,case_info,preposition,pdf_page,thematic_group,equivalent",order:"id.asc",limit:"1000",id:"gt."+String(afterId)});let lastError;for(let attempt=0;attempt<3;attempt++){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);try{const res=await fetch(SUPABASE_URL+"/rest/v1/vocabulary?"+params.toString(),{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY},signal:controller.signal});if(!res.ok){const error=new Error("Supabase returned "+res.status);error.status=res.status;throw error}const data=await res.json();if(!Array.isArray(data))throw new Error("Supabase returned an invalid vocabulary page");return data}catch(err){lastError=err;const retryable=!Number.isFinite(err.status)||err.status===429||err.status>=500;if(!retryable||attempt===2)break;await new Promise(resolve=>setTimeout(resolve,300*Math.pow(2,attempt)))}finally{clearTimeout(timeout)}}throw lastError||new Error("Vocabulary page request failed")}
-async function loadWords(){vocabularyLoading=true;const cached=await readVocabularyCache();if(cached.length){words=cached.map(normaliseWord).filter(w=>w.word);await rebuildWordIndexes();migrateProgressKeys();renderAll();resumeStudyViewAfterVocabularyLoad()}setDbStatus("loading",cached.length?"به‌روزرسانی واژگان":"دریافت واژگان");try{const fresh=[];let afterId=0,pageCount=0;while(pageCount<20){const page=await fetchWordPage(afterId);if(!page.length)break;fresh.push(...page);const nextId=Number(page[page.length-1].id);if(!Number.isSafeInteger(nextId)||nextId<=afterId)throw new Error("Vocabulary pagination cursor did not advance");afterId=nextId;pageCount++;if(page.length<1000)break}if(pageCount>=20)throw new Error("Vocabulary pagination safety limit reached");const normalized=fresh.filter(Boolean).map(normaliseWord).filter(w=>w.word);if(!normalized.length)throw new Error("جدول واژگان هنوز خالی است");words=normalized;await rebuildWordIndexes();migrateProgressKeys();await writeVocabularyCache(words);vocabularyLoading=false;setDbStatus("ok",faNum(words.length)+" واژه متصل");renderAll();resumeStudyViewAfterVocabularyLoad()}catch(err){vocabularyLoading=false;if(words.length){setDbStatus("","حالت آفلاین");if(!cached.length)toast("از نسخه‌ی ذخیره‌شده‌ی واژگان استفاده می‌شود.");console.warn("Vocabulary refresh failed; using cached data.",err);return}setDbStatus("","اتصال ناموفق");$("statTotal").textContent="—";$("wordList").innerHTML='<div class="empty">دیتابیس واژگان در دسترس نیست. تنظیمات Supabase و سیاست دسترسی خواندن را بررسی کن.</div>';console.error(err)}}
+function normaliseVocabularyCacheRecord(record){
+  if(Array.isArray(record))return{cacheVersion:0,datasetVersion:null,rowCount:record.length,fetchedAt:0,items:record};
+  if(!record||typeof record!=="object"||!Array.isArray(record.items))return null;
+  const schemaVersion=Number(record.version)||0;
+  if(schemaVersion!==5&&schemaVersion!==4)return null;
+  return{
+    cacheVersion:schemaVersion,
+    datasetVersion:typeof record.datasetVersion==="string"?record.datasetVersion:null,
+    rowCount:Number.isSafeInteger(Number(record.rowCount))?Number(record.rowCount):record.items.length,
+    fetchedAt:Number(record.fetchedAt)||0,
+    items:record.items
+  };
+}
+async function readVocabularyCache(){
+  try{
+    const db=await openVocabularyCacheDb();
+    const tx=db.transaction("cache","readonly");
+    const record=await idbRequest(tx.objectStore("cache").get("vocabulary"));
+    const normalized=normaliseVocabularyCacheRecord(record);
+    if(normalized)return normalized;
+  }catch(err){console.warn("IndexedDB vocabulary cache read failed; checking local storage.",err)}
+  try{
+    let raw=storageGet(CACHE_KEY)||storageGet("wortin.vocabulary.cache.v4")||storageGet("wortin.vocabulary.cache.v3")||storageGet("wortin.vocabulary.cache.v2");
+    if(!raw)return null;
+    return normaliseVocabularyCacheRecord(JSON.parse(raw));
+  }catch(err){console.warn("Local vocabulary cache is unreadable.",err);return null}
+}
+async function writeVocabularyCache(snapshot){
+  const record={
+    version:5,
+    datasetVersion:String(snapshot.datasetVersion),
+    rowCount:snapshot.items.length,
+    fetchedAt:Date.now(),
+    items:snapshot.items
+  };
+  try{
+    const db=await openVocabularyCacheDb();
+    const tx=db.transaction("cache","readwrite");
+    tx.objectStore("cache").put(record,"vocabulary");
+    await new Promise((resolve,reject)=>{
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error("IndexedDB transaction failed"));
+      tx.onabort=()=>reject(tx.error||new Error("IndexedDB transaction aborted"));
+    });
+    return true;
+  }catch(err){console.warn("IndexedDB vocabulary cache write failed; trying local storage.",err)}
+  try{localStorage.setItem(CACHE_KEY,JSON.stringify(record));return true}
+  catch(err){console.warn("Vocabulary snapshot could not be persisted in this browser.",err);return false}
+}
+async function fetchVocabularyManifest(){
+  let lastError;
+  for(let attempt=0;attempt<3;attempt++){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),12000);
+    try{
+      const params=new URLSearchParams({
+        select:"version,row_count,updated_at",
+        singleton:"eq.true",
+        limit:"1",
+        _v:String(Date.now())
+      });
+      const response=await fetch(SUPABASE_URL+"/rest/v1/vocabulary_manifest?"+params.toString(),{
+        method:"GET",
+        cache:"no-store",
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:"Bearer "+SUPABASE_KEY,
+          Accept:"application/json",
+          "Cache-Control":"no-cache"
+        },
+        signal:controller.signal
+      });
+      if(!response.ok){
+        const error=new Error("Vocabulary manifest returned "+response.status);
+        error.status=response.status;
+        throw error;
+      }
+      const data=await response.json();
+      if(!Array.isArray(data)||data.length!==1)throw new Error("Vocabulary manifest is missing or malformed");
+      const version=String(data[0].version??"");
+      const rowCount=Number(data[0].row_count);
+      if(!/^\\d+$/.test(version)||!Number.isSafeInteger(rowCount)||rowCount<1||rowCount>50000)
+        throw new Error("Vocabulary manifest contains invalid version or row count");
+      return{version,rowCount,updatedAt:String(data[0].updated_at||"")};
+    }catch(err){
+      lastError=err;
+      const retryable=!Number.isFinite(err.status)||err.status===429||err.status>=500;
+      if(!retryable||attempt===2)break;
+      await new Promise(resolve=>setTimeout(resolve,250*Math.pow(2,attempt)));
+    }finally{clearTimeout(timeout)}
+  }
+  throw lastError||new Error("Vocabulary version check failed");
+}
+async function fetchWordPage(afterId=0){
+  const params=new URLSearchParams({
+    select:"id,source_number,record_code,progress_key,record_section,word,word_type,meaning_fa,example_de,examples_de,extra_examples_de,case_info,preposition,pdf_page,thematic_group,equivalent",
+    order:"id.asc",
+    limit:"1000",
+    id:"gt."+String(afterId),
+    _v:String(Date.now())
+  });
+  let lastError;
+  for(let attempt=0;attempt<3;attempt++){
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
+    try{
+      const res=await fetch(SUPABASE_URL+"/rest/v1/vocabulary?"+params.toString(),{
+        method:"GET",
+        cache:"no-store",
+        headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,Accept:"application/json","Cache-Control":"no-cache"},
+        signal:controller.signal
+      });
+      if(!res.ok){
+        const error=new Error("Supabase returned "+res.status);
+        error.status=res.status;
+        throw error;
+      }
+      const data=await res.json();
+      if(!Array.isArray(data))throw new Error("Supabase returned an invalid vocabulary page");
+      return data;
+    }catch(err){
+      lastError=err;
+      const retryable=!Number.isFinite(err.status)||err.status===429||err.status>=500;
+      if(!retryable||attempt===2)break;
+      await new Promise(resolve=>setTimeout(resolve,300*Math.pow(2,attempt)));
+    }finally{clearTimeout(timeout)}
+  }
+  throw lastError||new Error("Vocabulary page request failed");
+}
+function showVocabularyLoader({title="در حال آماده‌سازی Wortin",detail="در حال آماده‌سازی محیط یادگیری…",stage="آماده‌سازی",progress=4,retry=false,error=false}={}){
+  const root=$("vocabularyLoader");
+  if(!root)return;
+  root.classList.add("is-visible");
+  root.classList.toggle("has-error",!!error);
+  root.setAttribute("aria-hidden","false");
+  root.setAttribute("aria-busy",String(!error));
+  $("loaderHeadline").textContent=title;
+  $("loaderDetail").textContent=detail;
+  $("loaderStage").textContent=stage;
+  const value=Math.max(0,Math.min(100,Math.round(Number(progress)||0)));
+  $("loaderPercent").textContent=faNum(value)+"٪";
+  $("loaderProgress").style.width=value+"%";
+  $("loaderProgress").parentElement?.setAttribute("aria-valuenow",String(value));
+  $("loaderRetry").hidden=!retry;
+}
+function hideVocabularyLoader(){
+  const root=$("vocabularyLoader");
+  if(root){
+    root.classList.remove("is-visible","has-error");
+    root.setAttribute("aria-hidden","true");
+    root.setAttribute("aria-busy","false");
+    $("loaderRetry").hidden=true;
+  }
+  document.body.classList.remove("is-booting");
+}
+function cacheMatchesManifest(cache,manifest){
+  return !!cache&&cache.cacheVersion===5&&cache.datasetVersion===manifest.version&&
+    cache.rowCount===manifest.rowCount&&cache.items.length===manifest.rowCount;
+}
+async function downloadVocabularySnapshot(initialManifest){
+  let expected=initialManifest;
+  for(let consistencyAttempt=0;consistencyAttempt<2;consistencyAttempt++){
+    const rows=[];
+    let afterId=0,pageCount=0;
+    while(rows.length<expected.rowCount){
+      if(pageCount>=50)throw new Error("Vocabulary download exceeded the 50-page safety limit");
+      const page=await fetchWordPage(afterId);
+      if(!page.length)throw new Error("Vocabulary download ended before the manifest row count");
+      for(const row of page){
+        const id=Number(row?.id);
+        if(!Number.isSafeInteger(id)||id<=afterId)throw new Error("Vocabulary pagination cursor did not advance");
+        afterId=id;
+      }
+      rows.push(...page);
+      if(rows.length>expected.rowCount)throw new Error("Vocabulary rows exceed the manifest row count");
+      if(page.length<1000&&rows.length<expected.rowCount)throw new Error("Vocabulary page ended before all rows were received");
+      pageCount++;
+      const progress=12+Math.round(rows.length/expected.rowCount*68);
+      showVocabularyLoader({
+        title:consistencyAttempt?"در حال همگام‌سازی نسخهٔ تازه":"در حال دریافت واژگان",
+        detail:faNum(rows.length)+" از "+faNum(expected.rowCount)+" واژه دریافت شد",
+        stage:"دریافت امن داده‌ها",
+        progress
+      });
+    }
+    if(rows.length!==expected.rowCount)throw new Error("Downloaded vocabulary count does not match the manifest");
+    showVocabularyLoader({title:"در حال بررسی یکپارچگی داده‌ها",detail:"نسخهٔ دیتابیس دوباره بررسی می‌شود تا دادهٔ ناقص ذخیره نشود.",stage:"اعتبارسنجی نسخه",progress:84});
+    const latest=await fetchVocabularyManifest();
+    if(latest.version===expected.version&&latest.rowCount===expected.rowCount)
+      return{items:rows,manifest:latest};
+    if(consistencyAttempt===1)throw new Error("Vocabulary changed repeatedly during download; previous cache was preserved");
+    expected=latest;
+    showVocabularyLoader({title:"دیتابیس به‌روزرسانی شد",detail:"نسخهٔ پایدار جدید دوباره دریافت می‌شود.",stage:"هماهنگ‌سازی نسخه",progress:8});
+  }
+  throw new Error("Could not obtain a stable vocabulary snapshot");
+}
+async function loadWords(){
+  vocabularyLoading=true;
+  showVocabularyLoader({title:"Wortin در حال بیدار شدن",detail:"در حال آماده‌سازی موتور واژگان و بررسی نسخهٔ ذخیره‌شده…",stage:"شروع",progress:3});
+  let cached=null;
+  try{cached=await readVocabularyCache()}catch(err){console.warn("Vocabulary cache read failed.",err)}
+  if(cached&&cached.items.length){
+    const cachedWords=cached.items.map(normaliseWord).filter(w=>w.word);
+    if(cachedWords.length===cached.items.length&&cachedWords.length===cached.rowCount){
+      words=cachedWords;
+      await rebuildWordIndexes();
+      migrateProgressKeys();
+      renderAll();
+      vocabularyLoading=false;
+      resumeStudyViewAfterVocabularyLoad();
+      showVocabularyLoader({title:"نسخهٔ ذخیره‌شده آماده است",detail:"در حال بررسی سبکِ نسخهٔ جدید دیتابیس؛ نیازی به دریافت دوبارهٔ واژگان نیست.",stage:"بررسی نسخه",progress:7});
+    }else{
+      console.warn("Stored vocabulary cache failed integrity validation.");
+      cached=null;
+    }
+  }
+  setDbStatus("loading",cached?.items?.length?"بررسی نسخه":"دریافت واژگان");
+  try{
+    const manifest=await fetchVocabularyManifest();
+    if(cacheMatchesManifest(cached,manifest)){
+      setDbStatus("ok",faNum(words.length)+" واژه آماده");
+      showVocabularyLoader({title:"همه‌چیز به‌روز است",detail:"نسخهٔ دیتابیس تغییر نکرده؛ از حافظهٔ محلی استفاده شد.",stage:"آماده",progress:100});
+      hideVocabularyLoader();
+      return;
+    }
+    const hasUsableCache=words.length>0;
+    showVocabularyLoader({
+      title:hasUsableCache?"نسخهٔ تازه پیدا شد":"در حال دریافت نخستین نسخه",
+      detail:hasUsableCache?"واژگان جدید جایگزین نسخهٔ قبلی می‌شوند؛ نسخهٔ قبلی تا پایان بررسی حفظ می‌شود.":"در نخستین ورود، همهٔ واژگان دریافت و به‌صورت محلی ذخیره می‌شوند.",
+      stage:"شروع دریافت",
+      progress:10
+    });
+    const snapshot=await downloadVocabularySnapshot(manifest);
+    const normalized=snapshot.items.filter(Boolean).map(normaliseWord).filter(w=>w.word);
+    if(normalized.length!==snapshot.manifest.rowCount)throw new Error("Vocabulary normalization changed the expected row count");
+    const ids=new Set();
+    for(const word of normalized){
+      const id=String(word.id);
+      if(!id||ids.has(id))throw new Error("Vocabulary snapshot contains a duplicate or missing record ID");
+      ids.add(id);
+    }
+    showVocabularyLoader({title:"ساخت نمایهٔ یادگیری",detail:"جست‌وجو، دسته‌بندی و اتصال واژه‌ها آماده می‌شود.",stage:"پردازش واژگان",progress:88});
+    const previousWords=words;
+    words=normalized;
+    try{
+      await rebuildWordIndexes();
+      migrateProgressKeys();
+    }catch(err){
+      words=previousWords;
+      await rebuildWordIndexes();
+      throw err;
+    }
+    showVocabularyLoader({title:"ذخیرهٔ نسخهٔ محلی",detail:"نسخهٔ کامل و اعتبارسنجی‌شده در حافظهٔ دستگاه ذخیره می‌شود.",stage:"ذخیره‌سازی",progress:94});
+    const persisted=await writeVocabularyCache({datasetVersion:snapshot.manifest.version,items:words});
+    setDbStatus("ok",faNum(words.length)+" واژه آماده");
+    renderAll();
+    resumeStudyViewAfterVocabularyLoad();
+    showVocabularyLoader({title:"محیط یادگیری آماده است",detail:"واژگان با موفقیت به‌روزرسانی شدند.",stage:"تکمیل",progress:100});
+    hideVocabularyLoader();
+    if(!persisted)toast("واژگان بارگذاری شدند، اما ذخیره‌سازی محلی در این مرورگر در دسترس نیست.");
+  }catch(err){
+    vocabularyLoading=false;
+    console.error("Vocabulary initialization or version refresh failed.",err);
+    if(words.length){
+      setDbStatus("","نسخهٔ ذخیره‌شده");
+      hideVocabularyLoader();
+      toast("اتصال به نسخهٔ جدید ممکن نشد؛ از آخرین نسخهٔ ذخیره‌شده استفاده می‌شود.");
+      return;
+    }
+    setDbStatus("","اتصال ناموفق");
+    $("statTotal").textContent="—";
+    $("wordList").innerHTML='<div class="empty">برای دریافت واژگان اتصال به دیتابیس برقرار نشد.</div>';
+    showVocabularyLoader({
+      title:"اتصال برقرار نشد",
+      detail:"هیچ نسخهٔ محلی در این دستگاه پیدا نشد. اتصال اینترنت را بررسی و دوباره تلاش کن.",
+      stage:"نیاز به تلاش دوباره",
+      progress:0,
+      retry:true,
+      error:true
+    });
+  }
+}
 
 function renderAll(){$("statTotal").textContent=faNum(words.length);$("dictCount").textContent=faNum(words.length)+" واژه";renderStats();if(activeView==="dictionary")renderDictionary();if(activeView==="review")renderSaved();if(activeView==="daily")renderDaily()}
 function renderStats(){if(!words.length)return;const sets=getDerivedWordSets(),known=sets.mastered.length,due=sets.due.length,saved=sets.saved.length,st=streak(),total=words.length,pct=Math.round(known/Math.max(total,1)*100),accuracy=progress.quizTotal?Math.round(progress.quizCorrect/progress.quizTotal*100):null,learning=sets.learning.length,unseen=sets.unseen.length;$("statKnown").textContent=faNum(known);$("knownPercent").textContent=pct+"%";$("statDue").textContent=faNum(due);$("statSessions").textContent=faNum(progress.sessions);$("dueNav").textContent=faNum(due);$("savedNav").textContent=faNum(saved);$("savedTotal").textContent=faNum(saved);$("reviewTotal").textContent=faNum(due);$("reviewKnown").textContent=faNum(known);$("reviewSessions").textContent=faNum(progress.sessions);$("progressMastery").textContent=pct+"%";$("progressAccuracy").textContent=accuracy===null?"—":accuracy+"%";$("progressReviews").textContent=faNum(progress.reviewCount);$("progressStreak").textContent=faNum(st);$("masteryBar").style.width=pct+"%";$("masteryCaption").textContent=faNum(pct)+"٪";$("statsHeroKnown").textContent=faNum(known);$("statsHeroDays").textContent=faNum(st);$("statsOrbKnown").textContent=faNum(known);$("statsOrbStreak").textContent=faNum(st);$("statsOrbPercent").textContent=faNum(pct)+"٪";$("metricMasteryRing").style.setProperty("--metric-pct",pct+"%");$("metricQuizCount").textContent=faNum(progress.quizTotal)+" پاسخ";$("metricSessionCount").textContent=faNum(progress.sessions)+" جلسه";$("masteryDonut").style.setProperty("--donut-pct",pct+"%");$("masteryDonut").style.setProperty("--donut-learning-pct",Math.round(learning/Math.max(total,1)*100)+"%");$("masteryDonut").style.setProperty("--donut-due-pct",Math.round(due/Math.max(total,1)*100)+"%");$("masteryDonutValue").textContent=faNum(pct)+"٪";$("donutKnown").textContent=faNum(known);$("donutLearning").textContent=faNum(learning);$("donutDue").textContent=faNum(due);$("donutUnseen").textContent=faNum(unseen);$("donutTotal").textContent=faNum(total);if(activeView==="stats")renderTypeStats();renderWeekChart();renderGoal()}
