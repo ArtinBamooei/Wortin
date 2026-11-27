@@ -56,7 +56,8 @@ test("vocabulary startup uses a versioned IndexedDB snapshot and a tiny manifest
   assert.ok(app.includes("cacheMatchesManifest(cached,manifest)"));
   assert.ok(app.includes("async function writeVocabularyCache(snapshot)"));
   assert.ok(app.includes("Vocabulary manifest returned "));
-  assert.ok(html.includes('id="vocabularyLoader"'));
+  assert.ok(html.includes('id="vocabularyLoader" class="vocabulary-loader is-visible"'));
+  assert.ok(html.includes('aria-busy="true" aria-hidden="false"'));
   assert.ok(html.includes('id="loaderRetry"'));
   assert.ok(css.includes(".loader-orbit-one"));
   assert.ok(css.includes("@keyframes wortinOrbitOne"));
