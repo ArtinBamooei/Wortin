@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 7000 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 12000 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -122,7 +122,7 @@ async function run() {
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
-    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 30000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
     assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
     assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
