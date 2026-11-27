@@ -315,6 +315,10 @@ async function loadWords(){
     vocabularyLoading=false;
     setDbStatus("ok",faNum(words.length)+" واژه آماده");
     renderAll();
+    if(activeView==="learn"||activeView==="quiz"){
+      study.cards=[];study.index=0;study.mode=activeView==="quiz"?"quiz":"flash";
+      study.revealed=false;study.locked=false;
+    }
     resumeStudyViewAfterVocabularyLoad();
     showVocabularyLoader({title:"محیط یادگیری آماده است",detail:"واژگان با موفقیت به‌روزرسانی شدند.",stage:"تکمیل",progress:100});
     hideVocabularyLoader();
