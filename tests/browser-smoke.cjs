@@ -52,6 +52,7 @@ async function mockBackend(page, options = {}) {
 async function waitForVocabulary(page) {
   await page.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("ok"), null, { timeout: 15000 });
   await page.locator("#statTotal").waitFor({ timeout: 5000 });
+  await page.waitForFunction(() => ["current", "updated", "offline", "error"].includes(document.documentElement.dataset.vocabularySyncState), null, { timeout: 15000 });
   assert.match(await page.locator("#statTotal").innerText(), /^[۱1]$/,
     "The loaded vocabulary count should be one.");
 }
