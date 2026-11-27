@@ -80,10 +80,10 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { vocabularyFixture: vocabularyFixture.map(word => ({ ...word })) };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 900 };
     const coldStart = await browser.newPage({ viewport: { width: 390, height: 844 } });
     coldStart.on("pageerror", error => failures.push("Cold-start page error: " + error.message));
-    await mockBackend(coldStart, { ...cacheCounters, vocabularyDelayMs: 900 });
+    await mockBackend(coldStart, cacheCounters);
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
     await coldStart.locator("#view-learn.active").waitFor();
     await coldStart.locator("#vocabularyLoader.is-visible").waitFor();
@@ -116,7 +116,7 @@ async function run() {
     // A temporary manifest outage must keep the usable cache and must not start a full download.
     cacheCounters.failManifest = true;
     await coldStart.reload({ waitUntil: "domcontentloaded" });
-    await coldStart.waitForFunction(() => document.querySelector("#wordList")?.innerText.includes("spielen"), null, { timeout: 15000 });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "spielen", null, { timeout: 15000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
     assert.equal(cacheCounters.vocabularyRequests, 2,
       "Manifest failure with a valid local snapshot must not cause a full database download.");
