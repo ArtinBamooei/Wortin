@@ -97,11 +97,11 @@ async function run() {
       }
       forceEmptyVocabularyCache = false;
       const source = await response.text();
-      const originalReader = "async function readVocabularyCache(){try{";
+      const originalReader = ["async function readVocabularyCache(){", "  try{"].join("\n");
       assert.ok(source.includes(originalReader), "The application cache reader must be found for an isolated cold-start test.");
       const isolatedSource = source.replace(
         originalReader,
-        "async function readVocabularyCache(){return null}\\nasync function readLegacyVocabularyCache(){try{"
+        ["async function readVocabularyCache(){return null}", "async function readLegacyVocabularyCache(){", "  try{"].join("\n")
       );
       await route.fulfill({ response, body: isolatedSource });
     });
