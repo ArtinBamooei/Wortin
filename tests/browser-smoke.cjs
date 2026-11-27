@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 3000 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 1500 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -106,7 +106,7 @@ async function run() {
       assert.notEqual(isolatedSource, source, "The cold-start test must replace the real IndexedDB cache reader.");
       await route.fulfill({ response, body: isolatedSource });
     });
-    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
+    await coldStart.goto(BASE_URL + "#learn", { waitUntil: "commit" });
     await coldStart.locator("#view-learn.active").waitFor();
     await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
     const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
