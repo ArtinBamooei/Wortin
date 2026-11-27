@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 900 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 3000 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -101,8 +101,9 @@ async function run() {
       assert.ok(source.includes(originalReader), "The application cache reader must be found for an isolated cold-start test.");
       const isolatedSource = source.replace(
         originalReader,
-        ["async function readVocabularyCache(){return null}", "async function readLegacyVocabularyCache(){", "  try{"].join("\n")
+        ["async function readVocabularyCache(){window.__wortinForcedColdCacheReader=true;return null}", "async function readLegacyVocabularyCache(){", "  try{"].join("\n")
       );
+      assert.notEqual(isolatedSource, source, "The cold-start test must replace the real IndexedDB cache reader.");
       await route.fulfill({ response, body: isolatedSource });
     });
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "domcontentloaded" });
@@ -115,8 +116,9 @@ async function run() {
       bodyClass: document.body.className,
       manifestRequests: 0
     }));
+    const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(initialLoaderState.className.split(/\\s+/).includes("is-visible"),
-      "A cold start must keep the full-screen vocabulary loader visible: " + JSON.stringify(initialLoaderState));
+      "A cold start must keep the full-screen vocabulary loader visible: " + JSON.stringify({ ...initialLoaderState, forcedReaderWasUsed, cacheCounters }));
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
