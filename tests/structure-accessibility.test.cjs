@@ -42,6 +42,32 @@ test("view navigation supports direct links and browser history", () => {
   assert.match(app, /history\[method\]\(\{view\}/);
 });
 
+test("vocabulary startup uses a versioned IndexedDB snapshot and a tiny manifest check", () => {
+  const app = read("app.js");
+  const html = read("index.html");
+  const css = read("styles.css");
+  const migration = read("supabase/migrations/20261127102142_versioned_vocabulary_manifest.sql");
+  assert.ok(app.includes('const CACHE_KEY="wortin.vocabulary.cache.v5"'));
+  assert.ok(app.includes("async function fetchVocabularyManifest()"));
+  assert.ok(app.includes("/rest/v1/vocabulary_manifest?"));
+  assert.ok(app.includes("cache:\"no-store\""));
+  assert.ok(app.includes("function cacheMatchesManifest(cache,manifest)"));
+  assert.ok(app.includes("function downloadVocabularySnapshot(initialManifest)"));
+  assert.ok(app.includes("cacheMatchesManifest(cached,manifest)"));
+  assert.ok(app.includes("async function writeVocabularyCache(snapshot)"));
+  assert.ok(app.includes("manifest version"));
+  assert.ok(html.includes('id="vocabularyLoader"'));
+  assert.ok(html.includes('id="loaderRetry"'));
+  assert.ok(css.includes(".loader-orbit-one"));
+  assert.ok(css.includes("@keyframes wortinOrbitOne"));
+  assert.ok(css.includes("@media(prefers-reduced-motion:reduce)"));
+  assert.match(migration, /create table public\\.vocabulary_manifest/);
+  assert.match(migration, /enable row level security/);
+  assert.match(migration, /grant select on table public\\.vocabulary_manifest to anon, authenticated, service_role/);
+  assert.match(migration, /after insert or update or delete or truncate on public\\.vocabulary/);
+  assert.match(migration, /for each statement/);
+});
+
 test("flashcard deep links wait for vocabulary and resume after cache or network load", () => {
   const app = read("app.js");
   assert.match(app, /vocabularyLoading=true/);
