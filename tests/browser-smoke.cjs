@@ -115,9 +115,11 @@ async function run() {
     const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await initialManifestResponse;
-    await initialVocabularyResponse;
+    await coldStart.waitForFunction(() => document.querySelector("#loaderHeadline")?.textContent.includes("در حال دریافت نخستین نسخه"), null, { timeout: 10000 }).catch(() => {});
+    assert.equal(cacheCounters.vocabularyRequests, 1, "The initial version check must initiate one vocabulary snapshot download.");
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
-      "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
+      "A flashcard must not be rendered from an empty vocabulary list before the first snapshot response completes.");
+    await initialVocabularyResponse;
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 60000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
     assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
