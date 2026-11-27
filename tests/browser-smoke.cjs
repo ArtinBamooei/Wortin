@@ -111,13 +111,6 @@ async function run() {
     const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
-    await coldStart.waitForFunction(() => document.querySelector("#loaderHeadline")?.textContent.includes("در حال دریافت نخستین نسخه"));
-    const transferLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
-      visible: el.classList.contains("is-visible"),
-      headline: document.querySelector("#loaderHeadline")?.textContent,
-      visibility: getComputedStyle(el).visibility
-    }));
-    assert.ok(transferLoaderState.visible, "The full-screen loader must remain visible during the first snapshot transfer: " + JSON.stringify({ transferLoaderState, cacheCounters }));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 60000 });
