@@ -140,7 +140,7 @@ async function fetchVocabularyManifest(){
       if(!Array.isArray(data)||data.length!==1)throw new Error("Vocabulary manifest is missing or malformed");
       const version=String(data[0].version??"");
       const rowCount=Number(data[0].row_count);
-      if(!/^\\d+$/.test(version)||!Number.isSafeInteger(rowCount)||rowCount<1||rowCount>50000)
+      if(!/^\d+$/.test(version)||!Number.isSafeInteger(rowCount)||rowCount<1||rowCount>50000)
         throw new Error("Vocabulary manifest contains invalid version or row count");
       return{version,rowCount,updatedAt:String(data[0].updated_at||"")};
     }catch(err){
@@ -312,6 +312,7 @@ async function loadWords(){
     }
     showVocabularyLoader({title:"ذخیرهٔ نسخهٔ محلی",detail:"نسخهٔ کامل و اعتبارسنجی‌شده در حافظهٔ دستگاه ذخیره می‌شود.",stage:"ذخیره‌سازی",progress:94});
     const persisted=await writeVocabularyCache({datasetVersion:snapshot.manifest.version,items:words});
+    vocabularyLoading=false;
     setDbStatus("ok",faNum(words.length)+" واژه آماده");
     renderAll();
     resumeStudyViewAfterVocabularyLoad();
@@ -624,4 +625,4 @@ if(authClient){authClient.auth.onAuthStateChange((event,session)=>{if(event==="P
 function flushPendingProgressForLifecycle(){if(!authUser||!cloudSyncPending)return;clearTimeout(cloudSyncTimer);cloudSyncTimer=null;flushCloudSync().catch(err=>console.warn("Progress remains cached locally until sync can retry.",err))}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushPendingProgressForLifecycle()});
 window.addEventListener("pagehide",flushPendingProgressForLifecycle);window.addEventListener("online",()=>{if(authUser&&cloudSyncPending)flushPendingProgressForLifecycle()});
-const today=new Date();setTheme(storageGet(THEME_KEY)||(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));renderWeekChart();renderGoal();loadWords();
+const today=new Date();setTheme(storageGet(THEME_KEY)||(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));renderWeekChart();renderGoal();$("loaderRetry").addEventListener("click",()=>loadWords());loadWords();
