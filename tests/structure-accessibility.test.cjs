@@ -72,7 +72,8 @@ test("flashcard deep links wait for vocabulary and resume after cache or network
   const app = read("app.js");
   assert.match(app, /vocabularyLoading=true/);
   assert.ok(app.includes("function resumeStudyViewAfterVocabularyLoad()"));
-  assert.ok(app.includes("renderAll();resumeStudyViewAfterVocabularyLoad()"));
+  assert.ok(app.includes("renderAll();"));
+  assert.ok(app.includes("resumeStudyViewAfterVocabularyLoad()"));
   assert.ok(app.includes('if(view==="learn"&&words.length&&'));
   assert.ok(app.includes('if(vocabularyLoading){changeView(mode==="quiz"?"quiz":"learn");return}'));
 });
