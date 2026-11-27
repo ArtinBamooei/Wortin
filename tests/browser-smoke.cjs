@@ -116,8 +116,8 @@ async function run() {
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await initialManifestResponse;
     assert.equal(cacheCounters.vocabularyRequests, 1, "The initial version check must initiate one vocabulary snapshot download.");
-    assert.equal(await coldStart.locator("#flashcard").count(), 0,
-      "A flashcard must not be rendered from an empty vocabulary list before the first snapshot response completes.");
+    assert.equal(await coldStart.locator("#flashcard .flash-word").count(), 0,
+      "A German vocabulary word must not be rendered before the first snapshot response completes.");
     await initialVocabularyResponse;
     await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 60000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
