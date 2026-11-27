@@ -39,7 +39,7 @@ async function mockBackend(page, options = {}) {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify([{ version: options.manifestVersion, row_count: vocabularyFixture.length, updated_at: "2026-11-27T00:00:00Z" }]) });
   });
 
-  await page.route("**/rest/v1/vocabulary*", async route => {
+  await page.route(url => new URL(url).pathname.endsWith("/rest/v1/vocabulary"), async route => {
     options.vocabularyRequests++;
     if (options.vocabularyDelayMs) await new Promise(resolve => setTimeout(resolve, options.vocabularyDelayMs));
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(vocabularyFixture) });
