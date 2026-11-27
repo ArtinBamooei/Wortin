@@ -47,6 +47,7 @@ async function mockBackend(page, options = {}) {
 
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
+  return options;
 }
 
 async function waitForVocabulary(page) {
