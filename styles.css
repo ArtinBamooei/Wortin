@@ -18,7 +18,7 @@
   --blue: #8fb3d2;
   --shadow: 0 24px 70px rgba(4,15,27,.28);
   --radius: 24px;
-  --fa-number-font: "Estedad","Vazirmatn",sans-serif;
+  --fa-number-font: "Vazirmatn",sans-serif;
   --accent-mint: #c4db73;
   --accent-cyan: #8fb3d2;
   --accent-lilac: #9ab4ca;
@@ -259,7 +259,7 @@ body{letter-spacing:0;line-height:1.65;background:var(--bg)}
 }
 
 
-/* Wortin Persian numeral typography: Estedad for Persian-digit UI values. */
+/* Persian numerals use the already-loaded primary Persian font to avoid a separate font download. */
 
 .stat-value,
 .streak-number,
@@ -851,7 +851,7 @@ body.modal-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.stats-orb,.stats-orb-halo,.stats-orb-chip,.stats-orb-particle,.insight-cube,.insight-spark,.stats-week-day,.heat-cell,.stats-type-track span,.stats-type-progress span{animation:none!important;transition:none!important}}
 
 
-/* Persian numeral typography: Estedad, distinct from the main UI typeface */
+/* Persian numerals reuse the primary Persian typeface to reduce font requests. */
 
 .fa-number,.stat-value,.streak-number,.stats-metric .metric-number,.stats-hero-facts strong,.stats-orb-core span,.stats-orb-chip b,.mastery-donut strong,.mastery-legend b,.stats-focus-footer b,.stats-type-row-head>span:last-child,.stats-type-footer strong,.stats-bar-value,.stats-week-total{font-family:var(--fa-number-font)!important;font-variant-numeric:lining-nums}
 
@@ -999,7 +999,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 .study-progress-meta{display:flex;flex-direction:column;gap:2px;flex:none;min-width:120px}
 .study-progress-meta>span{color:var(--muted);font-size:12px}
 #view-learn .study-counter{
-  min-width:0;color:var(--text);font:750 12px "Estedad","Vazirmatn",sans-serif;
+  min-width:0;color:var(--text);font:750 12px "Vazirmatn",sans-serif;
   direction:rtl;letter-spacing:0;
 }
 #view-learn .study-top .progress-line{
@@ -1266,7 +1266,7 @@ button:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-v
 }@media (hover: hover) and (pointer: fine){#view-learn .quiz-option:hover:not(:disabled){border-color:var(--study-accent);background:var(--study-accent-soft)}}
 .quiz-option-index{
   display:grid;place-items:center;flex:none;width:30px;height:30px;border:1px solid var(--line);
-  border-radius:9px;background:var(--panel);color:var(--muted);font:700 12px "Estedad",sans-serif;
+  border-radius:9px;background:var(--panel);color:var(--muted);font:700 12px "Vazirmatn",sans-serif;
 }
 #view-learn .quiz-option.correct{border-color:var(--study-accent);background:var(--study-accent-soft);color:var(--study-accent-strong)}
 #view-learn .quiz-option.correct .quiz-option-index{border-color:var(--study-accent);background:var(--study-accent);color:#fff}
@@ -2882,7 +2882,7 @@ html,body{width:100%;min-height:100%;overflow-x:hidden;overflow-y:auto}
 .loader-core:before{inset:8px;border:1px solid rgba(248,207,157,.23)}
 .loader-core:after{inset:-13px;border:1px solid rgba(216,153,102,.22);border-left-color:transparent;border-bottom-color:transparent;transform:rotate(-27deg)}
 .loader-core-aura{position:absolute;inset:16%;border-radius:50%;background:radial-gradient(circle,rgba(235,153,92,.27),transparent 67%);filter:blur(7px)}
-.loader-core strong{position:relative;font:800 clamp(42px,10vw,67px)/.95 "DM Sans","Estedad",sans-serif;letter-spacing:-5px;color:#f4e9d8;text-shadow:0 4px 28px rgba(246,174,110,.35)}
+.loader-core strong{position:relative;font:800 clamp(42px,10vw,67px)/.95 "DM Sans","Vazirmatn",sans-serif;letter-spacing:-5px;color:#f4e9d8;text-shadow:0 4px 28px rgba(246,174,110,.35)}
 .loader-core>span{position:relative;font:700 12px "DM Sans",sans-serif;letter-spacing:3px;color:#dfad7d}
 .loader-core>i{width:19px;height:2px;margin-top:5px;border-radius:4px;background:#e48b4b;box-shadow:0 0 14px rgba(228,139,75,.9)}
 .loader-brandline{display:flex;align-items:center;gap:9px;margin-top:2px;color:var(--text);font:800 12px "DM Sans",sans-serif;letter-spacing:3.4px}
