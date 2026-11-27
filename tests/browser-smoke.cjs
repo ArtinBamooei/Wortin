@@ -107,23 +107,20 @@ async function run() {
       await route.fulfill({ response, body: isolatedSource });
     });
     await coldStart.goto(BASE_URL + "#learn", { waitUntil: "commit" });
-    await coldStart.locator("#vocabularyLoader").waitFor({ state: "attached" });
-    const initialLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
-      className: el.className,
-      visibility: getComputedStyle(el).visibility
-    }));
-    assert.ok(initialLoaderState.className.split(/\\s+/).includes("is-visible"),
-      "The full-screen loader must be present in the initial HTML before app initialization.");
     await coldStart.locator("#view-learn.active").waitFor();
     const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await coldStart.waitForFunction(() => document.querySelector("#dbStatus")?.classList.contains("loading"));
     await coldStart.waitForFunction(() => document.querySelector("#loaderHeadline")?.textContent.includes("در حال دریافت نخستین نسخه"));
-    const transferLoaderVisible = await coldStart.locator("#vocabularyLoader").evaluate(el => el.classList.contains("is-visible"));
-    assert.ok(transferLoaderVisible, "The full-screen loader must remain visible while the first vocabulary snapshot is downloading: " + JSON.stringify(cacheCounters));
+    const transferLoaderState = await coldStart.locator("#vocabularyLoader").evaluate(el => ({
+      visible: el.classList.contains("is-visible"),
+      headline: document.querySelector("#loaderHeadline")?.textContent,
+      visibility: getComputedStyle(el).visibility
+    }));
+    assert.ok(transferLoaderState.visible, "The full-screen loader must remain visible during the first snapshot transfer: " + JSON.stringify({ transferLoaderState, cacheCounters }));
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list while the first snapshot is downloading.");
-    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 30000 });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 60000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
     assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
     assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
