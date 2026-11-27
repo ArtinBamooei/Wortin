@@ -80,7 +80,7 @@ async function run() {
   const failures = [];
 
   try {
-    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 12000 };
+    const cacheCounters = { manifestRequests: 0, vocabularyRequests: 0, manifestVersion: "1", vocabularyFixture: vocabularyFixture.map(word => ({ ...word })), vocabularyDelayMs: 30000 };
     const coldContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: "block"
@@ -116,10 +116,11 @@ async function run() {
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await initialManifestResponse;
     assert.equal(cacheCounters.vocabularyRequests, 1, "The initial version check must initiate one vocabulary snapshot download.");
-    assert.equal(await coldStart.locator("#flashcard .flash-word").count(), 0,
-      "A German vocabulary word must not be rendered before the first snapshot response completes.");
+    const earlyWords = await coldStart.locator("#flashcard .flash-word").allTextContents();
+    assert.equal(earlyWords.length, 0,
+      "A German vocabulary word must not be rendered before the first snapshot response completes: " + JSON.stringify({ earlyWords, manifestRequests: cacheCounters.manifestRequests, vocabularyRequests: cacheCounters.vocabularyRequests, forcedReaderWasUsed }));
     await initialVocabularyResponse;
-    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 60000 });
+    await coldStart.waitForFunction(() => document.querySelector("#flashcard .flash-word")?.textContent.trim() === "lernen", null, { timeout: 90000 });
     await coldStart.waitForFunction(() => !document.querySelector("#vocabularyLoader")?.classList.contains("is-visible"));
     assert.equal(cacheCounters.manifestRequests, 2, "A cold start checks the manifest before and after downloading to verify snapshot consistency.");
     assert.equal(cacheCounters.vocabularyRequests, 1, "A cold start should download the vocabulary snapshot once.");
