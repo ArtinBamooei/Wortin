@@ -115,7 +115,6 @@ async function run() {
     const forcedReaderWasUsed = await coldStart.evaluate(() => window.__wortinForcedColdCacheReader === true);
     assert.ok(forcedReaderWasUsed, "The cold-start scenario must bypass any pre-existing local snapshot.");
     await initialManifestResponse;
-    await coldStart.waitForFunction(() => document.querySelector("#loaderHeadline")?.textContent.includes("در حال دریافت نخستین نسخه"), null, { timeout: 10000 }).catch(() => {});
     assert.equal(cacheCounters.vocabularyRequests, 1, "The initial version check must initiate one vocabulary snapshot download.");
     assert.equal(await coldStart.locator("#flashcard").count(), 0,
       "A flashcard must not be rendered from an empty vocabulary list before the first snapshot response completes.");
